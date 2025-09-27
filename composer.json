@@ -1,0 +1,12 @@
+{
+  "repositories": [
+    {
+      "type": "vcs",
+      "url":  "git@github.com:mutms/commonmark-alert.git"
+    }
+  ],
+  "require": {
+    "league/commonmark": "^2.7",
+    "pomodocs/commonmark-alert": "dev-mutms-php81"
+  }
+}

@@ -1,0 +1,267 @@
+<?php
+// This file is part of MuTMS suite of plugins for Moodle™ LMS.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+// phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
+// phpcs:disable moodle.Files.LineLength.TooLong
+// phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
+// phpcs:disable moodle.Commenting.VariableComment.Missing
+// phpcs:disable moodle.Commenting.MissingDocblock.Function
+// phpcs:disable moodle.Commenting.InlineComment.TypeHintingMatch
+// phpcs:disable moodle.Commenting.InlineComment.TypeHintingMatch
+
+namespace mod_mubook\local;
+
+use League\CommonMark\GithubFlavoredMarkdownConverter;
+use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Node\Node;
+use League\CommonMark\Renderer\ChildNodeRendererInterface;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Code;
+use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
+use League\CommonMark\Renderer\NodeRendererInterface;
+use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
+use League\CommonMark\Node\Query;
+use League\CommonMark\Event\DocumentParsedEvent;
+use PomoDocs\CommonMark\Alert\AlertExtension;
+use League\CommonMark\Util\HtmlElement;
+use League\CommonMark\Util\Xml;
+
+/**
+ * Markdown helper.
+ *
+ * @package    mod_mubook
+ * @copyright  2025 Petr Skoda
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+final class markdown_formatter {
+    /** @var int GFM */
+    public const FLAVOR_GITHUB = 1;
+    /** @var int CommonMark */
+    public const FLAVOR_COMMONMARK = 2;
+
+    /** @var int remove all html */
+    public const HTML_STRIP = 1;
+    /** @var int escape all html */
+    public const HTML_ESCAPE = 2;
+    /** @var int keep most of the html - html is sanitised after conversion */
+    public const HTML_ALLOW = 3;
+
+    /**
+     * Returns supported Markdown flavors.
+     *
+     * @return string[]
+     */
+    public static function get_flavor_options(): array {
+        return [
+            self::FLAVOR_GITHUB => get_string('markdown_flavor_github', 'mod_mubook'),
+            self::FLAVOR_COMMONMARK => get_string('markdown_flavor_commonmark', 'mod_mubook'),
+        ];
+    }
+
+    /**
+     * Returns options for handling of HTML embedded in Markdown.
+     *
+     * @return array
+     */
+    public static function get_html_options(): array {
+        return [
+            self::HTML_STRIP => get_string('markdown_html_strip', 'mod_mubook'),
+            self::HTML_ESCAPE => get_string('markdown_html_escape', 'mod_mubook'),
+            self::HTML_ALLOW => get_string('markdown_html_allow', 'mod_mubook'),
+        ];
+    }
+
+    /**
+     * Convert Markdown to HTML.
+     *
+     * @param string $markdown
+     * @param int $firstheading normalise headings to sart with given level
+     * @param string|null $filebase
+     * @param array $options
+     * @return string
+     */
+    public static function convert_to_html(string $markdown, int $firstheading, ?string $filebase, array $options): string {
+        require_once(__DIR__ . '/../../vendor/autoload.php');
+
+        $firstheading = min(6, max(1, $firstheading));
+
+        if ($filebase !== null) {
+            $markdown = str_replace('@@PLUGINFILE@@', $filebase, $markdown);
+        }
+
+        $config = [
+            'allow_unsafe_links' => false,
+            'max_nesting_level' => 20,
+            'max_delimiters_per_line' => 100,
+        ];
+
+        if (isset($options['html']) && $options['html'] == self::HTML_ESCAPE) {
+            $config['html_input'] = 'escape';
+        } else if (isset($options['html']) && $options['html'] == self::HTML_ALLOW) {
+            $config['html_input'] = 'allow';
+        } else {
+            $config['html_input'] = 'strip';
+        }
+
+        if (isset($options['flavor']) && $options['flavor'] == self::FLAVOR_COMMONMARK) {
+            $converter = new CommonMarkConverter($config);
+        } else {
+            $options['flavor'] = self::FLAVOR_GITHUB;
+            $alertconfig = [
+                'alert' => [
+                    'class_name' => 'mubook-alert',
+                    'labels' => [
+                        'note' => get_string('markdown_alert_note', 'mod_mubook'),
+                        'tip' => get_string('markdown_alert_tip', 'mod_mubook'),
+                        'important' => get_string('markdown_alert_important', 'mod_mubook'),
+                        'warning' => get_string('markdown_alert_warning', 'mod_mubook'),
+                        'caution' => get_string('markdown_alert_caution', 'mod_mubook'),
+                    ],
+                    'icons' => [
+                        'active' => true,
+                        'names' => [
+                            'note' => 'fa-solid fa-circle-info me-1',
+                            'tip' => 'fa-regular fa-lightbulb me-1',
+                            'important' => 'fa-solid fa-book-open-reader me-1',
+                            'warning' => 'fa-solid fa-triangle-exclamation me-1',
+                            'caution' => 'fa-solid fa-circle-exclamation me-1',
+                        ],
+                    ],
+                ],
+            ];
+            $config = array_merge($config, $alertconfig);
+            $converter = new GithubFlavoredMarkdownConverter($config);
+            $converter->getEnvironment()->addExtension(new AlertExtension());
+        }
+
+        // Normalise headings.
+        $diff = null;
+        $converter->getEnvironment()->addEventListener(
+            DocumentParsedEvent::class,
+            function (DocumentParsedEvent $e) use ($firstheading, &$diff): void {
+                $document = $e->getDocument();
+                $query = (new Query())->where(function (Node $node): bool {
+                    return $node instanceof Heading;
+                });
+                /** @var Heading $node */
+                foreach ($query->findAll($document) as $node) {
+                    $level = $node->getLevel();
+                    if ($diff === null) {
+                        $diff = $firstheading - $level;
+                    }
+                    $node->setLevel(min(6, max($firstheading, $level + $diff)));
+                }
+            },
+            9999999
+        );
+
+        // Fix relative image urls.
+        $imagerender = new class ($filebase) implements NodeRendererInterface {
+            public function __construct(protected ?string $filebase) {
+            }
+
+            public function render(Node $node, ChildNodeRendererInterface $childRenderer) {
+                /** @var Image $node */
+                Image::assertInstanceOf($node);
+                $url = $node->getUrl();
+                $title = $node->getTitle();
+                if ($this->filebase !== null) {
+                    if (str_starts_with($url, './')) {
+                        $url = $this->filebase . substr($url, 2);
+                    } else if (!str_starts_with($url, '/') && !preg_match('/^[a-zA-Z]+:/', $url)) {
+                        $url = $this->filebase . $url;
+                    }
+                }
+                return \html_writer::img($url, $title, ['class' => 'img-fluid']);
+            }
+        };
+        $converter->getEnvironment()->addRenderer(Image::class, $imagerender);
+
+        // Fix relative link urls.
+        $linkrender = new class ($filebase) implements NodeRendererInterface {
+            public function __construct(protected ?string $filebase) {
+            }
+
+            public function render(Node $node, ChildNodeRendererInterface $childRenderer) {
+                /** @var Link $node */
+                Link::assertInstanceOf($node);
+                $url = $node->getUrl();
+                $text = $childRenderer->renderNodes($node->children());
+                $title = $node->getTitle();
+                if ($this->filebase !== null) {
+                    if (str_starts_with($url, './')) {
+                        $url = $this->filebase . substr($url, 2);
+                    } else if (!str_starts_with($url, '/') && !preg_match('/^[a-zA-Z]+:/', $url)) {
+                        $url = $this->filebase . $url;
+                    }
+                }
+                $attributes = [];
+                if (isset($title) && $title !== '') {
+                    $attributes['title'] = $title;
+                }
+                return \html_writer::link($url, $text, $attributes);
+            }
+        };
+        $converter->getEnvironment()->addRenderer(Link::class, $linkrender);
+
+        if ($options['flavor'] == self::FLAVOR_GITHUB) {
+            // Fix inline math.
+            $inlinemathrenderer = new class ($filebase) implements NodeRendererInterface {
+                public function __construct(protected ?string $filebase) {
+                }
+
+                public function render(Node $node, ChildNodeRendererInterface $childRenderer) {
+                    /** @var Code $node */
+                    Code::assertInstanceOf($node);
+
+                    $literal = $node->getLiteral();
+                    if (str_starts_with($literal, '$') && str_ends_with($literal, '$')) {
+                        return '\(' . Xml::escape(substr($literal, 1, -1)) . '\)';
+                    }
+
+                    $renderer = new \League\CommonMark\Extension\CommonMark\Renderer\Inline\CodeRenderer();
+                    return $renderer->render($node, $childRenderer);
+                }
+            };
+            $converter->getEnvironment()->addRenderer(Code::class, $inlinemathrenderer);
+
+            // Fix indented block math.
+            $blockmathrenderer = new class ($filebase) implements NodeRendererInterface {
+                public function __construct(protected ?string $filebase) {
+                }
+
+                public function render(Node $node, ChildNodeRendererInterface $childRenderer) {
+                    /** @var FencedCode $node */
+                    FencedCode::assertInstanceOf($node);
+
+                    $infowords = $node->getInfoWords();
+                    if ($infowords === ['math']) {
+                        $literal = $node->getLiteral();
+                        return '<div class="mubook-codeblock-math">\(' . Xml::escape(substr($literal, 1, -1)) . '\)</div>';
+                    }
+
+                    $renderer = new \League\CommonMark\Extension\CommonMark\Renderer\Block\FencedCodeRenderer();
+                    return $renderer->render($node, $childRenderer);
+                }
+            };
+            $converter->getEnvironment()->addRenderer(FencedCode::class, $blockmathrenderer);
+        }
+
+        $html = $converter->convert($markdown);
+        return clean_text($html, FORMAT_HTML);
+    }
+}

@@ -1,49 +1,74 @@
 <?php
-// This file is part of Book module for Moodle - http://moodle.org/
+// This file is part of MuTMS suite of plugins for Moodle™ LMS.
 //
-// Moodle is free software: you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+// phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
+// phpcs:disable moodle.Commenting.InlineComment.TypeHintingMatch
 
 /**
- * Book plugin settings
+ * Interactive book settings.
  *
- * @package    mod
- * @subpackage book
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_mubook
+ * @copyright  2004 Petr Skoda
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use mod_mubook\local\toc;
 
 defined('MOODLE_INTERNAL') || die;
 
+/** @var admin_root $ADMIN */
+
 if ($ADMIN->fulltree) {
-    require_once("$CFG->dirroot/mod/book/lib.php");
+    /** @var \admin_settingpage $settings */
 
-    //--- general settings -----------------------------------------------------------------------------------
+    // General settings.
 
-    $settings->add(new admin_setting_configcheckbox('book/requiremodintro',
-        get_string('requiremodintro', 'admin'), get_string('configrequiremodintro', 'admin'), 1));
+    $settings->add(new admin_setting_configcheckbox(
+        'mubook/restoreothertrustunsafe',
+        get_string('restoreothertrustunsafe', 'mod_mubook'),
+        get_string('restoreothertrustunsafe_desc', 'mod_mubook'),
+        0
+    ));
 
-    $options = book_get_numbering_types();
+    // New module editing form defaults.
 
-    $settings->add(new admin_setting_configmultiselect('book/numberingoptions',
-        get_string('numberingoptions', 'mod_book'), get_string('numberingoptions_help', 'mod_book'),
-        array_keys($options), $options));
+    $settings->add(new admin_setting_heading(
+        'bookmodeditdefaults',
+        get_string('modeditdefaults', 'admin'),
+        get_string('condifmodeditdefaults', 'admin')
+    ));
 
+    $settings->add(new admin_setting_configselect(
+        'mubook/numberingdefault',
+        get_string('numberingdefault', 'mod_mubook'),
+        '',
+        1,
+        function (): array {
+            return toc::get_numbering_menu();
+        }
+    ));
 
-    //--- modedit defaults -----------------------------------------------------------------------------------
-    $settings->add(new admin_setting_heading('bookmodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
-
-    $settings->add(new admin_setting_configselect('book/numbering',
-        get_string('numbering', 'mod_book'), '', BOOK_NUM_NUMBERS, $options));
-
+    $settings->add(new admin_setting_configselect(
+        'mubook/contentdefault',
+        get_string('contentdefault', 'mod_mubook'),
+        get_string('contentdefault_desc', 'mod_mubook'),
+        'html',
+        function (): array {
+            $cman = \core\di::get(\mod_mubook\local\content_manager::class);
+            return $cman->get_types_menu(true);
+        }
+    ));
 }

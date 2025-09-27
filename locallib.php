@@ -1,404 +1,152 @@
 <?php
-// This file is part of Book module for Moodle - http://moodle.org/
+// This file is part of MuTMS suite of plugins for Moodle™ LMS.
 //
-// Moodle is free software: you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+// phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
+// phpcs:disable moodle.Files.LineLength.TooLong
 
 /**
- * Book module local lib functions
+ * Interactive book plugin additional core API.
  *
- * @package    mod
- * @subpackage book
- * @copyright  2010-2011 Petr Skoda  {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    mod_mubook
+ * @copyright  2010 Petr Skoda
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-require_once($CFG->dirroot.'/mod/book/lib.php');
-require_once($CFG->libdir.'/filelib.php');
-
-define('BOOK_NUM_NONE',     '0');
-define('BOOK_NUM_NUMBERS',  '1');
-define('BOOK_NUM_BULLETS',  '2');
-define('BOOK_NUM_INDENTED', '3');
+use core_tag\output\tagindex;
 
 /**
- * Preload book chapters and fix toc structure if necessary.
+ * Returns book chapters tagged with a specified tag.
  *
- * Returns array of chapters with standard 'pagenum', 'id, pagenum, subchapter, title, hidden'
- * and extra 'parent, number, subchapters, prev, next'.
- * Please note the content/text of chapters is not included.
+ * This is a callback used by the tag area mod_mubook/book_chapter to search for book chapters
+ * tagged with a specific tag.
  *
- * @param  stdClass $book
- * @return array of id=>chapter
+ * @param core_tag_tag $tag
+ * @param bool $exclusivemode if set to true it means that no other entities tagged with this tag
+ *             are displayed on the page and the per-page limit may be bigger
+ * @param int $fromctx context id where the link was displayed, may be used by callbacks
+ *            to display items in the same context first
+ * @param int $ctx context id where to search for records
+ * @param bool $rec search in subcontexts as well
+ * @param int $page 0-based number of page being displayed
+ * @return tagindex|null
  */
-function book_preload_chapters($book) {
-    global $DB;
-    $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum', 'id, pagenum, subchapter, title, hidden');
-    if (!$chapters) {
-        return array();
+function mod_mubook_get_tagged_chapters(core_tag_tag $tag, bool $exclusivemode = false, int $fromctx = 0, int $ctx = 0, bool $rec = true, int $page = 0): ?tagindex {
+    global $OUTPUT;
+    $perpage = $exclusivemode ? 20 : 5;
+
+    // Build the SQL query.
+    $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+    $query = "SELECT bc.id, bc.title, bc.mubookid,
+                     cm.id AS cmid, c.id AS courseid, c.shortname, c.fullname, $ctxselect
+                FROM {mubook_chapter} bc
+                JOIN {mu} b ON b.id = bc.mubookid
+                JOIN {modules} m ON m.name='book'
+                JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = b.id
+                JOIN {tag_instance} tt ON bc.id = tt.itemid
+                JOIN {course} c ON cm.course = c.id
+                JOIN {context} ctx ON ctx.instanceid = cm.id AND ctx.contextlevel = :coursemodulecontextlevel
+               WHERE tt.itemtype = :itemtype AND tt.tagid = :tagid AND tt.component = :component
+                     AND cm.deletioninprogress = 0
+                     AND bc.id %ITEMFILTER% AND c.id %COURSEFILTER%";
+
+    $params = ['itemtype' => 'mubook_chapter', 'tagid' => $tag->id, 'component' => 'mod_mubook', 'coursemodulecontextlevel' => CONTEXT_MODULE];
+
+    if ($ctx) {
+        $context = $ctx ? context::instance_by_id($ctx) : context_system::instance();
+        $query .= $rec ? ' AND (ctx.id = :contextid OR ctx.path LIKE :path)' : ' AND ctx.id = :contextid';
+        $params['contextid'] = $context->id;
+        $params['path'] = $context->path . '/%';
     }
 
-    $prev = null;
-    $prevsub = null;
+    $query .= " ORDER BY ";
+    if ($fromctx) {
+        // In order-clause specify that modules from inside "fromctx" context should be returned first.
+        $fromcontext = context::instance_by_id($fromctx);
+        $query .= ' (CASE WHEN ctx.id = :fromcontextid OR ctx.path LIKE :frompath THEN 0 ELSE 1 END),';
+        $params['fromcontextid'] = $fromcontext->id;
+        $params['frompath'] = $fromcontext->path . '/%';
+    }
+    $query .= ' c.sortorder, cm.id, bc.id';
 
-    $first = true;
-    $hidesub = true;
-    $parent = null;
-    $pagenum = 0; // chapter sort
-    $i = 0;       // main chapter num
-    $j = 0;       // subchapter num
-    foreach($chapters as $id=>$ch) {
-        $oldch = clone($ch);
-        $pagenum++;
-        $ch->pagenum = $pagenum;
-        if ($first) {
-            // book can not start with a subchapter
-            $ch->subchapter = 0;
-            $first = false;
+    $totalpages = $page + 1;
+
+    // Use core_tag_index_builder to build and filter the list of items.
+    $builder = new core_tag_index_builder('mod_mubook', 'mubook_chapter', $query, $params, $page * $perpage, $perpage + 1);
+    while ($item = $builder->has_item_that_needs_access_check()) {
+        context_helper::preload_from_record($item);
+        $courseid = $item->courseid;
+        if (!$builder->can_access_course($courseid)) {
+            $builder->set_accessible($item, false);
+            continue;
         }
-        if (!$ch->subchapter) {
-            $ch->prev = $prev;
-            $ch->next = null;
-            if ($prev) {
-                $chapters[$prev]->next = $ch->id;
-            }
-            if ($ch->hidden) {
-                if ($book->numbering == BOOK_NUM_NUMBERS) {
-                    $ch->number = 'x';
-                } else {
-                    $ch->number = null;
+        $modinfo = get_fast_modinfo($builder->get_course($courseid));
+        // Set accessibility of this item and all other items in the same course.
+        $builder->walk(function ($taggeditem) use ($courseid, $modinfo, $builder) {
+            if ($taggeditem->courseid == $courseid) {
+                $accessible = false;
+                if (($cm = $modinfo->get_cm($taggeditem->cmid)) && $cm->uservisible) {
+                    $accessible = true;
                 }
-            } else {
-                $i++;
-                $ch->number = $i;
+                $builder->set_accessible($taggeditem, $accessible);
             }
-            $j = 0;
-            $prevsub = null;
-            $hidesub = $ch->hidden;
-            $parent = $ch->id;
-            $ch->parent = null;
-            $ch->subchpaters = array();
-        } else {
-            $ch->prev = $prevsub;
-            $ch->next = null;
-            if ($prevsub) {
-                $chapters[$prevsub]->next = $ch->id;
-            }
-            $ch->parent = $parent;
-            $ch->subchpaters = null;
-            $chapters[$parent]->subchapters[$ch->id] = $ch->id;
-            if ($hidesub) {
-                // all subchapters in hidden chapter must be hidden too
-                $ch->hidden = 1;
-            }
-            if ($ch->hidden) {
-                if ($book->numbering == BOOK_NUM_NUMBERS) {
-                    $ch->number = 'x';
-                } else {
-                    $ch->number = null;
-                }
-            } else {
-                $j++;
-                $ch->number = $j;
-            }
+        });
+    }
+
+    $items = $builder->get_items();
+    if (count($items) > $perpage) {
+        $totalpages = $page + 2; // We don't need the exact page count, just indicate that the next page exists.
+        array_pop($items);
+    }
+
+    // Build the display contents.
+    if ($items) {
+        $tagfeed = new core_tag\output\tagfeed();
+        foreach ($items as $item) {
+            context_helper::preload_from_record($item);
+            $modinfo = get_fast_modinfo($item->courseid);
+            $cm = $modinfo->get_cm($item->cmid);
+            $pageurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $item->id]);
+            $pagename = format_string($item->title, true, ['context' => context_module::instance($item->cmid)]);
+            $pagename = html_writer::link($pageurl, $pagename);
+            $courseurl = course_get_url($item->courseid, $cm->sectionnum);
+            $cmname = html_writer::link($cm->url, $cm->get_formatted_name());
+            $coursename = format_string($item->fullname, true, ['context' => context_course::instance($item->courseid)]);
+            $coursename = html_writer::link($courseurl, $coursename);
+            $icon = html_writer::link($pageurl, html_writer::empty_tag('img', ['src' => $cm->get_icon_url()]));
+            $tagfeed->add($icon, $pagename, $cmname . '<br>' . $coursename);
         }
-        if ($oldch->subchapter != $ch->subchapter or $oldch->pagenum != $ch->pagenum or $oldch->hidden != $ch->hidden) {
-            // update only if something changed
-            $DB->update_record('book_chapters', $ch);
-        }
-        $chapters[$id] = $ch;
+
+        $content = $OUTPUT->render_from_template(
+            'core_tag/tagfeed',
+            $tagfeed->export_for_template($OUTPUT)
+        );
+
+        return new tagindex(
+            $tag,
+            'mod_mubook',
+            'mubook_chapter',
+            $content,
+            $exclusivemode,
+            $fromctx,
+            $ctx,
+            $rec,
+            $page,
+            $totalpages
+        );
     }
 
-    return $chapters;
-}
-
-function book_get_chapter_title($chid, $chapters, $book, $context) {
-    $ch = $chapters[$chid];
-    $title = trim(format_string($ch->title, true, array('context'=>$context)));
-    $numbers = array();
-    if ($book->numbering == BOOK_NUM_NUMBERS) {
-        if ($ch->parent and $chapters[$ch->parent]->number) {
-            $numbers[] = $chapters[$ch->parent]->number;
-        }
-        if ($ch->number) {
-            $numbers[] = $ch->number;
-        }
-    }
-
-    if ($numbers) {
-        $title = implode('.', $numbers).' '.$title;
-    }
-
-    return $title;
-}
-
-/**
- * General logging to table
- * @param string $str1
- * @param string $str2
- * @param int $level
- * @return void
- */
-function book_log($str1, $str2, $level = 0) {
-    switch ($level) {
-        case 1:
-            echo '<tr><td><span class="dimmed_text">'.$str1.'</span></td><td><span class="dimmed_text">'.$str2.'</span></td></tr>';
-            break;
-        case 2:
-            echo '<tr><td><span style="color: rgb(255, 0, 0);">'.$str1.'</span></td><td><span style="color: rgb(255, 0, 0);">'.$str2.'</span></td></tr>';
-            break;
-        default:
-            echo '<tr><td>'.$str1.'</class></td><td>'.$str2.'</td></tr>';
-            break;
-    }
-}
-
-function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
-    global $OUTPUT, $PAGE;
-
-    $toc = book_get_toc($chapters, $chapter, $book, $cm, $edit, 0);
-
-    if ($edit) {
-        $toc .= '<div class="book_faq">';
-        $toc .=  $OUTPUT->help_icon('faq', 'mod_book', get_string('faq', 'mod_book'));
-        $toc .=  '</div>';
-    }
-
-    $bc = new block_contents();
-    $bc->title = get_string('toc', 'mod_book');
-    $bc->attributes['class'] = 'block';
-    $bc->content = $toc;
-
-    $regions = $PAGE->blocks->get_regions();
-    $firstregion = reset($regions);
-    $PAGE->blocks->add_fake_block($bc, $firstregion);
-}
-
-/**
- * Generate toc structure
- *
- * @param array $chapters
- * @param stdClass $chapter
- * @param stdClass $book
- * @param stdClass $cm
- * @param bool $edit
- * @return string
- */
-function book_get_toc($chapters, $chapter, $book, $cm, $edit) {
-    global $USER, $OUTPUT;
-
-    $toc = '';  //representation of toc (HTML)
-    $nch = 0;   //chapter number
-    $ns = 0;    //subchapter number
-    $first = 1;
-
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-
-    switch ($book->numbering) {
-      case BOOK_NUM_NONE:
-          $toc .= '<div class="book_toc_none">';
-          break;
-      case BOOK_NUM_NUMBERS:
-          $toc .= '<div class="book_toc_numbered">';
-          break;
-      case BOOK_NUM_BULLETS:
-          $toc .= '<div class="book_toc_bullets">';
-          break;
-      case BOOK_NUM_INDENTED:
-          $toc .= '<div class="book_toc_indented">';
-          break;
-    }
-
-
-    if ($edit) { ///teacher's TOC
-        $toc .= '<ul>';
-        $i = 0;
-        foreach($chapters as $ch) {
-            $i++;
-            $title = trim(format_string($ch->title, true, array('context'=>$context)));
-            if (!$ch->subchapter) {
-                $toc .= ($first) ? '<li>' : '</ul></li><li>';
-                if (!$ch->hidden) {
-                    $nch++;
-                    $ns = 0;
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                        $title = "$nch $title";
-                    }
-                } else {
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                        $title = "x $title";
-                    }
-                    $title = '<span class="dimmed_text">'.$title.'</span>';
-                }
-            } else {
-                $toc .= ($first) ? '<li><ul><li>' : '<li>';
-                if (!$ch->hidden) {
-                    $ns++;
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                        $title = "$nch.$ns $title";
-                    }
-                } else {
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                        $title = "x.x $title";
-                    }
-                    $title = '<span class="dimmed_text">'.$title.'</span>';
-                }
-            }
-
-            if ($ch->id == $chapter->id) {
-                $toc .= '<strong>'.$title.'</strong>';
-            } else {
-                $toc .= '<a title="'.s($title).'" href="view.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'">'.$title.'</a>';
-            }
-            $toc .=  '&nbsp;&nbsp;';
-            if ($i != 1) {
-                $toc .=  ' <a title="'.get_string('up').'" href="move.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;up=1&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/up').'" class="iconsmall" alt="'.get_string('up').'" /></a>';
-            }
-            if ($i != count($chapters)) {
-                $toc .=  ' <a title="'.get_string('down').'" href="move.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;up=0&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/down').'" class="iconsmall" alt="'.get_string('down').'" /></a>';
-            }
-            $toc .=  ' <a title="'.get_string('edit').'" href="edit.php?cmid='.$cm->id.'&amp;id='.$ch->id.'"><img src="'.$OUTPUT->pix_url('t/edit').'" class="iconsmall" alt="'.get_string('edit').'" /></a>';
-            $toc .=  ' <a title="'.get_string('delete').'" href="delete.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/delete').'" class="iconsmall" alt="'.get_string('delete').'" /></a>';
-            if ($ch->hidden) {
-                $toc .= ' <a title="'.get_string('show').'" href="show.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/show').'" class="iconsmall" alt="'.get_string('show').'" /></a>';
-            } else {
-                $toc .= ' <a title="'.get_string('hide').'" href="show.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$OUTPUT->pix_url('t/hide').'" class="iconsmall" alt="'.get_string('hide').'" /></a>';
-            }
-            $toc .= ' <a title="'.get_string('addafter', 'mod_book').'" href="edit.php?cmid='.$cm->id.'&amp;pagenum='.$ch->pagenum.'&amp;subchapter='.$ch->subchapter.'"><img src="'.$OUTPUT->pix_url('add', 'mod_book').'" class="iconsmall" alt="'.get_string('addafter', 'mod_book').'" /></a>';
-
-            $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
-            $first = 0;
-        }
-        $toc .= '</ul></li></ul>';
-    } else { //normal students view
-        $toc .= '<ul>';
-        foreach($chapters as $ch) {
-            $title = trim(format_string($ch->title, true, array('context'=>$context)));
-            if (!$ch->hidden) {
-                if (!$ch->subchapter) {
-                    $nch++;
-                    $ns = 0;
-                    $toc .= ($first) ? '<li>' : '</ul></li><li>';
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                          $title = "$nch $title";
-                    }
-                } else {
-                    $ns++;
-                    $toc .= ($first) ? '<li><ul><li>' : '<li>';
-                    if ($book->numbering == BOOK_NUM_NUMBERS) {
-                          $title = "$nch.$ns $title";
-                    }
-                }
-                if ($ch->id == $chapter->id) {
-                    $toc .= '<strong>'.$title.'</strong>';
-                } else {
-                    $toc .= '<a title="'.s($title).'" href="view.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'">'.$title.'</a>';
-                }
-                $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
-                $first = 0;
-            }
-        }
-        $toc .= '</ul></li></ul>';
-    }
-
-    $toc .= '</div>';
-
-    $toc = str_replace('<ul></ul>', '', $toc); //cleanup of invalid structures
-
-    return $toc;
-}
-
-
-/**
- * File browsing support class
- */
-class book_file_info extends file_info {
-    protected $course;
-    protected $cm;
-    protected $areas;
-    protected $filearea;
-
-    public function __construct($browser, $course, $cm, $context, $areas, $filearea) {
-        parent::__construct($browser, $context);
-        $this->course   = $course;
-        $this->cm       = $cm;
-        $this->areas    = $areas;
-        $this->filearea = $filearea;
-    }
-
-    /**
-     * Returns list of standard virtual file/directory identification.
-     * The difference from stored_file parameters is that null values
-     * are allowed in all fields
-     * @return array with keys contextid, filearea, itemid, filepath and filename
-     */
-    public function get_params() {
-        return array('contextid'=>$this->context->id,
-                     'component'=>'mod_book',
-                     'filearea' =>$this->filearea,
-                     'itemid'   =>null,
-                     'filepath' =>null,
-                     'filename' =>null);
-    }
-
-    /**
-     * Returns localised visible name.
-     * @return string
-     */
-    public function get_visible_name() {
-        return $this->areas[$this->filearea];
-    }
-
-    /**
-     * Can I add new files or directories?
-     * @return bool
-     */
-    public function is_writable() {
-        return false;
-    }
-
-    /**
-     * Is directory?
-     * @return bool
-     */
-    public function is_directory() {
-        return true;
-    }
-
-    /**
-     * Returns list of children.
-     * @return array of file_info instances
-     */
-    public function get_children() {
-        global $DB;
-
-        $children = array();
-        $chapters = $DB->get_records('book_chapters', array('bookid'=>$this->cm->instance), 'pagenum', 'id, pagenum');
-        foreach ($chapters as $itemid=>$unused) {
-            if ($child = $this->browser->get_file_info($this->context, 'mod_book', $this->filearea, $itemid)) {
-                $children[] = $child;
-            }
-        }
-        return $children;
-    }
-
-    /**
-     * Returns parent file_info instance
-     * @return file_info or null for root
-     */
-    public function get_parent() {
-        return $this->browser->get_file_info($this->context);
-    }
+    return null;
 }

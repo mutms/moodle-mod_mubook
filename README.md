@@ -1,51 +1,53 @@
-Book module for Moodle (http://moodle.org/) - Copyright (C) 2004-2011  Petr Skoda (http://skodak.org/)
+# Interactive book for Moodle™ LMS
 
-The Book module makes it easy to create multi-page resources with a book-like format. This module can be used to build complete book-like websites inside of your Moodle course.
-This module was developed for Technical University of Liberec (Czech Republic). Many ideas and code were taken from other Moodle modules and Moodle itself
+Interactive book module is the successor to original Book module for Moodle. It is part of [MuTMS](https://github.com/mutms/) suite of plugins.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version.
+## New features and improvements
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details: http://www.gnu.org/copyleft/gpl.html
+1. Modern look and feel
+2. Full-page table of contents
+3. Page showing all chapters
+4. Redesigned chapter navigation
+5. Full support for Markdown format
+6. Support for new chapter content types including interactive elements
+7. Print sub-plugin was replaced with optimised printing support on regular book pages 
+8. Hidden chapters were replaced with hidden chapter content
+9. Editing of unsafe HTML content is controlled by a separate capability
+10. It is safe to allow students to edit chapters and content  
 
+## Future ideas
 
-Created by:
+* Markdown preview
+* Chapter content visibility based on group membership
+* Content snapshots for tracking of changes
+* Export and import
+* Integration of react-markdown editor
+* Full text search
+* New block with table of contents, progress indicators and bookmarks
 
-* Petr Skoda (skodak) - most of the coding & design
-* Mojmir Volf, Eloy Lafuente, Antonio Vicent and others
+_Note that development of new features will depend on availability of funding._
 
+## Markdown support
 
+Interactive book supports both vanilla [CommonMark text format](https://commonmark.thephpleague.com/2.7/)
+and [GitHub Flavored Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax). 
 
-Project page:
+Additional features:
 
-* https://github.com/skodak/moodle-mod_book
-* http://moodle.org/plugins/view.php?plugin=mod_book
+* content files are accessible via relative links or @@PLUGINFILE@@ prefix
+* Mathjax rendering is supported in GitHub Flavored Markdown, see [Writing mathematical expressions](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions)
+* alerts are available in GitHub Flavored Markdown, see [Alerts](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#alerts)
 
+## Credits
 
-Installation:
+Original Book module was developed for Technical University of Liberec (Czech Republic).
 
-* http://docs.moodle.org/20/en/Installing_contributed_modules_or_plugins
+The impulse to create new Interactive book module came from the participants of
+[Moodle Moot DACH 2025](https://moodlemootdach.org/mod/forum/discuss.php?d=7076).
 
+The user interface of Interactive book module was inspired by [The Modern JavaScript Tutorial](https://javascript.info/) design.
 
-Issue tracker:
+Developers (including legacy Book module):
 
-* https://github.com/skodak/moodle-mod_book/issues?milestone=&labels=
-
-
-Intentionally omitted features:
-
-* more chapter levels - it would encourage teachers to write too much complex and long books, better use standard standalone HTML editor and import it as Resource. DocBook format is another suitable solution.
-* TOC hiding in normal view - instead use printer friendly view
-* PDF export - there is no elegant way AFAIK to convert HTML to PDF, use virtual PDF printer or better use DocBook format for authoring
-* detailed student tracking (postponed till officially supported)
-* export as zipped set of HTML pages - instead use browser command Save page as... in print view
-
-
-Future:
-
-* No more development planned
+* Petr Skoda - majority the coding and design
+* Mojmir Volf, Eloy Lafuente, Antonio Vicent, Moodle HQ and others

@@ -1,84 +1,74 @@
 <?php
-// This file is part of Book module for Moodle - http://moodle.org/
+// This file is part of MuTMS suite of plugins for Moodle™ LMS.
 //
-// Moodle is free software: you can redistribute it and/or modify
+// This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 //
-// Moodle is distributed in the hope that it will be useful,
+// This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-/**
- * Instance add/edit form
- *
- * @package    mod
- * @subpackage book
- * @copyright  2004-2011 Petr Skoda  {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+// phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
+
+use mod_mubook\local\markdown_formatter;
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot.'/mod/book/locallib.php');
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+/** @var stdClass $CFG */
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
-class mod_book_mod_form extends moodleform_mod {
-
-    function definition() {
-        global $CFG;
-
+/**
+ * Interactive book plugin activity form.
+ *
+ * @package    mod_mubook
+ * @copyright  2004 Petr Skoda
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class mod_mubook_mod_form extends moodleform_mod {
+    #[\Override]
+    public function definition() {
         $mform = $this->_form;
 
-        $config = get_config('book');
+        $config = get_config('mubook');
 
-//-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
-        $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
-        if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
-        } else {
-            $mform->setType('name', PARAM_CLEANHTML);
-        }
+        $mform->addElement('text', 'name', get_string('name'), ['size' => '64']);
+        $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
-        $this->add_intro_editor($config->requiremodintro, get_string('summary'));
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+        $this->standard_intro_elements(get_string('moduleintro'));
 
+        $options = \mod_mubook\local\toc::get_numbering_menu();
+        $mform->addElement('select', 'numbering', get_string('numbering', 'mod_mubook'), $options);
+        $mform->setDefault('numbering', $config->numberingdefault ?? 1);
 
-        $alloptions = book_get_numbering_types();
-        $allowed = explode(',', $config->numberingoptions);
-        $options = array();
-        foreach ($allowed as $type) {
-            if (isset($alloptions[$type])) {
-                $options[$type] = $alloptions[$type];
-            }
+        $cman = \core\di::get(\mod_mubook\local\content_manager::class);
+        $options = $cman->get_types_menu(true);
+        $mform->addElement('select', 'contentdefault', get_string('contentdefault', 'mod_mubook'), $options);
+        $contentdefault = get_config('mubook', 'contentdefault');
+        if (isset($options[$contentdefault])) {
+            $mform->setDefault('contentdefault', $contentdefault);
+        } else {
+            $mform->setDefault('contentdefault', 'html');
         }
-        if ($this->current->instance) {
-            if (!isset($options[$this->current->numbering])) {
-                if (isset($alloptions[$this->current->numbering])) {
-                    $options[$this->current->numbering] = $alloptions[$this->current->numbering];
-                }
-            }
-        }
-        $mform->addElement('select', 'numbering', get_string('numbering', 'book'), $options);
-        $mform->addHelpButton('numbering', 'numbering', 'mod_book');
-        $mform->setDefault('numbering', $config->numbering);
 
-        $mform->addElement('checkbox', 'customtitles', get_string('customtitles', 'book'));
-        $mform->addHelpButton('customtitles', 'customtitles', 'mod_book');
-        $mform->setDefault('customtitles', 0);
+        $menu = markdown_formatter::get_flavor_options();
+        $mform->addElement('select', 'markdownflavor', get_string('markdown_flavor', 'mod_mubook'), $menu);
+        $mform->setDefault('markdownflavor', markdown_formatter::FLAVOR_GITHUB);
 
-//-------------------------------------------------------------------------------
+        $menu = markdown_formatter::get_html_options();
+        $mform->addElement('select', 'markdownhtml', get_string('markdown_html', 'mod_mubook'), $menu);
+        $mform->setDefault('markdownhtml', markdown_formatter::HTML_STRIP);
+
         $this->standard_coursemodule_elements();
 
-//-------------------------------------------------------------------------------
         $this->add_action_buttons();
     }
-
-
 }
