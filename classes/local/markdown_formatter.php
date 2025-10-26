@@ -221,8 +221,8 @@ final class markdown_formatter {
 
         if ($flavor == self::FLAVOR_GITHUB) {
             // Fix inline math.
-            $inlinemathrenderer = new class ($filebase) implements NodeRendererInterface {
-                public function __construct(protected ?string $filebase) {
+            $inlinemathrenderer = new class () implements NodeRendererInterface {
+                public function __construct() {
                 }
 
                 public function render(Node $node, ChildNodeRendererInterface $childRenderer) {
@@ -241,8 +241,8 @@ final class markdown_formatter {
             $environment->addRenderer(Code::class, $inlinemathrenderer);
 
             // Fix indented block math.
-            $blockmathrenderer = new class ($filebase) implements NodeRendererInterface {
-                public function __construct(protected ?string $filebase) {
+            $blockmathrenderer = new class () implements NodeRendererInterface {
+                public function __construct() {
                 }
 
                 public function render(Node $node, ChildNodeRendererInterface $childRenderer) {
