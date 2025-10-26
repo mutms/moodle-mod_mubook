@@ -49,7 +49,7 @@ final class content_classes {
      * Register content class.
      *
      * @param string $type
-     * @param class-string<content> $classname
+     * @param string $classname
      * @return void
      */
     public function register(string $type, string $classname): void {

@@ -72,6 +72,8 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame('1', $mubook2->introformat);
         $this->assertSame('2', $mubook2->numbering);
         $this->assertSame('markdown', $mubook2->contentdefault);
+        $this->assertSame('1', $mubook2->markdownflavor);
+        $this->assertSame('1', $mubook2->markdownhtml);
         $this->assertTimeCurrent($mubook2->timecreated);
         $this->assertTimeCurrent($mubook2->timemodified);
 
@@ -140,7 +142,6 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame(null, $content1->auxint2);
         $this->assertSame(null, $content1->auxint3);
         $this->assertSame(null, $content1->unsafetrusted);
-        $this->assertSame('0', $content1->filter);
         $this->assertSame('0', $content1->hidden);
         $this->assertSame(null, $content1->groupid);
     }
