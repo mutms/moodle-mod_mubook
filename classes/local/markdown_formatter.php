@@ -24,8 +24,10 @@
 
 namespace mod_mubook\local;
 
-use League\CommonMark\GithubFlavoredMarkdownConverter;
-use League\CommonMark\CommonMarkConverter;
+use League\CommonMark\Environment\Environment;
+use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
+use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use League\CommonMark\MarkdownConverter;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
@@ -36,9 +38,8 @@ use League\CommonMark\Renderer\NodeRendererInterface;
 use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
 use League\CommonMark\Node\Query;
 use League\CommonMark\Event\DocumentParsedEvent;
-use PomoDocs\CommonMark\Alert\AlertExtension;
-use League\CommonMark\Util\HtmlElement;
 use League\CommonMark\Util\Xml;
+use PomoDocs\CommonMark\Alert\AlertExtension;
 
 /**
  * Markdown helper.
@@ -117,40 +118,40 @@ final class markdown_formatter {
             $config['html_input'] = 'strip';
         }
 
-        if (isset($options['flavor']) && $options['flavor'] == self::FLAVOR_COMMONMARK) {
-            $converter = new CommonMarkConverter($config);
-        } else {
-            $options['flavor'] = self::FLAVOR_GITHUB;
-            $alertconfig = [
-                'alert' => [
-                    'class_name' => 'mubook-alert',
-                    'labels' => [
-                        'note' => get_string('markdown_alert_note', 'mod_mubook'),
-                        'tip' => get_string('markdown_alert_tip', 'mod_mubook'),
-                        'important' => get_string('markdown_alert_important', 'mod_mubook'),
-                        'warning' => get_string('markdown_alert_warning', 'mod_mubook'),
-                        'caution' => get_string('markdown_alert_caution', 'mod_mubook'),
-                    ],
-                    'icons' => [
-                        'active' => true,
-                        'names' => [
-                            'note' => 'fa-solid fa-circle-info me-1',
-                            'tip' => 'fa-regular fa-lightbulb me-1',
-                            'important' => 'fa-solid fa-book-open-reader me-1',
-                            'warning' => 'fa-solid fa-triangle-exclamation me-1',
-                            'caution' => 'fa-solid fa-circle-exclamation me-1',
-                        ],
-                    ],
+        $config['alert'] = [
+            'class_name' => 'mubook-alert',
+            'labels' => [
+                'note' => get_string('markdown_alert_note', 'mod_mubook'),
+                'tip' => get_string('markdown_alert_tip', 'mod_mubook'),
+                'important' => get_string('markdown_alert_important', 'mod_mubook'),
+                'warning' => get_string('markdown_alert_warning', 'mod_mubook'),
+                'caution' => get_string('markdown_alert_caution', 'mod_mubook'),
+            ],
+            'icons' => [
+                'active' => true,
+                'names' => [
+                    'note' => 'fa-solid fa-circle-info me-1',
+                    'tip' => 'fa-regular fa-lightbulb me-1',
+                    'important' => 'fa-solid fa-book-open-reader me-1',
+                    'warning' => 'fa-solid fa-triangle-exclamation me-1',
+                    'caution' => 'fa-solid fa-circle-exclamation me-1',
                 ],
-            ];
-            $config = array_merge($config, $alertconfig);
-            $converter = new GithubFlavoredMarkdownConverter($config);
-            $converter->getEnvironment()->addExtension(new AlertExtension());
+            ],
+        ];
+
+        $flavor = $options['flavor'] ?? self::FLAVOR_GITHUB;
+
+        $environment = new Environment($config);
+        $environment->addExtension(new CommonMarkCoreExtension());
+
+        if ($flavor == self::FLAVOR_GITHUB) {
+            $environment->addExtension(new GithubFlavoredMarkdownExtension());
+            $environment->addExtension(new AlertExtension());
         }
 
         // Normalise headings.
         $diff = null;
-        $converter->getEnvironment()->addEventListener(
+        $environment->addEventListener(
             DocumentParsedEvent::class,
             function (DocumentParsedEvent $e) use ($firstheading, &$diff): void {
                 $document = $e->getDocument();
@@ -189,7 +190,7 @@ final class markdown_formatter {
                 return \html_writer::img($url, $title, ['class' => 'img-fluid']);
             }
         };
-        $converter->getEnvironment()->addRenderer(Image::class, $imagerender);
+        $environment->addRenderer(Image::class, $imagerender);
 
         // Fix relative link urls.
         $linkrender = new class ($filebase) implements NodeRendererInterface {
@@ -216,9 +217,9 @@ final class markdown_formatter {
                 return \html_writer::link($url, $text, $attributes);
             }
         };
-        $converter->getEnvironment()->addRenderer(Link::class, $linkrender);
+        $environment->addRenderer(Link::class, $linkrender);
 
-        if ($options['flavor'] == self::FLAVOR_GITHUB) {
+        if ($flavor == self::FLAVOR_GITHUB) {
             // Fix inline math.
             $inlinemathrenderer = new class ($filebase) implements NodeRendererInterface {
                 public function __construct(protected ?string $filebase) {
@@ -237,7 +238,7 @@ final class markdown_formatter {
                     return $renderer->render($node, $childRenderer);
                 }
             };
-            $converter->getEnvironment()->addRenderer(Code::class, $inlinemathrenderer);
+            $environment->addRenderer(Code::class, $inlinemathrenderer);
 
             // Fix indented block math.
             $blockmathrenderer = new class ($filebase) implements NodeRendererInterface {
@@ -258,10 +259,12 @@ final class markdown_formatter {
                     return $renderer->render($node, $childRenderer);
                 }
             };
-            $converter->getEnvironment()->addRenderer(FencedCode::class, $blockmathrenderer);
+            $environment->addRenderer(FencedCode::class, $blockmathrenderer);
         }
 
+        $converter = new MarkdownConverter($environment);
         $html = $converter->convert($markdown);
+        // We must sanitise HTML here!
         return clean_text($html, FORMAT_HTML);
     }
 }
