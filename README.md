@@ -20,6 +20,7 @@ Interactive book module is the successor to original Book module for Moodle. It 
 * Markdown preview
 * Chapter content visibility based on group membership
 * Content snapshots for tracking of changes
+* Optional user experience tracking
 * Export and import
 * Integration of react-markdown editor
 * Full text search
