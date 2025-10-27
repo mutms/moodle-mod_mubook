@@ -39,6 +39,8 @@ class backup_mubook_activity_structure_step extends backup_activity_structure_st
             'intro',
             'introformat',
             'numbering',
+            'markdownflavor',
+            'markdownhtml',
             'contentdefault',
             'timecreated',
             'timemodified',
@@ -60,7 +62,7 @@ class backup_mubook_activity_structure_step extends backup_activity_structure_st
             'auxint1',
             'auxint2',
             'auxint3',
-            'filter',
+            'unsafetrusted',
             'hidden',
             'groupid',
             'originjson',
@@ -84,10 +86,15 @@ class backup_mubook_activity_structure_step extends backup_activity_structure_st
         // Define file annotations.
         $mubook->annotate_files('mod_mubook', 'intro', null);
 
+        $areas = [];
         /** @var class-string<\mod_mubook\local\content> $classname */
         foreach ($cman->get_available_classes() as $classname) {
             foreach ($classname::get_file_areas() as $filearea) {
+                if (in_array($filearea, $areas)) {
+                    continue;
+                }
                 $content->annotate_files('mod_mubook', $filearea, 'id');
+                $areas[] = $filearea;
             }
         }
 
