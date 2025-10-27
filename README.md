@@ -39,6 +39,20 @@ Additional features:
 * Mathjax rendering is supported in GitHub Flavored Markdown, see [Writing mathematical expressions](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions)
 * alerts are available in GitHub Flavored Markdown, see [Alerts](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#alerts)
 
+## Installation via git
+
+In Moodle 5.0 use:
+
+```bash
+cd moodle
+git clone -b MOODLE_500_STABLE https://github.com/mutms/moodle-mod_mubook.git mod/mubook
+git clone -b MOODLE_500_STABLE https://github.com/mutms/moodle-tool_mulib.git admin/tool/mulib
+```
+
+In Moodle 5.1 start with `cd moodle/public` instead. 
+
+_Note that the preview version is not compatible with Moodle 4.5 and earlier._
+
 ## Credits
 
 Original Book module was developed for Technical University of Liberec (Czech Republic).
