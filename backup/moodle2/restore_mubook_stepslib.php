@@ -87,7 +87,7 @@ class restore_mubook_activity_structure_step extends restore_activity_structure_
 
         unset($data->id);
         $newitemid = $DB->insert_record('mubook_chapter', $data);
-        $this->set_mapping('mubook_chapter', $oldid, $newitemid, true);
+        $this->set_mapping('mubook_chapter', $oldid, $newitemid);
     }
 
     /**
@@ -164,10 +164,15 @@ class restore_mubook_activity_structure_step extends restore_activity_structure_
         // Add mubook related files.
         $this->add_related_files('mod_mubook', 'intro', null);
 
+        $areas = [];
         /** @var class-string<\mod_mubook\local\content> $classname */
         foreach ($cman->get_available_classes() as $classname) {
             foreach ($classname::get_file_areas() as $filearea) {
+                if (in_array($filearea, $areas)) {
+                    continue;
+                }
                 $this->add_related_files('mod_mubook', $filearea, 'mubook_content');
+                $areas[] = $filearea;
             }
         }
     }
