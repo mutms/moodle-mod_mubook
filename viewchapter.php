@@ -88,29 +88,9 @@ $renderer = $PAGE->get_renderer('mod_mubook', 'viewchapter');
 $PAGE->activityheader->set_hidecompletion(true);
 $PAGE->activityheader->set_description('');
 
-$headeractions = '';
-if ($PAGE->user_is_editing()) {
-    if ($chapter->parentid) {
-        if ($cman->can_create_content($chapter, $mubook, $context)) {
-            $link = $cman->get_create_content_link($chapter, 0);
-            $button = $link->create_button(true, false, true);
-            $headeractions = $renderer->render($button);
-        }
-    } else {
-        if (chapter::can_create($mubook, $context)) {
-            $lastsubchapter = $toc->get_last_subchapter($chapter->id);
-            $link = chapter::get_create_link($mubook, $lastsubchapter->id ?? $chapter->id, true);
-            $button = $link->create_button(true, false, true);
-            $headeractions = $renderer->render($button);
-        }
-    }
-}
 $actions = new \mod_mubook\hook\book_actions($toc, $PAGE->url, $PAGE->user_is_editing());
 if ($actions->has_items()) {
-    $headeractions .= $renderer->render($actions);
-}
-if ($headeractions) {
-    $PAGE->add_header_action($headeractions);
+    $PAGE->add_header_action($renderer->render($actions));
 }
 
 \mod_mubook\event\chapter_viewed::create_from_chapter($chapter, $mubook, $context)->trigger();

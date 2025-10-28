@@ -48,12 +48,22 @@ class renderer extends \plugin_renderer_base {
         }
 
         $actions = new \mod_mubook\hook\chapter_actions($chapter, $toc, $this->page->url, $editing);
+        $actionshtml = '';
+        if ($actions->get_extra_button()) {
+            $actionshtml .= $this->render($actions->get_extra_button());
+        }
+        if ($actions->has_items()) {
+            $actionshtml .= $this->render($actions);
+        }
+        if ($actionshtml === '') {
+            $actionshtml = null;
+        }
         $data = [
             'chapterid' => $chapter->id,
             'numbers' => $toc->format_chapter_numbers($chapter->id),
             'title' => $chapter->format_title(),
             'tags' => $tags,
-            'actions' => $actions->has_items() ? $this->render($actions) : null,
+            'actions' => $actionshtml,
             'contents' => $this->render_contents($chapter, $toc),
             'subchapters' => $this->get_subchapters_data($chapter, $toc, $editing),
         ];

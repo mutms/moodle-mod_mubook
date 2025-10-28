@@ -21,6 +21,7 @@ namespace mod_mubook\hook;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
 use core\url;
+use tool_mulib\output\ajax_form\button;
 
 /**
  * Hook for adding of interactive book chapter actions.
@@ -40,6 +41,8 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
     public $pageurl;
     /** @var bool */
     public $editing;
+    /** @var button */
+    protected $button;
 
     /**
      * Chapter actions dropdown constructor.
@@ -82,6 +85,8 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
         $isviewurl = $pageurl->compare($viewurl);
         $isviewchapterurl = $pageurl->compare($viewchapterurl);
 
+        $cman = \core\di::get(\mod_mubook\local\content_manager::class);
+
         $chapters = $toc->get_chapters();
         $subchapters = [];
         foreach ($chapters as $ch) {
@@ -111,34 +116,62 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
         }
 
         if (!$orphaned && chapter::can_create($mubook, $context)) {
-            if ($this->has_items()) {
-                $this->add_divider();
-            }
-            if ($chapter->parentid) {
-                $link = chapter::get_create_link($mubook, $chapter->id, true);
-                $this->add_ajax_form($link);
-            } else {
-                $link = chapter::get_create_link($mubook, $chapter->id, false);
-                $this->add_ajax_form($link);
-                if (isset($subchapters[$chapter->id])) {
-                    $lastsubchapterid = array_key_last($subchapters[$chapter->id]);
-                    $link = chapter::get_create_link($mubook, $lastsubchapterid, true);
+            $links = [];
+
+            if ($isviewurl) {
+                if ($chapter->parentid) {
+                    $links[] = chapter::get_create_link($mubook, $chapter->id, true);
                 } else {
-                    $link = chapter::get_create_link($mubook, $chapter->id, true);
+                    $links[] = chapter::get_create_link($mubook, $chapter->id, false);
+                    if (isset($subchapters[$chapter->id])) {
+                        $lastsubchapterid = array_key_last($subchapters[$chapter->id]);
+                        $links[] = chapter::get_create_link($mubook, $lastsubchapterid, true);
+                    } else {
+                        $links[] = chapter::get_create_link($mubook, $chapter->id, true);
+                    }
                 }
-                $this->add_ajax_form($link);
+            } else if ($isviewchapterurl) {
+                if (!$chapter->parentid) {
+                    $lastsubchapter = $toc->get_last_subchapter($chapter->id);
+                    $link = chapter::get_create_link($mubook, $lastsubchapter->id ?? $chapter->id, true);
+                    $this->button = $link->create_button(true, false, true);
+                }
+            }
+
+            if ($links) {
+                if ($this->has_items()) {
+                    $this->add_divider();
+                }
+                foreach ($links as $link) {
+                    $this->add_ajax_form($link);
+                }
             }
 
             if ($isviewchapterurl) {
-                $cman = \core\di::get(\mod_mubook\local\content_manager::class);
-                if ($cman->can_create_content($chapter, $mubook, $context)) {
-                    $this->add_divider();
+                if ($chapter->parentid) {
                     $link = $cman->get_create_content_link($chapter, 0);
-                    $this->add_ajax_form($link);
+                    $this->button = $link->create_button(true, false, true);
+                } else {
+                    if ($cman->can_create_content($chapter, $mubook, $context)) {
+                        if ($this->has_items()) {
+                            $this->add_divider();
+                        }
+                        $link = $cman->get_create_content_link($chapter, 0);
+                        $this->add_ajax_form($link);
+                    }
                 }
             }
         }
 
         \core\di::get(\core\hook\manager::class)->dispatch($this);
+    }
+
+    /**
+     * Returns additional header action button.
+     *
+     * @return button|null
+     */
+    public function get_extra_button(): ?button {
+        return $this->button;
     }
 }
