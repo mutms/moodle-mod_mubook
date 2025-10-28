@@ -26,7 +26,6 @@ namespace mod_mubook\local;
 
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
-use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
 use League\CommonMark\MarkdownConverter;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
@@ -104,7 +103,7 @@ final class markdown_formatter {
         $headingoffset = $options['headingoffset'] ?? 0;
 
         if ($filebase !== null) {
-            $markdown = str_replace('@@PLUGINFILE@@', $filebase, $markdown);
+            $markdown = str_replace('@@PLUGINFILE@@/', rtrim($filebase, '/') . '/', $markdown);
         }
 
         $config = [
@@ -148,7 +147,11 @@ final class markdown_formatter {
         $environment->addExtension(new CommonMarkCoreExtension());
 
         if ($flavor == self::FLAVOR_GITHUB) {
-            $environment->addExtension(new GithubFlavoredMarkdownExtension());
+            // Do not include GithubFlavoredMarkdownExtension here,
+            // we do not want autolinking (done via filters) and tasks (not compatible with HTMLPurifier).
+            $environment->addExtension(new \League\CommonMark\Extension\DisallowedRawHtml\DisallowedRawHtmlExtension());
+            $environment->addExtension(new \League\CommonMark\Extension\Strikethrough\StrikethroughExtension());
+            $environment->addExtension(new \League\CommonMark\Extension\Table\TableExtension());
             $environment->addExtension(new AlertExtension());
         }
 
