@@ -113,13 +113,6 @@
         }
     }
 
-    @media print {
-        #page-footer {
-            /* stylelint-disable-next-line declaration-no-important */
-            display: none !important;
-        }
-    }
-
     .mubook-format-markdown {
         .mubook-codeblock-math {
             background-color: var(--bs-gray-100);
@@ -183,23 +176,6 @@
         }
     }
 
-    @media print {
-        #page-header {
-            /* stylelint-disable-next-line declaration-no-important */
-            display: block !important;
-        }
-
-        #page,
-        #topofscroll {
-            padding: 0;
-            margin: 0;
-        }
-
-        .header-actions-container {
-            display: none;
-        }
-    }
-
     .mubook-format-markdown {
         h3 {
             border-bottom: 1px solid var(--bs-border-color);
@@ -224,27 +200,35 @@
         }
     }
 
-    @media print {
-        #page-header {
-            /* stylelint-disable-next-line declaration-no-important */
-            display: block !important;
-        }
+}
 
-        #page,
-        #topofscroll {
-            padding: 0;
-            margin: 0;
-        }
+@media print {
+    .path-mod-mubook #page-header {
+        /* stylelint-disable-next-line declaration-no-important */
+        display: block !important;
+    }
 
-        .header-actions-container {
-            display: none;
-        }
+    .path-mod-mubook #page,
+    .path-mod-mubook #topofscroll {
+        /* stylelint-disable-next-line declaration-no-important */
+        padding: 0 !important;
+        /* stylelint-disable-next-line declaration-no-important */
+        margin: 0 !important;
+    }
 
-        .mubook-chapter {
-            border-top: 0;
-            padding-top: 1em;
-            padding-bottom: 1em;
-            break-before: page;
-        }
+    .path-mod-mubook .header-actions-container {
+        display: none;
+    }
+
+    .path-mod-mubook #page-footer {
+        /* stylelint-disable-next-line declaration-no-important */
+        display: none !important;
+    }
+
+    #page-mod-mubook-viewall .mubook-chapter {
+        border-top: 0;
+        padding-top: 1em;
+        padding-bottom: 1em;
+        break-before: page;
     }
 }
