@@ -136,15 +136,6 @@
                 border: var(--bs-border-width) solid var(--bs-border-color);
             }
         }
-
-        h3,
-        h4,
-        h5 {
-            border-bottom: 1px solid var(--bs-border-color);
-            padding-bottom: 0.1em;
-            margin-top: 0.7em;
-            margin-bottom: 0.5em;
-        }
     }
 }
 
@@ -196,11 +187,29 @@
             display: none;
         }
     }
+
+    .mubook-format-markdown {
+        h3 {
+            border-bottom: 1px solid var(--bs-border-color);
+            padding-bottom: 0.1em;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+    }
 }
 
 #page-mod-mubook-viewall {
     .mubook-chapter {
         border-top: 2px solid var(--bs-gray-500);
+    }
+
+    .mubook-format-markdown {
+        h4 {
+            border-bottom: 1px solid var(--bs-border-color);
+            padding-bottom: 0.1em;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
     }
 
     @media print {

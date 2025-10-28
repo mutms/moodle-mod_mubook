@@ -433,9 +433,10 @@ abstract class content {
      * @param \renderer_base $output
      * @param toc $toc
      * @param int $firstheading
+     * @param int $headingoffset
      * @return string
      */
-    public function render(\renderer_base $output, toc $toc, int $firstheading): string {
+    public function render(\renderer_base $output, toc $toc, int $firstheading, int $headingoffset = 0): string {
         throw new coding_exception('content rendering method must be overridden');
     }
 

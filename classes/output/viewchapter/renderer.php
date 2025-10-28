@@ -161,7 +161,7 @@ class renderer extends \plugin_renderer_base {
                 'editing' => $editing,
                 'hidden' => (bool)$content->hidden,
                 'actions' => $actions->has_items() ? $this->render($actions) : null,
-                'html' => $content->render($this, $toc, 3),
+                'html' => $content->render($this, $toc, 3, 1), // We want smaller headings to match viewall page.
             ];
             $html .= $this->render_from_template('mod_mubook/content', $data);
         }

@@ -54,7 +54,7 @@ final class unknown extends \mod_mubook\local\content {
     }
 
     #[\Override]
-    public function render(\renderer_base $output, toc $toc, int $firstheading): string {
+    public function render(\renderer_base $output, toc $toc, int $firstheading, int $headingoffset = 0): string {
         return '<div class="text-danger">' . get_string('content_unknowntype', 'mod_mubook', $this->record->type) . '</div>';
     }
 }

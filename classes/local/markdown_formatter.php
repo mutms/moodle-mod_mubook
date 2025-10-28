@@ -90,15 +90,18 @@ final class markdown_formatter {
      * Convert Markdown to HTML.
      *
      * @param string $markdown
-     * @param int $firstheading normalise headings to sart with given level
-     * @param string|null $filebase
      * @param array $options
      * @return string
      */
-    public static function convert_to_html(string $markdown, int $firstheading, ?string $filebase, array $options): string {
+    public static function convert_to_html(string $markdown, array $options = []): string {
         require_once(__DIR__ . '/../../vendor/autoload.php');
 
+        $firstheading = $options['firstheading'] ?? 1;
         $firstheading = min(6, max(1, $firstheading));
+
+        $filebase = $options['filebase'] ?? null;
+
+        $headingoffset = $options['headingoffset'] ?? 0;
 
         if ($filebase !== null) {
             $markdown = str_replace('@@PLUGINFILE@@', $filebase, $markdown);
@@ -149,11 +152,11 @@ final class markdown_formatter {
             $environment->addExtension(new AlertExtension());
         }
 
-        // Normalise headings.
+        // Normalise headings, optionally shift visual heading level with CSS.
         $diff = null;
         $environment->addEventListener(
             DocumentParsedEvent::class,
-            function (DocumentParsedEvent $e) use ($firstheading, &$diff): void {
+            function (DocumentParsedEvent $e) use ($firstheading, &$diff, $headingoffset): void {
                 $document = $e->getDocument();
                 $query = (new Query())->where(function (Node $node): bool {
                     return $node instanceof Heading;
@@ -165,6 +168,13 @@ final class markdown_formatter {
                         $diff = $firstheading - $level;
                     }
                     $node->setLevel(min(6, max($firstheading, $level + $diff)));
+
+                    if ($headingoffset) {
+                        $newlevel = min(6, max(1, $node->getLevel() + $headingoffset));
+                        $attributes = $node->data->get('attributes') ?? [];
+                        $attributes['class'] = 'h' . $newlevel;
+                        $node->data->set('attributes', $attributes);
+                    }
                 }
             },
             9999999

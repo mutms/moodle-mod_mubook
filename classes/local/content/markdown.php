@@ -30,16 +30,18 @@ use mod_mubook\local\markdown_formatter;
  */
 final class markdown extends \mod_mubook\local\content {
     #[\Override]
-    public function render(\renderer_base $output, toc $toc, int $firstheading): string {
+    public function render(\renderer_base $output, toc $toc, int $firstheading, int $headingoffset = 0): string {
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
 
-        $filebase = $this->get_fileserving_base('content');
         $options = [
             'flavor' => $mubook->markdownflavor,
             'html' => $mubook->markdownhtml,
+            'filebase' => $this->get_fileserving_base('content'),
+            'firstheading' => $firstheading,
+            'headingoffset' => $headingoffset,
         ];
-        $html = markdown_formatter::convert_to_html($this->record->data1, $firstheading, $filebase, $options);
+        $html = markdown_formatter::convert_to_html($this->record->data1, $options);
 
         $formatoptions = [
             'noclean' => false,
