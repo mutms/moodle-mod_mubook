@@ -65,10 +65,20 @@ if ($ADMIN->fulltree) {
         'mubook/contentdefault',
         get_string('contentdefault', 'mod_mubook'),
         get_string('contentdefault_desc', 'mod_mubook'),
-        'html',
+        'markdown',
         function (): array {
             $cman = \core\di::get(\mod_mubook\local\content_manager::class);
             return $cman->get_types_menu(true);
+        }
+    ));
+
+    $settings->add(new admin_setting_configselect(
+        'mubook/markdownhtml',
+        get_string('markdown_html_setting', 'mod_mubook'),
+        get_string('markdown_html_setting_desc', 'mod_mubook'),
+        \mod_mubook\local\markdown_formatter::HTML_ALLOW,
+        function (): array {
+            return \mod_mubook\local\markdown_formatter::get_html_options();
         }
     ));
 }

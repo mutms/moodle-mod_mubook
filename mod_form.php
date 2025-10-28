@@ -65,7 +65,7 @@ class mod_mubook_mod_form extends moodleform_mod {
 
         $menu = markdown_formatter::get_html_options();
         $mform->addElement('select', 'markdownhtml', get_string('markdown_html', 'mod_mubook'), $menu);
-        $mform->setDefault('markdownhtml', markdown_formatter::HTML_STRIP);
+        $mform->setDefault('markdownhtml', $config->markdownhtml ?? markdown_formatter::HTML_ALLOW);
 
         $this->standard_coursemodule_elements();
 

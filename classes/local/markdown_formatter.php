@@ -213,7 +213,7 @@ final class markdown_formatter {
                 $url = $node->getUrl();
                 $text = $childRenderer->renderNodes($node->children());
                 $title = $node->getTitle();
-                if ($this->filebase !== null) {
+                if ($this->filebase !== null && trim($url ?? '') !== '' && !str_starts_with($url, '#')) {
                     if (str_starts_with($url, './')) {
                         $url = $this->filebase . substr($url, 2);
                     } else if (!str_starts_with($url, '/') && !preg_match('/^[a-zA-Z]+:/', $url)) {
@@ -274,7 +274,9 @@ final class markdown_formatter {
 
         $converter = new MarkdownConverter($environment);
         $html = $converter->convert($markdown);
-        // We must sanitise HTML here!
+
+        // We must sanitise HTML here.
+        // Unfortunately there is a known problem with link anchors - the name attributes from 'a' tags are removed.
         return clean_text($html, FORMAT_HTML);
     }
 }
