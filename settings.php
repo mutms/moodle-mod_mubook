@@ -65,7 +65,7 @@ if ($ADMIN->fulltree) {
         'mubook/contentdefault',
         get_string('contentdefault', 'mod_mubook'),
         get_string('contentdefault_desc', 'mod_mubook'),
-        'markdown',
+        'html',
         function (): array {
             $cman = \core\di::get(\mod_mubook\local\content_manager::class);
             return $cman->get_types_menu(true);
