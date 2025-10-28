@@ -265,7 +265,7 @@ final class markdown_formatter {
                     $infowords = $node->getInfoWords();
                     if ($infowords === ['math']) {
                         $literal = $node->getLiteral();
-                        return '<div class="mubook-codeblock-math">\(' . Xml::escape(substr($literal, 1, -1)) . '\)</div>';
+                        return '<div class="mubook-codeblock-math">\(' . Xml::escape($literal) . '\)</div>';
                     }
 
                     $renderer = new \League\CommonMark\Extension\CommonMark\Renderer\Block\FencedCodeRenderer();
