@@ -61,10 +61,14 @@ abstract class content_create_base extends \moodleform {
      * @param chapter $chapter
      * @param int $sortorder
      * @param toc $toc
+     * @param int $fromcreatechapterid
      * @return static
      */
-    public static function init_form(chapter $chapter, int $sortorder, toc $toc): static {
-        return new static(null, ['chapter' => $chapter, 'sortorder' => $sortorder, 'toc' => $toc]);
+    public static function init_form(chapter $chapter, int $sortorder, toc $toc, int $fromcreatechapterid): static {
+        return new static(
+            null,
+            ['chapter' => $chapter, 'sortorder' => $sortorder, 'toc' => $toc, 'fromcreatechapterid' => $fromcreatechapterid],
+        );
     }
 
     /**
@@ -117,6 +121,7 @@ abstract class content_create_base extends \moodleform {
         /** @var toc $toc */
         $toc = $this->_customdata['toc'];
         $context = $toc->get_context();
+        $fromcreatechapterid = $this->_customdata['fromcreatechapterid'];
 
         $mform->addElement('hidden', 'chapterid');
         $mform->setType('chapterid', PARAM_INT);
@@ -125,6 +130,10 @@ abstract class content_create_base extends \moodleform {
         $mform->addElement('hidden', 'type');
         $mform->setType('type', PARAM_ALPHANUM);
         $mform->setDefault('type', static::get_content_type());
+
+        $mform->addElement('hidden', 'fromcreatechapterid');
+        $mform->setType('fromcreatechapterid', PARAM_INT);
+        $mform->setDefault('fromcreatechapterid', $fromcreatechapterid);
 
         $options = [];
         foreach ($chapter->get_contents($toc) as $c) {

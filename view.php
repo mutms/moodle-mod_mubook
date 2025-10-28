@@ -70,7 +70,7 @@ if ($PAGE->user_is_editing()) {
     if (chapter::can_create($mubook, $context)) {
         if ($toc->get_chapters()) {
             $lastchapter = $toc->get_last_chapter();
-            $link = chapter::get_create_link($mubook, $lastchapter->parentid ?? $lastchapter->id, false);
+            $link = chapter::get_create_link($mubook, $lastchapter->parentid ?? $lastchapter->id, false, 0);
             $button = $link->create_button(true, false, true);
             $headeractions = $renderer->render($button);
         } else {

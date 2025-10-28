@@ -36,6 +36,7 @@ require('../../../config.php');
 $mubookid = required_param('mubookid', PARAM_INT);
 $subchapter = optional_param('subchapter', 0, PARAM_BOOL);
 $position = optional_param('position', 0, PARAM_INT);
+$fromcreatechapterid = optional_param('fromcreatechapterid', -1, PARAM_INT);
 
 $mubook = $DB->get_record('mubook', ['id' => $mubookid], '*', MUST_EXIST);
 $cm = get_coursemodule_from_instance('mubook', $mubook->id, $mubook->course, false, MUST_EXIST);
@@ -65,7 +66,13 @@ if (!$toc->get_chapters()) {
     $subchapter = 0;
 }
 
-$form = new \mod_mubook\local\form\chapter_create(null, ['toc' => $toc, 'position' => $position, 'subchapter' => $subchapter]);
+$form = new \mod_mubook\local\form\chapter_create(null, [
+    'toc' => $toc,
+    'position' => $position,
+    'subchapter' => $subchapter,
+    'fromcreatechapterid' => $fromcreatechapterid,
+]);
+
 if ($form->is_cancelled()) {
     $form->ajax_form_cancelled($returnurl);
 } else if ($data = $form->get_data()) {
@@ -80,6 +87,9 @@ if ($form->is_cancelled()) {
             /** @var class-string<\mod_mubook\local\content> $contentclass */
             $contentclass = $contentclasses[$data->contentcreate];
             $returnurl = $contentclass::get_create_url($chapter, 0);
+            if ($fromcreatechapterid >= 0) {
+                $returnurl->param('fromcreatechapterid', $fromcreatechapterid);
+            }
         }
     }
 

@@ -35,12 +35,17 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
         $toc = $this->_customdata['toc'];
         $subchapter = $this->_customdata['subchapter'];
         $position = $this->_customdata['position'];
+        $fromcreatechapterid = $this->_customdata['fromcreatechapterid'];
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
 
         $mform->addElement('hidden', 'subchapter');
         $mform->setType('subchapter', PARAM_BOOL);
         $mform->setDefault('subchapter', $subchapter);
+
+        $mform->addElement('hidden', 'fromcreatechapterid');
+        $mform->setType('fromcreatechapterid', PARAM_INT);
+        $mform->setDefault('fromcreatechapterid', $fromcreatechapterid);
 
         $topchapters = [];
         $subchapters = [];

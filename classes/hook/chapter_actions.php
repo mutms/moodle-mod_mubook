@@ -120,20 +120,21 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
 
             if ($isviewurl) {
                 if ($chapter->parentid) {
-                    $links[] = chapter::get_create_link($mubook, $chapter->id, true);
+                    $links[] = chapter::get_create_link($mubook, $chapter->id, true, 0);
                 } else {
-                    $links[] = chapter::get_create_link($mubook, $chapter->id, false);
+                    $links[] = chapter::get_create_link($mubook, $chapter->id, false, 0);
                     if (isset($subchapters[$chapter->id])) {
                         $lastsubchapterid = array_key_last($subchapters[$chapter->id]);
-                        $links[] = chapter::get_create_link($mubook, $lastsubchapterid, true);
+                        $links[] = chapter::get_create_link($mubook, $lastsubchapterid, true, 0);
                     } else {
-                        $links[] = chapter::get_create_link($mubook, $chapter->id, true);
+                        $links[] = chapter::get_create_link($mubook, $chapter->id, true, 0);
                     }
                 }
             } else if ($isviewchapterurl) {
                 if (!$chapter->parentid) {
+                    $fromcreatechapterid = $pageurl->param('id') ?? -1;
                     $lastsubchapter = $toc->get_last_subchapter($chapter->id);
-                    $link = chapter::get_create_link($mubook, $lastsubchapter->id ?? $chapter->id, true);
+                    $link = chapter::get_create_link($mubook, $lastsubchapter->id ?? $chapter->id, true, $fromcreatechapterid);
                     $this->button = $link->create_button(true, false, true);
                 }
             }

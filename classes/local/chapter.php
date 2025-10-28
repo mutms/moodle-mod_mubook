@@ -410,13 +410,17 @@ final class chapter {
      * @param stdClass $mubook
      * @param int $position
      * @param bool $subchapter
+     * @param int $fromcreatechapterid
      * @return link
      */
-    public static function get_create_link(stdClass $mubook, int $position, bool $subchapter): link {
+    public static function get_create_link(stdClass $mubook, int $position, bool $subchapter, int $fromcreatechapterid = -1): link {
         $url = new \core\url(
             '/mod/mubook/management/chapter_create.php',
             ['mubookid' => $mubook->id, 'subchapter' => (int)$subchapter, 'position' => $position]
         );
+        if ($fromcreatechapterid >= 0) {
+            $url->param('fromcreatechapterid', $fromcreatechapterid);
+        }
         if ($subchapter) {
             $action = new link($url, get_string('subchapter_create', 'mod_mubook'), 'subchapter', 'mod_mubook');
         } else {

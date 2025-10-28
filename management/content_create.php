@@ -37,6 +37,7 @@ require('../../../config.php');
 $chapterid = required_param('chapterid', PARAM_INT);
 $type = required_param('type', PARAM_ALPHANUM);
 $sortorder = optional_param('sortorder', 0, PARAM_INT);
+$fromcreatechapterid = optional_param('fromcreatechapterid', -1, PARAM_INT);
 
 $chapterrecord = $DB->get_record('mubook_chapter', ['id' => $chapterid], '*', MUST_EXIST);
 $mubook = $DB->get_record('mubook', ['id' => $chapterrecord->mubookid], '*', MUST_EXIST);
@@ -74,9 +75,17 @@ if (!$currenturl->compare($expectedurl, URL_MATCH_BASE)) {
 $formclass = $classname::get_create_form_classname();
 $formclass::setup_content_page($chapter, $toc);
 
-$form = $formclass::init_form($chapter, $sortorder, $toc);
+$form = $formclass::init_form($chapter, $sortorder, $toc, $fromcreatechapterid);
 
 if ($form->is_cancelled()) {
+    if ($fromcreatechapterid === 0) {
+        $returnurl = new url('/mod/mubook/view.php', ['id' => $cm->id]);
+    } else if ($fromcreatechapterid > 0) {
+        $from = $toc->get_chapter($fromcreatechapterid);
+        if ($from) {
+            $returnurl = new url('/mod/mubook/viewchapter.php', ['id' => $from->id]);
+        }
+    }
     redirect($returnurl);
 } else if ($data = $form->get_data()) {
     $content = $classname::create($data);
