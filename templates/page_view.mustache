@@ -27,6 +27,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     {
         "chapters": [
             {
+                "chapterid": "123",
                 "numbers": "1",
                 "url": "https://example.com/mod/mubook/viewchapter.php?id=123",
                 "title": "Some chapter",
@@ -34,12 +35,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
                 "has_subchapters": true,
                 "subchapters": [
                     {
+                        "chapterid": "124",
                         "numbers": "1.1",
-                        "url": "https://example.com/mod/mubook/viewchapter.php?id=123",
+                        "url": "https://example.com/mod/mubook/viewchapter.php?id=124",
                         "title": "Some sub-chapter",
                         "actions": "<div>actions</div>"
                     },
                     {
+                        "chapterid": "140",
                         "numbers": "1.2",
                         "url": "https://example.com/mod/mubook/viewchapter.php?id=140",
                         "title": "Other sub-chapter",
@@ -51,6 +54,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         "orphaned": {
                 "subchapters": [
                     {
+                        "chapterid": "456",
                         "numbers": "",
                         "url": "https://example.com/mod/mubook/viewchapter.php?id=456",
                         "title": "Broken sub-chapter",
@@ -72,13 +76,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 <div class="mubook-page">
     <div id="mubook-toc">
         {{#chapters}}
-            <div class="h3 mubook-chapter-title"><a class="h4" href="{{{url}}}">{{{title}}}</a>{{{actions}}}</div>
+            <div id="mubook-chapter-{{chapterid}}" class="h3 mubook-chapter-title"><a class="h4" href="{{{url}}}">{{{title}}}</a>{{{actions}}}</div>
             {{#has_subchapters}}
                 {{> mod_mubook/chapter_toc}}
             {{/has_subchapters}}
         {{/chapters}}
         {{#orphaned}}
-            <div class="h3 mubook-orphaned-title h4 text-danger pt-4">{{#str}}subchapters_orphaned,mod_mubook{{/str}}</div>
+            <div id="mubook-chapter-{{chapterid}}" class="h3 mubook-orphaned-title h4 text-danger pt-4">{{#str}}subchapters_orphaned,mod_mubook{{/str}}</div>
             {{> mod_mubook/chapter_toc}}
         {{/orphaned}}
     </div>

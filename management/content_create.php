@@ -80,6 +80,7 @@ $form = $formclass::init_form($chapter, $sortorder, $toc, $fromcreatechapterid);
 if ($form->is_cancelled()) {
     if ($fromcreatechapterid === 0) {
         $returnurl = new url('/mod/mubook/view.php', ['id' => $cm->id]);
+        $returnurl->set_anchor('mubook-chapter-' . $chapter->id);
     } else if ($fromcreatechapterid > 0) {
         $from = $toc->get_chapter($fromcreatechapterid);
         if ($from) {
