@@ -114,7 +114,7 @@
     }
 
     .mubook-format-markdown {
-        .mubook-codeblock-math {
+        .code-language-math {
             background-color: var(--bs-gray-100);
             padding: 1em;
             border-radius: var(--bs-border-radius);

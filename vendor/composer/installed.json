@@ -274,6 +274,52 @@
             "install-path": "../league/config"
         },
         {
+            "name": "mutms/commonmark-extra",
+            "version": "dev-main",
+            "version_normalized": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mutms/commonmark-extra.git",
+                "reference": "2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mutms/commonmark-extra/zipball/2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993",
+                "reference": "2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993",
+                "shasum": ""
+            },
+            "require": {
+                "league/commonmark": "^2.7",
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "time": "2025-10-29T08:42:25+00:00",
+            "default-branch": true,
+            "type": "commonmark-extension",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "MuTMS\\CommonMark\\Extra\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "MuTMS\\CommonMark\\Extra\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Addition extensions for CommonMark rendering in MuTMS Interactive book plugin",
+            "support": {
+                "source": "https://github.com/mutms/commonmark-extra/tree/main",
+                "issues": "https://github.com/mutms/commonmark-extra/issues"
+            },
+            "install-path": "../mutms/commonmark-extra"
+        },
+        {
             "name": "nette/schema",
             "version": "v1.3.2",
             "version_normalized": "1.3.2.0",

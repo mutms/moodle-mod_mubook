@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-MOODLE_500_STABLE',
         'version' => 'dev-MOODLE_500_STABLE',
-        'reference' => '7a40f385e15f985dc482de071c9ff5de59d18caf',
+        'reference' => 'b09c98fe8ea2fe44ebaf5b40358869834fe0e0c9',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-MOODLE_500_STABLE',
             'version' => 'dev-MOODLE_500_STABLE',
-            'reference' => '7a40f385e15f985dc482de071c9ff5de59d18caf',
+            'reference' => 'b09c98fe8ea2fe44ebaf5b40358869834fe0e0c9',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -44,6 +44,17 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../league/config',
             'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'mutms/commonmark-extra' => array(
+            'pretty_version' => 'dev-main',
+            'version' => 'dev-main',
+            'reference' => '2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993',
+            'type' => 'commonmark-extension',
+            'install_path' => __DIR__ . '/../mutms/commonmark-extra',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
             'dev_requirement' => false,
         ),
         'nette/schema' => array(

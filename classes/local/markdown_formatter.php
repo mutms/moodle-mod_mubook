@@ -153,6 +153,7 @@ final class markdown_formatter {
             $environment->addExtension(new \League\CommonMark\Extension\Strikethrough\StrikethroughExtension());
             $environment->addExtension(new \League\CommonMark\Extension\Table\TableExtension());
             $environment->addExtension(new AlertExtension());
+            $environment->addExtension(new \MuTMS\CommonMark\Extra\ExtraExtension);
         }
 
         // Normalise headings, optionally shift visual heading level with CSS.
@@ -231,49 +232,6 @@ final class markdown_formatter {
             }
         };
         $environment->addRenderer(Link::class, $linkrender);
-
-        if ($flavor == self::FLAVOR_GITHUB) {
-            // Fix inline math.
-            $inlinemathrenderer = new class () implements NodeRendererInterface {
-                public function __construct() {
-                }
-
-                public function render(Node $node, ChildNodeRendererInterface $childRenderer) {
-                    /** @var Code $node */
-                    Code::assertInstanceOf($node);
-
-                    $literal = $node->getLiteral();
-                    if (str_starts_with($literal, '$') && str_ends_with($literal, '$')) {
-                        return '\(' . Xml::escape(substr($literal, 1, -1)) . '\)';
-                    }
-
-                    $renderer = new \League\CommonMark\Extension\CommonMark\Renderer\Inline\CodeRenderer();
-                    return $renderer->render($node, $childRenderer);
-                }
-            };
-            $environment->addRenderer(Code::class, $inlinemathrenderer);
-
-            // Fix indented block math.
-            $blockmathrenderer = new class () implements NodeRendererInterface {
-                public function __construct() {
-                }
-
-                public function render(Node $node, ChildNodeRendererInterface $childRenderer) {
-                    /** @var FencedCode $node */
-                    FencedCode::assertInstanceOf($node);
-
-                    $infowords = $node->getInfoWords();
-                    if ($infowords === ['math']) {
-                        $literal = $node->getLiteral();
-                        return '<div class="mubook-codeblock-math">\(' . Xml::escape($literal) . '\)</div>';
-                    }
-
-                    $renderer = new \League\CommonMark\Extension\CommonMark\Renderer\Block\FencedCodeRenderer();
-                    return $renderer->render($node, $childRenderer);
-                }
-            };
-            $environment->addRenderer(FencedCode::class, $blockmathrenderer);
-        }
 
         $converter = new MarkdownConverter($environment);
         $html = $converter->convert($markdown);

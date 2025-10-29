@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "30f5a0a6d8584ab5d03408ef6f5bb082",
+    "content-hash": "908c17531ac6f0e916f104e096922710",
     "packages": [
         {
             "name": "dflydev/dot-access-data",
@@ -269,6 +269,49 @@
                 }
             ],
             "time": "2022-12-11T20:36:23+00:00"
+        },
+        {
+            "name": "mutms/commonmark-extra",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mutms/commonmark-extra.git",
+                "reference": "2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mutms/commonmark-extra/zipball/2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993",
+                "reference": "2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993",
+                "shasum": ""
+            },
+            "require": {
+                "league/commonmark": "^2.7",
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5"
+            },
+            "default-branch": true,
+            "type": "commonmark-extension",
+            "autoload": {
+                "psr-4": {
+                    "MuTMS\\CommonMark\\Extra\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "MuTMS\\CommonMark\\Extra\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Addition extensions for CommonMark rendering in MuTMS Interactive book plugin",
+            "support": {
+                "source": "https://github.com/mutms/commonmark-extra/tree/main",
+                "issues": "https://github.com/mutms/commonmark-extra/issues"
+            },
+            "time": "2025-10-29T08:42:25+00:00"
         },
         {
             "name": "nette/schema",
@@ -693,6 +736,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "mutms/commonmark-extra": 20,
         "pomodocs/commonmark-alert": 20
     },
     "prefer-stable": false,

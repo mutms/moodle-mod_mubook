@@ -10,6 +10,7 @@ return array(
     'Psr\\EventDispatcher\\' => array($vendorDir . '/psr/event-dispatcher/src'),
     'PomoDocs\\CommonMark\\Alert\\' => array($vendorDir . '/pomodocs/commonmark-alert/src'),
     'Nette\\' => array($vendorDir . '/nette/utils/src'),
+    'MuTMS\\CommonMark\\Extra\\' => array($vendorDir . '/mutms/commonmark-extra/src'),
     'League\\Config\\' => array($vendorDir . '/league/config/src'),
     'League\\CommonMark\\' => array($vendorDir . '/league/commonmark/src'),
     'Dflydev\\DotAccessData\\' => array($vendorDir . '/dflydev/dot-access-data/src'),

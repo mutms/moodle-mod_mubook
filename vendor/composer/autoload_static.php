@@ -25,6 +25,10 @@ class ComposerStaticInite88754dcdc0b34005bb9d86914a2e175
         array (
             'Nette\\' => 6,
         ),
+        'M' => 
+        array (
+            'MuTMS\\CommonMark\\Extra\\' => 23,
+        ),
         'L' => 
         array (
             'League\\Config\\' => 14,
@@ -52,6 +56,10 @@ class ComposerStaticInite88754dcdc0b34005bb9d86914a2e175
         'Nette\\' => 
         array (
             0 => __DIR__ . '/..' . '/nette/utils/src',
+        ),
+        'MuTMS\\CommonMark\\Extra\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mutms/commonmark-extra/src',
         ),
         'League\\Config\\' => 
         array (
@@ -381,6 +389,11 @@ class ComposerStaticInite88754dcdc0b34005bb9d86914a2e175
         'League\\Config\\MutableConfigurationInterface' => __DIR__ . '/..' . '/league/config/src/MutableConfigurationInterface.php',
         'League\\Config\\ReadOnlyConfiguration' => __DIR__ . '/..' . '/league/config/src/ReadOnlyConfiguration.php',
         'League\\Config\\SchemaBuilderInterface' => __DIR__ . '/..' . '/league/config/src/SchemaBuilderInterface.php',
+        'MuTMS\\CommonMark\\Extra\\ExtraExtension' => __DIR__ . '/..' . '/mutms/commonmark-extra/src/ExtraExtension.php',
+        'MuTMS\\CommonMark\\Extra\\MathBlockRenderer' => __DIR__ . '/..' . '/mutms/commonmark-extra/src/MathBlockRenderer.php',
+        'MuTMS\\CommonMark\\Extra\\MathInline' => __DIR__ . '/..' . '/mutms/commonmark-extra/src/MathInline.php',
+        'MuTMS\\CommonMark\\Extra\\MathInlineParser' => __DIR__ . '/..' . '/mutms/commonmark-extra/src/MathInlineParser.php',
+        'MuTMS\\CommonMark\\Extra\\MathInlineRenderer' => __DIR__ . '/..' . '/mutms/commonmark-extra/src/MathInlineRenderer.php',
         'Nette\\ArgumentOutOfRangeException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
         'Nette\\DeprecatedException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
         'Nette\\DirectoryNotFoundException' => __DIR__ . '/..' . '/nette/utils/src/exceptions.php',
