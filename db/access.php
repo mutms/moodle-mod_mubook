@@ -91,17 +91,6 @@ $capabilities = [
         ],
     ],
 
-    /* View history of chapter and contents. */
-    'mod/mubook:viewsnapshots' => [
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => [
-            'teacher' => CAP_ALLOW,
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW,
-        ],
-    ],
-
     /* Allow use of unsafe HTML markup and files. */
     'mod/mubook:usexss' => [
         'riskbitmask' => RISK_XSS,

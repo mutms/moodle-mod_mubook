@@ -101,7 +101,6 @@ $string['mubook:usexss'] = 'Use unsafe HTML';
 $string['mubook:view'] = 'View book contents';
 $string['mubook:viewall'] = 'View book as one page';
 $string['mubook:viewhiddencontent'] = 'View hidden content';
-$string['mubook:viewsnapshots'] = 'View historic snapshots';
 $string['nochaptercontent'] = 'Chapter content is not available.';
 $string['nocontent'] = 'No content has been added to this book yet.';
 $string['nocontent_edit'] = 'Turn on edit mode to create book chapters.';
