@@ -153,7 +153,7 @@ final class markdown_formatter {
             $environment->addExtension(new \League\CommonMark\Extension\Strikethrough\StrikethroughExtension());
             $environment->addExtension(new \League\CommonMark\Extension\Table\TableExtension());
             $environment->addExtension(new AlertExtension());
-            $environment->addExtension(new \MuTMS\CommonMark\Extra\ExtraExtension);
+            $environment->addExtension(new \MuTMS\CommonMark\Extra\ExtraExtension());
         }
 
         // Normalise headings, optionally shift visual heading level with CSS.

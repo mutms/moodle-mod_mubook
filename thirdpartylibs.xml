@@ -16,6 +16,11 @@
     <license>BSD-3-Clause</license>
   </library>
   <library>
+    <location>vendor/mutms</location>
+    <name>mutms</name>
+    <license>MIT</license>
+  </library>
+  <library>
     <location>vendor/nette</location>
     <name>nette</name>
     <license>BSD-3-Clause</license>
