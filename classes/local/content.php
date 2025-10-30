@@ -103,6 +103,18 @@ abstract class content {
     }
 
     /**
+     * Returns one line description of the content block instable.
+     *
+     * @return string
+     */
+    public function get_identification(): string {
+
+        // NOTE: add some content preview in overridden class if possible.
+
+        return $this->sortorder . ' - ' . static::get_name();
+    }
+
+    /**
      * Is the content type unsafe?
      *
      * Unsafe content requires 'mod/mubook:usexss' for creation and updates.
@@ -432,11 +444,12 @@ abstract class content {
      *
      * @param \renderer_base $output
      * @param toc $toc
+     * @param bool $editing
      * @param int $firstheading
      * @param int $headingoffset
      * @return string
      */
-    public function render(\renderer_base $output, toc $toc, int $firstheading, int $headingoffset = 0): string {
+    public function render(\renderer_base $output, toc $toc, bool $editing, int $firstheading, int $headingoffset = 0): string {
         throw new coding_exception('content rendering method must be overridden');
     }
 

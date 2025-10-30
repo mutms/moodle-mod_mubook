@@ -19,25 +19,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 }}
 {{!
-    @template mod_mubook/content/collapsible
+    @template mod_mubook/content/disclosure_wrapper
 
-    Collapsible content.
+    Disclosure button target wrapper.
 
     Example context (json):
     {
-        "conntentid": "123",
-        "label": "Show solution",
+        "targettedbyid": "123",
         "editing": true,
         "html": "<p>some text</p>"
     }
 
 }}
-<div class="mubook-format-markdown">
-    <button class="btn btn-outline-primary mubook-content-collapsible mb-2" type="button" data-bs-toggle="collapse"
-            data-bs-target="#mubook-content-collapsible-{{contentid}}" aria-expanded="false" aria-controls="mubook-content-collapsible-{{contentid}}">
-        {{{label}}}
-    </button>
-    <div id="mubook-content-collapsible-{{contentid}}" class="collapse {{#editing}}show{{/editing}} d-print-block">
-        <div class="card card-body mubook-content-task-solution">{{{html}}}</div>
-    </div>
+<div id="mubook-content-disclosure-target-{{targettedbyid}}" class="collapse {{#editing}}show{{/editing}} d-print-block">
+    <div class="card card-body mubook-content-disclosure-target">{{{html}}}</div>
 </div>

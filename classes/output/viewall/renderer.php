@@ -82,11 +82,15 @@ class renderer extends \plugin_renderer_base {
             } else {
                 $firstheading = 3;
             }
+            $contenthtml = $content->render($this, $toc, false, $firstheading, 0);
+            $post = new \mod_mubook\hook\content_post_render($contenthtml, $content, $chapter, $this, $toc, false, $firstheading, 0);
+            $contenthtml = $post->html;
+
             $data = [
                 'chapterid' => $chapter->id,
                 'contentid' => $content->id,
                 'type' => $content::get_type(),
-                'html' => $content->render($this, $toc, $firstheading),
+                'html' => $contenthtml,
             ];
             $html .= $this->render_from_template('mod_mubook/content', $data);
         }

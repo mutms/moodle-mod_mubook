@@ -232,3 +232,13 @@
         break-before: page;
     }
 }
+
+.path-mod-mubook {
+    .mubook-content-disclosure-button[aria-expanded=false] .label-expanded {
+        display: none;
+    }
+
+    .mubook-content-disclosure-button[aria-expanded=true] .label-collapsed {
+        display: none;
+    }
+}

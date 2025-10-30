@@ -47,8 +47,7 @@ final class content_delete extends \tool_mulib\local\ajax_form {
             $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $chapter->get_numbered_title($toc));
         }
 
-        $preview = clean_text(shorten_text(html_to_text($content->render($OUTPUT, $toc, 3)), 80));
-        $mform->addElement('static', 'staticcontent', $content::get_name(), $preview);
+        $mform->addElement('static', 'staticidentif', $content->get_identification());
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

@@ -16,24 +16,32 @@
 
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
+namespace mod_mubook\hook;
+
+use mod_mubook\local\toc;
+use mod_mubook\local\chapter;
+use mod_mubook\local\content;
+
 /**
- * Interactive book plugin version.
+ * Hook triggered after content is rendered.
  *
  * @package    mod_mubook
- * @copyright  2004 Petr Skoda
+ * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/** @var stdClass $plugin */
-$plugin->component = 'mod_mubook';
-$plugin->version = 2025103050;
-$plugin->requires = 2025041400;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->supported = [500, 501];
-$plugin->release = 'mu-5.0.3-00';
-
-$plugin->dependencies = [
-    'tool_mulib' => 2025100650,
-];
+#[\core\attribute\label('Interactive book content post rendering hook')]
+#[\core\attribute\tags('mod_mubook')]
+final class content_post_render {
+    public function __construct(
+        public string $html,
+        public content $content,
+        public chapter $chapter,
+        public \renderer_base $output,
+        public toc $toc,
+        public bool $editing,
+        public int $firstheading,
+        public int $headingoffset
+    ) {
+        \core\di::get(\core\hook\manager::class)->dispatch($this);
+    }
+}

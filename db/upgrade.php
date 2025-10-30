@@ -17,23 +17,37 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 
 /**
- * Interactive book plugin version.
+ * Interactive book upgrades.
  *
  * @package    mod_mubook
- * @copyright  2004 Petr Skoda
+ * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Upgrade interactive books.
+ *
+ * @param mixed $oldversion
+ * @return true
+ */
+function xmldb_mubook_upgrade($oldversion): bool {
+    global $DB;
 
-/** @var stdClass $plugin */
-$plugin->component = 'mod_mubook';
-$plugin->version = 2025103050;
-$plugin->requires = 2025041400;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->supported = [500, 501];
-$plugin->release = 'mu-5.0.3-00';
+    $dbman = $DB->get_manager();
 
-$plugin->dependencies = [
-    'tool_mulib' => 2025100650,
-];
+    if ($oldversion < 2025103050) {
+        $sql = "UPDATE {mubook_content}
+                   SET type = 'markdown', data2 = NULL
+                 WHERE type = 'collapsiblemd'";
+        $DB->execute($sql);
+
+        $sql = "UPDATE {mubook_content}
+                   SET type = 'html', data2 = NULL
+                 WHERE type = 'collapsible'";
+        $DB->execute($sql);
+
+        upgrade_plugin_savepoint(true, 2025103050, 'mod', 'mubook');
+    }
+
+    return true;
+}

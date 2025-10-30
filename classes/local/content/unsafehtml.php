@@ -36,7 +36,7 @@ final class unsafehtml extends \mod_mubook\local\content {
     }
 
     #[\Override]
-    public function render(\renderer_base $output, toc $toc, int $firstheading, int $headingoffset = 0): string {
+    public function render(\renderer_base $output, toc $toc, bool $editing, int $firstheading, int $headingoffset = 0): string {
         $context = $toc->get_context();
 
         $html = file_rewrite_pluginfile_urls($this->data1, 'pluginfile.php', $context->id, 'mod_mubook', 'content', $this->id);

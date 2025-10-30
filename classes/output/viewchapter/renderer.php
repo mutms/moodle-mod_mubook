@@ -154,6 +154,12 @@ class renderer extends \plugin_renderer_base {
                 continue;
             }
             $actions = new \mod_mubook\hook\content_actions($content, $chapter, $toc, $this->page->url, $editing);
+
+            // We want smaller headings to match viewall page.
+            $contenthtml = $content->render($this, $toc, $editing, 3, 1);
+            $post = new \mod_mubook\hook\content_post_render($contenthtml, $content, $chapter, $this, $toc, $editing, 3, 1);
+            $contenthtml = $post->html;
+
             $data = [
                 'chapterid' => $chapter->id,
                 'contentid' => $content->id,
@@ -161,7 +167,7 @@ class renderer extends \plugin_renderer_base {
                 'editing' => $editing,
                 'hidden' => (bool)$content->hidden,
                 'actions' => $actions->has_items() ? $this->render($actions) : null,
-                'html' => $content->render($this, $toc, 3, 1), // We want smaller headings to match viewall page.
+                'html' => $contenthtml,
             ];
             $html .= $this->render_from_template('mod_mubook/content', $data);
         }
