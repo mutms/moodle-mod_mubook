@@ -32,6 +32,18 @@ use mod_mubook\local\content;
 #[\core\attribute\label('Interactive book content post rendering hook')]
 #[\core\attribute\tags('mod_mubook')]
 final class content_post_render {
+    /**
+     * Constructor.
+     *
+     * @param string $html
+     * @param content $content
+     * @param chapter $chapter
+     * @param \renderer_base $output
+     * @param toc $toc
+     * @param bool $editing
+     * @param int $firstheading
+     * @param int $headingoffset
+     */
     public function __construct(
         public string $html,
         public content $content,
