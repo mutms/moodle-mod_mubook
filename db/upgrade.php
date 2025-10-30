@@ -49,5 +49,19 @@ function xmldb_mubook_upgrade($oldversion): bool {
         upgrade_plugin_savepoint(true, 2025103050, 'mod', 'mubook');
     }
 
+    if ($oldversion < 2025103150) {
+        // Define field markdownflavor to be dropped from mubook.
+        $table = new xmldb_table('mubook');
+        $field = new xmldb_field('markdownflavor');
+
+        // Conditionally launch drop field markdownflavor.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Mubook savepoint reached.
+        upgrade_mod_savepoint(true, 2025103150, 'mubook');
+    }
+
     return true;
 }

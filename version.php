@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 /** @var stdClass $plugin */
 $plugin->component = 'mod_mubook';
-$plugin->version = 2025103050;
+$plugin->version = 2025103150;
 $plugin->requires = 2025041400;
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->supported = [500, 501];

@@ -39,7 +39,6 @@ class backup_mubook_activity_structure_step extends backup_activity_structure_st
             'intro',
             'introformat',
             'numbering',
-            'markdownflavor',
             'markdownhtml',
             'contentdefault',
             'timecreated',

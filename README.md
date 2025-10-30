@@ -30,14 +30,11 @@ _Note that development of new features will depend on availability of funding._
 
 ## Markdown support
 
-Interactive book supports both vanilla [CommonMark text format](https://commonmark.thephpleague.com/2.7/)
-and [GitHub Flavored Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax). 
+Interactive book supports a subset of [GitHub Flavored Markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax). 
 
 Additional features:
 
 * content files are accessible via relative links or @@PLUGINFILE@@ prefix
-* Mathjax rendering is supported in GitHub Flavored Markdown, see [Writing mathematical expressions](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/writing-mathematical-expressions)
-* alerts are available in GitHub Flavored Markdown, see [Alerts](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#alerts)
 
 ## Installation via git
 

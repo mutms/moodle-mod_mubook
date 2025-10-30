@@ -25,7 +25,6 @@
 namespace mod_mubook\local;
 
 use League\CommonMark\Environment\Environment;
-use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\MarkdownConverter;
 use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
@@ -35,7 +34,6 @@ use League\CommonMark\Renderer\NodeRendererInterface;
 use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
 use League\CommonMark\Node\Query;
 use League\CommonMark\Event\DocumentParsedEvent;
-use PomoDocs\CommonMark\Alert\AlertExtension;
 
 /**
  * Markdown helper.
@@ -45,29 +43,12 @@ use PomoDocs\CommonMark\Alert\AlertExtension;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class markdown_formatter {
-    /** @var int GFM */
-    public const FLAVOR_GITHUB = 1;
-    /** @var int CommonMark */
-    public const FLAVOR_COMMONMARK = 2;
-
     /** @var int remove all html */
     public const HTML_STRIP = 1;
     /** @var int escape all html */
     public const HTML_ESCAPE = 2;
     /** @var int keep most of the html - html is sanitised after conversion */
     public const HTML_ALLOW = 3;
-
-    /**
-     * Returns supported Markdown flavors.
-     *
-     * @return string[]
-     */
-    public static function get_flavor_options(): array {
-        return [
-            self::FLAVOR_GITHUB => get_string('markdown_flavor_github', 'mod_mubook'),
-            self::FLAVOR_COMMONMARK => get_string('markdown_flavor_commonmark', 'mod_mubook'),
-        ];
-    }
 
     /**
      * Returns options for handling of HTML embedded in Markdown.
@@ -145,20 +126,15 @@ final class markdown_formatter {
             ],
         ];
 
-        $flavor = $options['flavor'] ?? self::FLAVOR_GITHUB;
-
+        // Do not include GithubFlavoredMarkdownExtension here,
+        // we do not want autolinking (done via filters) and upstream tasks (not compatible with HTMLPurifier).
         $environment = new Environment($config);
-        $environment->addExtension(new CommonMarkCoreExtension());
-
-        if ($flavor == self::FLAVOR_GITHUB) {
-            // Do not include GithubFlavoredMarkdownExtension here,
-            // we do not want autolinking (done via filters) and tasks (not compatible with HTMLPurifier).
-            $environment->addExtension(new \League\CommonMark\Extension\DisallowedRawHtml\DisallowedRawHtmlExtension());
-            $environment->addExtension(new \League\CommonMark\Extension\Strikethrough\StrikethroughExtension());
-            $environment->addExtension(new \League\CommonMark\Extension\Table\TableExtension());
-            $environment->addExtension(new AlertExtension());
-            $environment->addExtension(new \MuTMS\CommonMark\Extra\ExtraExtension());
-        }
+        $environment->addExtension(new \League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension());
+        $environment->addExtension(new \League\CommonMark\Extension\DisallowedRawHtml\DisallowedRawHtmlExtension());
+        $environment->addExtension(new \League\CommonMark\Extension\Strikethrough\StrikethroughExtension());
+        $environment->addExtension(new \League\CommonMark\Extension\Table\TableExtension());
+        $environment->addExtension(new \PomoDocs\CommonMark\Alert\AlertExtension());
+        $environment->addExtension(new \MuTMS\CommonMark\Extra\ExtraExtension());
 
         // Normalise headings, optionally shift visual heading level with CSS.
         $diff = null;

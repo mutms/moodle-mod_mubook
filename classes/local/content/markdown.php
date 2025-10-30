@@ -35,7 +35,6 @@ final class markdown extends \mod_mubook\local\content {
         $context = $toc->get_context();
 
         $options = [
-            'flavor' => $mubook->markdownflavor,
             'html' => $mubook->markdownhtml,
             'filebase' => $this->get_fileserving_base('content'),
             'firstheading' => $firstheading,

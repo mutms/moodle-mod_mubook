@@ -52,11 +52,6 @@ function mubook_add_instance($data, $mform) {
         $data->contentdefault = 'html';
     }
 
-    $menu = markdown_formatter::get_flavor_options();
-    if (!isset($data->markdownflavor) || !isset($menu[$data->markdownflavor])) {
-        $data->markdownflavor = markdown_formatter::FLAVOR_GITHUB;
-    }
-
     $menu = markdown_formatter::get_html_options();
     if (!isset($data->markdownhtml) || !isset($menu[$data->markdownhtml])) {
         $data->markdownhtml = markdown_formatter::HTML_STRIP;
@@ -95,13 +90,6 @@ function mubook_update_instance($data, $mform) {
         $types = $cman->get_types_menu(true);
         if (!isset($types[$data->contentdefault])) {
             unset($data->contentdefault);
-        }
-    }
-
-    if (property_exists($data, 'markdownflavor')) {
-        $menu = markdown_formatter::get_flavor_options();
-        if (!isset($menu[$data->markdownflavor])) {
-            unset($data->markdownflavor);
         }
     }
 
