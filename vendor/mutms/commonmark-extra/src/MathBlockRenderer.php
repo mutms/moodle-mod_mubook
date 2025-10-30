@@ -9,7 +9,7 @@ use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
 use League\CommonMark\Extension\CommonMark\Renderer\Block\FencedCodeRenderer;
 use League\CommonMark\Util\Xml;
 
-class MathBlockRenderer implements NodeRendererInterface {
+final class MathBlockRenderer implements NodeRendererInterface {
     /**
      * @param FencedCode $node
      * @param ChildNodeRendererInterface $childRenderer

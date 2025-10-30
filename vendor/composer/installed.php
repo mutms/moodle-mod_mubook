@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-MOODLE_500_STABLE',
         'version' => 'dev-MOODLE_500_STABLE',
-        'reference' => 'b09c98fe8ea2fe44ebaf5b40358869834fe0e0c9',
+        'reference' => '95f026e5681ab90f93183fecd215be8b93b08d5d',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-MOODLE_500_STABLE',
             'version' => 'dev-MOODLE_500_STABLE',
-            'reference' => 'b09c98fe8ea2fe44ebaf5b40358869834fe0e0c9',
+            'reference' => '95f026e5681ab90f93183fecd215be8b93b08d5d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -49,7 +49,7 @@
         'mutms/commonmark-extra' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993',
+            'reference' => '78a1fe8b924b9479503db273f0c14720db4572e9',
             'type' => 'commonmark-extension',
             'install_path' => __DIR__ . '/../mutms/commonmark-extra',
             'aliases' => array(

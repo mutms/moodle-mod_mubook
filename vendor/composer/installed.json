@@ -280,12 +280,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mutms/commonmark-extra.git",
-                "reference": "2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993"
+                "reference": "78a1fe8b924b9479503db273f0c14720db4572e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mutms/commonmark-extra/zipball/2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993",
-                "reference": "2a949656ebe2c82cfc46fed4a49d6e6bcfbb8993",
+                "url": "https://api.github.com/repos/mutms/commonmark-extra/zipball/78a1fe8b924b9479503db273f0c14720db4572e9",
+                "reference": "78a1fe8b924b9479503db273f0c14720db4572e9",
                 "shasum": ""
             },
             "require": {
@@ -295,7 +295,7 @@
             "require-dev": {
                 "phpunit/phpunit": "^10.5"
             },
-            "time": "2025-10-29T08:42:25+00:00",
+            "time": "2025-10-30T14:13:32+00:00",
             "default-branch": true,
             "type": "commonmark-extension",
             "installation-source": "dist",

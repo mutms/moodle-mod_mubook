@@ -31,13 +31,10 @@ use League\CommonMark\Node\Node;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
-use League\CommonMark\Extension\CommonMark\Node\Inline\Code;
-use League\CommonMark\Extension\CommonMark\Node\Block\FencedCode;
 use League\CommonMark\Renderer\NodeRendererInterface;
 use League\CommonMark\Extension\CommonMark\Node\Block\Heading;
 use League\CommonMark\Node\Query;
 use League\CommonMark\Event\DocumentParsedEvent;
-use League\CommonMark\Util\Xml;
 use PomoDocs\CommonMark\Alert\AlertExtension;
 
 /**
@@ -138,6 +135,13 @@ final class markdown_formatter {
                     'warning' => 'fa-solid fa-triangle-exclamation me-1',
                     'caution' => 'fa-solid fa-circle-exclamation me-1',
                 ],
+            ],
+        ];
+
+        $config['task'] = [
+            'labels' => [
+                'completed' => get_string('markdown_task_completed', 'mod_mubook'),
+                'notcompleted' => get_string('markdown_task_notcompleted', 'mod_mubook'),
             ],
         ];
 

@@ -6,7 +6,7 @@ use League\CommonMark\Parser\Inline\InlineParserInterface;
 use League\CommonMark\Parser\Inline\InlineParserMatch;
 use League\CommonMark\Parser\InlineParserContext;
 
-class MathInlineParser implements InlineParserInterface {
+final class MathInlineParser implements InlineParserInterface {
     public const MATH_REGEX = '\$`([^`]+?)`\$';
 
     public function getMatchDefinition(): InlineParserMatch {
