@@ -46,15 +46,15 @@ function mubook_add_instance($data, $mform) {
         $data->numbering = 1;
     }
 
+    $menu = markdown_formatter::get_html_options();
+    if (!isset($data->markdownhtml) || !isset($menu[$data->markdownhtml])) {
+        $data->markdownhtml = markdown_formatter::HTML_STRIP;
+    }
+
     $cman = \core\di::get(\mod_mubook\local\content_manager::class);
     $types = $cman->get_types_menu(true);
     if (!isset($data->contentdefault) || !isset($types[$data->contentdefault])) {
         $data->contentdefault = 'html';
-    }
-
-    $menu = markdown_formatter::get_html_options();
-    if (!isset($data->markdownhtml) || !isset($menu[$data->markdownhtml])) {
-        $data->markdownhtml = markdown_formatter::HTML_STRIP;
     }
 
     $id = $DB->insert_record('mubook', $data);
@@ -85,18 +85,18 @@ function mubook_update_instance($data, $mform) {
         }
     }
 
+    if (property_exists($data, 'markdownhtml')) {
+        $menu = markdown_formatter::get_html_options();
+        if (!isset($menu[$data->markdownhtml])) {
+            unset($data->markdownhtml);
+        }
+    }
+
     if (property_exists($data, 'contentdefault')) {
         $cman = \core\di::get(\mod_mubook\local\content_manager::class);
         $types = $cman->get_types_menu(true);
         if (!isset($types[$data->contentdefault])) {
             unset($data->contentdefault);
-        }
-    }
-
-    if (property_exists($data, 'markdownhtml')) {
-        $menu = markdown_formatter::get_html_options();
-        if (!isset($menu[$data->markdownhtml])) {
-            unset($data->markdownhtml);
         }
     }
 
@@ -188,6 +188,7 @@ function mubook_supports($feature) {
 function mubook_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return [
         'mod-mubook-*' => get_string('page-mod-mubook-x', 'mod_mubook'),
+        'mod-mubook-viewchapter' => get_string('page-mod-mubook-viewchapter', 'mod_mubook'),
         'mod-mubook-viewall' => get_string('page-mod-mubook-viewall', 'mod_mubook'),
     ];
 }

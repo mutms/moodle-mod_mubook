@@ -69,7 +69,7 @@ class renderer extends \plugin_renderer_base {
         ];
         $data['has_subchapters'] = !empty($data['subchapters']);
 
-        $previous = $chapter->get_previous_chapter($toc);
+        $previous = $toc->get_previous_chapter($chapter->id);
         if ($previous) {
             $url = new \core\url('/mod/mubook/viewchapter.php', ['id' => $previous->id]);
             $data['previous'] = [
@@ -83,7 +83,7 @@ class renderer extends \plugin_renderer_base {
             ];
         }
 
-        $next = $chapter->get_next_chapter($toc);
+        $next = $toc->get_next_chapter($chapter->id);
         if ($next) {
             $url = new \core\url('/mod/mubook/viewchapter.php', ['id' => $next->id]);
             $data['next'] = [

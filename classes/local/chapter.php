@@ -354,7 +354,7 @@ final class chapter {
      * @return stdClass
      */
     public function get_mubook(): stdClass {
-        return clone($this->mubook);
+        return $this->mubook;
     }
 
     /**
@@ -362,7 +362,7 @@ final class chapter {
      *
      * @return \context_module
      */
-    public function get_contect(): \context_module {
+    public function get_context(): \context_module {
         return $this->context;
     }
 
@@ -489,42 +489,6 @@ final class chapter {
     }
 
     /**
-     * Returns previous chapter.
-     *
-     * @param toc $toc
-     * @return chapter|null
-     */
-    public function get_previous_chapter(toc $toc): ?chapter {
-        $prev = null;
-        foreach ($toc->get_chapters() as $ch) {
-            if ($ch->id == $this->record->id) {
-                return $prev;
-            }
-            $prev = $ch;
-        }
-        return null;
-    }
-
-    /**
-     * Returns next chapter.
-     *
-     * @param toc $toc
-     * @return chapter|null
-     */
-    public function get_next_chapter(toc $toc): ?chapter {
-        $found = false;
-        foreach ($toc->get_chapters() as $ch) {
-            if ($found) {
-                return $ch;
-            }
-            if ($ch->id == $this->record->id) {
-                $found = true;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Format chapter title.
      *
      * @return string
@@ -571,7 +535,7 @@ final class chapter {
 
         $contents = [];
         foreach ($records as $record) {
-            $contents[] = $cman->create_instance($record, $this, $mubook, $context);
+            $contents[$record->id] = $cman->create_instance($record, $this, $mubook, $context);
         }
 
         return $contents;

@@ -31,6 +31,13 @@ use core\exception\invalid_parameter_exception;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class toc {
+    /** @var int no chapter numbers */
+    public const NUMBERING_NONE = 0;
+    /** @var int 1, 1.1, 1.2, 2, ... */
+    public const NUMBERING_DOTSEPARATOR = 1;
+    /** @var int 1., 1.1., 1.2., ... */
+    public const NUMBERING_DOTTRAILING = 2;
+
     /** @var stdClass  */
     private $mubook;
     /** @var \context_module book context */
@@ -194,6 +201,44 @@ final class toc {
         return $last;
     }
 
+
+    /**
+     * Returns previous chapter of the give chapter.
+     *
+     * @param int $chapterid
+     * @return chapter|null
+     */
+    public function get_previous_chapter(int $chapterid): ?chapter {
+        $prev = null;
+        foreach ($this->chapters as $ch) {
+            if ($ch->id == $chapterid) {
+                return $prev;
+            }
+            $prev = $ch;
+        }
+        return null;
+    }
+
+    /**
+     * Returns next chapter of the givem chapter.
+     *
+     * @param int $chapterid
+     * @return chapter|null
+     */
+    public function get_next_chapter(int $chapterid): ?chapter {
+        $found = false;
+        foreach ($this->chapters as $ch) {
+            if ($found) {
+                return $ch;
+            }
+            if ($ch->id == $chapterid) {
+                $found = true;
+            }
+        }
+        return null;
+    }
+
+
     /**
      * Returns chapter numbering options.
      *
@@ -201,9 +246,9 @@ final class toc {
      */
     public static function get_numbering_menu(): array {
         return [
-            0 => get_string('none'),
-            1 => '1, 1.1, 1.2',
-            2 => '1., 1.1., 1.2.',
+            self::NUMBERING_NONE => get_string('none'),
+            self::NUMBERING_DOTSEPARATOR => '1, 1.1, 1.2',
+            self::NUMBERING_DOTTRAILING => '1., 1.1., 1.2.',
         ];
     }
 

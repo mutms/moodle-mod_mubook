@@ -50,6 +50,7 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame('Test mubook 1', $mubook1->intro);
         $this->assertSame('0', $mubook1->introformat);
         $this->assertSame('1', $mubook1->numbering);
+        $this->assertSame('1', $mubook1->markdownhtml);
         $this->assertSame('html', $mubook1->contentdefault);
         $this->assertTimeCurrent($mubook1->timecreated);
         $this->assertTimeCurrent($mubook1->timemodified);
@@ -64,6 +65,7 @@ final class generator_test extends \advanced_testcase {
             'intro' => 'Sample intro',
             'introformat' => FORMAT_HTML,
             'numbering' => '2',
+            'markdownhtml' => '2',
             'contentdefault' => 'markdown',
         ]);
         $this->assertSame($course1->id, $mubook2->course);
@@ -71,8 +73,8 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame('Sample intro', $mubook2->intro);
         $this->assertSame('1', $mubook2->introformat);
         $this->assertSame('2', $mubook2->numbering);
+        $this->assertSame('2', $mubook2->markdownhtml);
         $this->assertSame('markdown', $mubook2->contentdefault);
-        $this->assertSame('1', $mubook2->markdownhtml);
         $this->assertTimeCurrent($mubook2->timecreated);
         $this->assertTimeCurrent($mubook2->timemodified);
 
@@ -143,5 +145,6 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame(null, $content1->unsafetrusted);
         $this->assertSame('0', $content1->hidden);
         $this->assertSame(null, $content1->groupid);
+        $this->assertSame(null, $content1->originjson);
     }
 }
