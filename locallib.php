@@ -52,7 +52,7 @@ function mod_mubook_get_tagged_chapters(core_tag_tag $tag, bool $exclusivemode =
     $query = "SELECT bc.id, bc.title, bc.mubookid,
                      cm.id AS cmid, c.id AS courseid, c.shortname, c.fullname, $ctxselect
                 FROM {mubook_chapter} bc
-                JOIN {mu} b ON b.id = bc.mubookid
+                JOIN {mubook} b ON b.id = bc.mubookid
                 JOIN {modules} m ON m.name='book'
                 JOIN {course_modules} cm ON cm.module = m.id AND cm.instance = b.id
                 JOIN {tag_instance} tt ON bc.id = tt.itemid
