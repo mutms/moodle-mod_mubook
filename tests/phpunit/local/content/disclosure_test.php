@@ -600,6 +600,6 @@ final class disclosure_test extends \advanced_testcase {
         $cman = \core\di::get(\mod_mubook\local\content_manager::class);
 
         $record = $DB->get_record('mubook_content', ['id' => $content->id], '*', MUST_EXIST);
-        return $cman->create_instance($record, $content->get_chapter()));
+        return $cman->create_instance($record, $content->get_chapter());
     }
 }
