@@ -20,6 +20,7 @@ namespace mod_mubook\local\content;
 
 use mod_mubook\local\toc;
 use mod_mubook\local\markdown_formatter;
+use tool_mulib\local\mulib;
 
 /**
  * Content in Markdown format.
@@ -29,6 +30,16 @@ use mod_mubook\local\markdown_formatter;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class markdown extends \mod_mubook\local\content {
+    #[\Override]
+    public function get_identification(): string {
+        $ident = parent::get_identification();
+        if (trim($this->data1 ?? '') === '') {
+            return $ident;
+        }
+        $text = str_replace('# ', '', $this->data1);
+        return $ident . ' - ' . mulib::clean_string(trim(shorten_text($text, 20)));
+    }
+
     #[\Override]
     public function render(\renderer_base $output, toc $toc, bool $editing, int $firstheading, int $headingoffset = 0): string {
         $mubook = $toc->get_mubook();

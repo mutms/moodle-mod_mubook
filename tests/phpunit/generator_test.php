@@ -132,11 +132,30 @@ final class generator_test extends \advanced_testcase {
             'type' => 'html',
             'text' => '<p>Hola!</p>',
         ]);
-        $this->assertInstanceOf(content::class, $content1);
+        $this->assertInstanceOf(\mod_mubook\local\content\html::class, $content1);
         $this->assertSame('html', $content1->type);
         $this->assertSame($chapter->id, $content1->chapterid);
         $this->assertSame('1', $content1->sortorder);
         $this->assertSame('<p>Hola!</p>', $content1->data1);
+        $this->assertSame(null, $content1->data2);
+        $this->assertSame(null, $content1->data3);
+        $this->assertSame(null, $content1->auxint1);
+        $this->assertSame(null, $content1->auxint2);
+        $this->assertSame(null, $content1->auxint3);
+        $this->assertSame(null, $content1->unsafetrusted);
+        $this->assertSame('0', $content1->hidden);
+        $this->assertSame(null, $content1->groupid);
+        $this->assertSame(null, $content1->originjson);
+
+        $content1 = $generator->create_chapter_content([
+            'chapterid' => $chapter->id,
+            'type' => 'unknown',
+        ]);
+        $this->assertInstanceOf(\mod_mubook\local\content\unknown::class, $content1);
+        $this->assertSame('xyzunknowncyz', $content1->type);
+        $this->assertSame($chapter->id, $content1->chapterid);
+        $this->assertSame('2', $content1->sortorder);
+        $this->assertSame(null, $content1->data1);
         $this->assertSame(null, $content1->data2);
         $this->assertSame(null, $content1->data3);
         $this->assertSame(null, $content1->auxint1);

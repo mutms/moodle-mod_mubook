@@ -22,18 +22,18 @@
 namespace mod_mubook\phpunit\local\content;
 
 use mod_mubook\local\content;
-use mod_mubook\local\content\html;
+use mod_mubook\local\content\unsafehtml;
 
 /**
- * HTML content test.
+ * Unsafe raw html content test.
  *
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
- * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.unsafehtml GNU GPL v3 or later
  *
- * @covers \mod_mubook\local\content\html
+ * @covers \mod_mubook\local\content\unsafehtml
  */
-final class html_test extends \advanced_testcase {
+final class unsafehtml_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
@@ -51,24 +51,24 @@ final class html_test extends \advanced_testcase {
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
         $this->setUser();
 
-        /** @var html $content1 */
+        /** @var unsafehtml $content1 */
         $content1 = $generator->create_chapter_content([
             'chapterid' => $chapter->id,
-            'type' => 'html',
-            'text' => '<p>Hola!</p>',
+            'type' => 'unsafehtml',
+            'text' => '<div>Hola!</div>',
         ]);
 
         $record = $DB->get_record('mubook_content', ['id' => $content1->id], '*', MUST_EXIST);
-        $content = new html($record, $chapter, $mubook, $chapter->get_context());
+        $content = new unsafehtml($record, $chapter, $mubook, $chapter->get_context());
         $this->assertEquals($record, $content->get_record());
     }
 
     public function test_get_type(): void {
-        $this->assertSame('html', html::get_type());
+        $this->assertSame('unsafehtml', unsafehtml::get_type());
     }
 
     public function test_get_name(): void {
-        $this->assertSame('HTML text', html::get_name());
+        $this->assertSame('Unsafe raw HTML', unsafehtml::get_name());
     }
 
     public function test_get_identification(): void {
@@ -81,22 +81,22 @@ final class html_test extends \advanced_testcase {
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
         $this->setUser();
 
-        /** @var html $content1 */
+        /** @var unsafehtml $content1 */
         $content1 = $generator->create_chapter_content([
             'chapterid' => $chapter->id,
-            'type' => 'html',
-            'text' => '<p>Hola!</p>',
+            'type' => 'unsafehtml',
+            'text' => '<div>Hola!</div>',
         ]);
 
-        $this->assertSame('1 - HTML text - Hola!', $content1->get_identification());
+        $this->assertSame('1 - Unsafe raw HTML - Hola!', $content1->get_identification());
     }
 
     public function test_is_unsafe(): void {
-        $this->assertFalse(html::is_unsafe());
+        $this->assertTrue(unsafehtml::is_unsafe());
     }
 
     public function test_get_file_areas(): void {
-        $this->assertSame(['content'], html::get_file_areas());
+        $this->assertSame(['content'], unsafehtml::get_file_areas());
     }
 
     public function test_get_fileserving_base(): void {
@@ -110,11 +110,11 @@ final class html_test extends \advanced_testcase {
         $context = $chapter->get_context();
         $this->setUser();
 
-        /** @var html $content1 */
+        /** @var unsafehtml $content1 */
         $content1 = $generator->create_chapter_content([
             'chapterid' => $chapter->id,
-            'type' => 'html',
-            'text' => '<p>Hola!</p>',
+            'type' => 'unsafehtml',
+            'text' => '<div>Hola!</div>',
         ]);
 
         $result = $content1->get_fileserving_base('content');
@@ -140,11 +140,11 @@ final class html_test extends \advanced_testcase {
         $this->setUser($user);
 
         $this->setCurrentTimeStart();
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
         ]);
-        $this->assertInstanceOf(html::class, $content1);
-        $this->assertSame('html', $content1->type);
+        $this->assertInstanceOf(unsafehtml::class, $content1);
+        $this->assertSame('unsafehtml', $content1->type);
         $this->assertSame($chapter->id, $content1->chapterid);
         $this->assertSame('1', $content1->sortorder);
         $this->assertSame('', $content1->data1);
@@ -153,51 +153,53 @@ final class html_test extends \advanced_testcase {
         $this->assertSame(null, $content1->auxint1);
         $this->assertSame(null, $content1->auxint2);
         $this->assertSame(null, $content1->auxint3);
-        $this->assertSame(null, $content1->unsafetrusted);
+        $this->assertSame('0', $content1->unsafetrusted);
         $this->assertSame('0', $content1->hidden);
         $this->assertSame(null, $content1->groupid);
         $this->assertSame(null, $content1->originjson);
         $this->assertTimeCurrent($content1->timecreated);
         $this->assertTimeCurrent($content1->timemodified);
 
-        $content2 = html::create((object)[
+        $content2 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test</p>',
+            'data1' => 'test',
             'hidden' => 1,
             'sortorder' => 1,
+            'unsafetrusted' => 1,
         ]);
-        $this->assertSame('html', $content2->type);
+        $this->assertSame('unsafehtml', $content2->type);
         $this->assertSame($chapter->id, $content2->chapterid);
         $this->assertSame('1', $content2->sortorder);
-        $this->assertSame('<p>test</p>', $content2->data1);
+        $this->assertSame('test', $content2->data1);
         $this->assertSame(null, $content2->data2);
         $this->assertSame(null, $content2->data3);
         $this->assertSame(null, $content2->auxint1);
         $this->assertSame(null, $content2->auxint2);
         $this->assertSame(null, $content2->auxint3);
-        $this->assertSame(null, $content2->unsafetrusted);
+        $this->assertSame('1', $content2->unsafetrusted);
         $this->assertSame('1', $content2->hidden);
         $this->assertSame(null, $content2->groupid);
         $this->assertSame(null, $content2->originjson);
         $content1 = self::refetch_content($content1);
         $this->assertSame('2', $content1->sortorder);
 
-        $content3 = html::create((object)[
+        $content3 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'text' => '<p>test</p>',
+            'text' => 'test',
             'hidden' => 0,
             'sortorder' => 4,
+            'unsafetrusted' => 0,
         ]);
-        $this->assertSame('html', $content3->type);
+        $this->assertSame('unsafehtml', $content3->type);
         $this->assertSame($chapter->id, $content3->chapterid);
         $this->assertSame('3', $content3->sortorder);
-        $this->assertSame('<p>test</p>', $content3->data1);
+        $this->assertSame('test', $content3->data1);
         $this->assertSame(null, $content3->data2);
         $this->assertSame(null, $content3->data3);
         $this->assertSame(null, $content3->auxint1);
         $this->assertSame(null, $content3->auxint2);
         $this->assertSame(null, $content3->auxint3);
-        $this->assertSame(null, $content3->unsafetrusted);
+        $this->assertSame('0', $content3->unsafetrusted);
         $this->assertSame('0', $content3->hidden);
         $this->assertSame(null, $content3->groupid);
         $this->assertSame(null, $content3->originjson);
@@ -218,25 +220,23 @@ final class html_test extends \advanced_testcase {
             'filepath' => '/',
         ];
         $fs->create_file_from_pathname($filerecord, $CFG->dirroot . '/pix/moodlelogo.png');
-        $content4 = html::create((object)[
+        $content4 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'text_editor' => [
-                'text' => '<p>editor test</p>',
-                'itemid' => $draftitemid,
-            ],
+            'text' => 'editor test',
+            'files' => $draftitemid,
             'hidden' => 0,
             'sortorder' => 4,
         ]);
-        $this->assertSame('html', $content4->type);
+        $this->assertSame('unsafehtml', $content4->type);
         $this->assertSame($chapter->id, $content4->chapterid);
         $this->assertSame('4', $content4->sortorder);
-        $this->assertSame('<p>editor test</p>', $content4->data1);
+        $this->assertSame('editor test', $content4->data1);
         $this->assertSame(null, $content4->data2);
         $this->assertSame(null, $content4->data3);
         $this->assertSame(null, $content4->auxint1);
         $this->assertSame(null, $content4->auxint2);
         $this->assertSame(null, $content4->auxint3);
-        $this->assertSame(null, $content4->unsafetrusted);
+        $this->assertSame('0', $content4->unsafetrusted);
         $this->assertSame('0', $content4->hidden);
         $this->assertSame(null, $content4->groupid);
         $this->assertSame(null, $content4->originjson);
@@ -262,48 +262,50 @@ final class html_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
-        $content2 = html::create((object)[
+        $content2 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 2</p>',
+            'data1' => 'test 2',
             'hidden' => 1,
             'sortorder' => 2,
         ]);
-        $content3 = html::create((object)[
+        $content3 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 3</p>',
+            'data1' => 'test 3',
             'hidden' => 0,
             'sortorder' => 3,
         ]);
-        $content4 = html::create((object)[
+        $content4 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 4</p>',
+            'data1' => 'test 4',
             'hidden' => 0,
             'sortorder' => 4,
         ]);
 
         $content1 = $content1->update((object)[
             'id' => $content1->id,
-            'text' => '<p>fancy!</p>',
+            'text' => 'fancy!',
             'hidden' => 1,
         ]);
         $content1 = self::refetch_content($content1);
-        $this->assertSame('<p>fancy!</p>', $content1->data1);
+        $this->assertSame('fancy!', $content1->data1);
         $this->assertSame('1', $content1->hidden);
 
         $content1 = $content1->update((object)[
             'id' => $content1->id,
-            'text' => '<p>fancier!</p>',
+            'text' => 'fancier!',
             'hidden' => 0,
+            'unsafetrusted' => 1,
         ]);
         $content1 = self::refetch_content($content1);
-        $this->assertSame('<p>fancier!</p>', $content1->data1);
+        $this->assertSame('fancier!', $content1->data1);
         $this->assertSame('0', $content1->hidden);
+        $this->assertSame('1', $content1->unsafetrusted);
 
         // Test moving of content.
 
@@ -359,10 +361,8 @@ final class html_test extends \advanced_testcase {
         $fs->create_file_from_pathname($filerecord, $CFG->dirroot . '/pix/moodlelogo.png');
         $content1 = $content1->update((object)[
             'id' => $content1->id,
-            'text_editor' => [
-                'text' => '<p>extras</p>',
-                'itemid' => $draftitemid,
-            ],
+            'text' => 'extras',
+            'files' => $draftitemid,
         ]);
         $files = $fs->get_area_files($context->id, 'mod_mubook', 'content', $content1->id, 'id ASC', false);
         $this->assertCount(1, $files);
@@ -383,10 +383,8 @@ final class html_test extends \advanced_testcase {
         $fs->create_file_from_pathname($filerecord, $CFG->dirroot . '/pix/moodlelogo.png');
         $content1 = $content1->update((object)[
             'id' => $content1->id,
-            'text_editor' => [
-                'text' => '<p>extras</p>',
-                'itemid' => $draftitemid,
-            ],
+            'text' => 'extras',
+            'files' => $draftitemid,
         ]);
         $files = $fs->get_area_files($context->id, 'mod_mubook', 'content', $content1->id, 'id ASC', false);
         $this->assertCount(1, $files);
@@ -408,27 +406,27 @@ final class html_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
-        $content2 = html::create((object)[
+        $content2 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 2</p>',
+            'data1' => 'test 2',
             'hidden' => 1,
             'sortorder' => 2,
         ]);
-        $content3 = html::create((object)[
+        $content3 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 3</p>',
+            'data1' => 'test 3',
             'hidden' => 0,
             'sortorder' => 3,
         ]);
-        $content4 = html::create((object)[
+        $content4 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 4</p>',
+            'data1' => 'test 4',
             'hidden' => 0,
             'sortorder' => 4,
         ]);
@@ -455,9 +453,9 @@ final class html_test extends \advanced_testcase {
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
         $this->setUser();
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
@@ -476,9 +474,9 @@ final class html_test extends \advanced_testcase {
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
         $this->setUser();
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
@@ -497,9 +495,9 @@ final class html_test extends \advanced_testcase {
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
         $this->setUser();
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
@@ -518,9 +516,9 @@ final class html_test extends \advanced_testcase {
         $context = $chapter->get_context();
         $this->setUser();
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
@@ -542,20 +540,28 @@ final class html_test extends \advanced_testcase {
         $syscontext = \context_system::instance();
         $editorroleid = $this->getDataGenerator()->create_role(['shortname' => 'editor']);
         assign_capability('mod/mubook:editcontent', CAP_ALLOW, $editorroleid, $syscontext);
+        $unsaferoleid = $this->getDataGenerator()->create_role(['shortname' => 'unsafe']);
+        assign_capability('mod/mubook:usexss', CAP_ALLOW, $unsaferoleid, $syscontext);
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
         role_assign($editorroleid, $user1->id, $context->id);
+        role_assign($editorroleid, $user3->id, $context->id);
+        role_assign($unsaferoleid, $user3->id, $context->id);
 
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
 
         $this->setUser($user1);
-        $this->assertTrue(html::can_create($chapter, $mubook, $context));
+        $this->assertFalse(unsafehtml::can_create($chapter, $mubook, $context));
 
         $this->setUser($user2);
-        $this->assertFalse(html::can_create($chapter, $mubook, $context));
+        $this->assertFalse(unsafehtml::can_create($chapter, $mubook, $context));
+
+        $this->setUser($user3);
+        $this->assertTrue(unsafehtml::can_create($chapter, $mubook, $context));
 
         $this->setAdminUser();
-        $this->assertTrue(html::can_create($chapter, $mubook, $context));
+        $this->assertTrue(unsafehtml::can_create($chapter, $mubook, $context));
     }
 
     public function test_get_create_url(): void {
@@ -568,15 +574,15 @@ final class html_test extends \advanced_testcase {
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
         $this->setUser();
 
-        $url = html::get_create_url($chapter, 3);
+        $url = unsafehtml::get_create_url($chapter, 3);
         $this->assertSame(
-            "https://www.example.com/moodle/mod/mubook/management/content_create.php?chapterid={$chapter->id}&sortorder=3&type=html",
+            "https://www.example.com/moodle/mod/mubook/management/content_create.php?chapterid={$chapter->id}&sortorder=3&type=unsafehtml",
             $url->out(false)
         );
     }
 
     public function test_get_create_form_classname(): void {
-        $this->assertSame('\\mod_mubook\\local\\content\\form\\html_create', html::get_create_form_classname());
+        $this->assertSame('\\mod_mubook\\local\\content\\form\\unsafehtml_create', unsafehtml::get_create_form_classname());
     }
 
     public function test_can_update(): void {
@@ -595,30 +601,36 @@ final class html_test extends \advanced_testcase {
         $hideroleid = $this->getDataGenerator()->create_role(['shortname' => 'hiddenviwer']);
         assign_capability('mod/mubook:editcontent', CAP_ALLOW, $editorroleid, $syscontext);
         assign_capability('mod/mubook:viewhiddencontent', CAP_ALLOW, $hideroleid, $syscontext);
+        $unsaferoleid = $this->getDataGenerator()->create_role(['shortname' => 'unsafe']);
+        assign_capability('mod/mubook:usexss', CAP_ALLOW, $unsaferoleid, $syscontext);
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
         role_assign($editorroleid, $user1->id, $context->id);
         role_assign($editorroleid, $user3->id, $context->id);
         role_assign($hideroleid, $user3->id, $context->id);
+        role_assign($editorroleid, $user4->id, $context->id);
+        role_assign($hideroleid, $user4->id, $context->id);
+        role_assign($unsaferoleid, $user4->id, $context->id);
 
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
-        $content2 = html::create((object)[
+        $content2 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 2</p>',
+            'data1' => 'test 2',
             'hidden' => 1,
             'sortorder' => 2,
         ]);
 
         $this->setUser($user1);
-        $this->assertTrue($content1->can_update());
+        $this->assertFalse($content1->can_update());
         $this->assertFalse($content2->can_update());
 
         $this->setUser($user2);
@@ -626,6 +638,10 @@ final class html_test extends \advanced_testcase {
         $this->assertFalse($content2->can_update());
 
         $this->setUser($user3);
+        $this->assertFalse($content1->can_update());
+        $this->assertFalse($content2->can_update());
+
+        $this->setUser($user4);
         $this->assertTrue($content1->can_update());
         $this->assertTrue($content2->can_update());
 
@@ -644,9 +660,9 @@ final class html_test extends \advanced_testcase {
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
         $this->setUser();
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
@@ -659,7 +675,7 @@ final class html_test extends \advanced_testcase {
     }
 
     public function test_get_update_form_classname(): void {
-        $this->assertSame('\\mod_mubook\\local\\content\\form\\html_update', html::get_update_form_classname());
+        $this->assertSame('\\mod_mubook\\local\\content\\form\\unsafehtml_update', unsafehtml::get_update_form_classname());
     }
 
     public function test_can_delete(): void {
@@ -678,6 +694,8 @@ final class html_test extends \advanced_testcase {
         $hideroleid = $this->getDataGenerator()->create_role(['shortname' => 'hiddenviwer']);
         assign_capability('mod/mubook:editcontent', CAP_ALLOW, $editorroleid, $syscontext);
         assign_capability('mod/mubook:viewhiddencontent', CAP_ALLOW, $hideroleid, $syscontext);
+        $unsaferoleid = $this->getDataGenerator()->create_role(['shortname' => 'unsafe']);
+        assign_capability('mod/mubook:usexss', CAP_ALLOW, $unsaferoleid, $syscontext);
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
@@ -687,15 +705,15 @@ final class html_test extends \advanced_testcase {
 
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
-        $content2 = html::create((object)[
+        $content2 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 2</p>',
+            'data1' => 'test 2',
             'hidden' => 1,
             'sortorder' => 2,
         ]);
@@ -727,9 +745,9 @@ final class html_test extends \advanced_testcase {
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
         $this->setUser();
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
@@ -758,6 +776,8 @@ final class html_test extends \advanced_testcase {
         $syscontext = \context_system::instance();
         $hideroleid = $this->getDataGenerator()->create_role(['shortname' => 'hiddenviwer']);
         assign_capability('mod/mubook:viewhiddencontent', CAP_ALLOW, $hideroleid, $syscontext);
+        $unsaferoleid = $this->getDataGenerator()->create_role(['shortname' => 'unsafe']);
+        assign_capability('mod/mubook:usexss', CAP_ALLOW, $unsaferoleid, $syscontext);
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
@@ -765,15 +785,15 @@ final class html_test extends \advanced_testcase {
 
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
 
-        $content1 = html::create((object)[
+        $content1 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 1</p>',
+            'data1' => 'test 1',
             'hidden' => 0,
             'sortorder' => 1,
         ]);
-        $content2 = html::create((object)[
+        $content2 = unsafehtml::create((object)[
             'chapterid' => $chapter->id,
-            'data1' => '<p>test 2</p>',
+            'data1' => 'test 2',
             'hidden' => 1,
             'sortorder' => 2,
         ]);

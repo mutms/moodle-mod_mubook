@@ -35,12 +35,13 @@ final class content_deleted extends \core\event\base {
      * Create instance of event.
      *
      * @param content $content
-     * @param chapter $chapter
-     * @param stdClass $mubook
-     * @param \context_module $context
      * @return self
      */
-    public static function create_from_content(content $content, chapter $chapter, stdClass $mubook, \context_module $context): self {
+    public static function create_from_content(content $content): self {
+        $chapter = $content->get_chapter();
+        $mubook = $chapter->get_mubook();
+        $context = $chapter->get_context();
+
         $data = [
             'context' => $context,
             'objectid' => $content->id,

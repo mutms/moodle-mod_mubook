@@ -141,7 +141,7 @@ final class chapter {
 
         $chapter = new chapter($record, $mubook, $context);
 
-        \mod_mubook\event\chapter_created::create_from_chapter($chapter, $mubook, $context)->trigger();
+        \mod_mubook\event\chapter_created::create_from_chapter($chapter)->trigger();
 
         return $chapter;
     }
@@ -188,7 +188,7 @@ final class chapter {
         $record = $DB->get_record('mubook_chapter', ['id' => $record->id], '*', MUST_EXIST);
         $chapter = new chapter($record, $mubook, $context);
 
-        \mod_mubook\event\chapter_updated::create_from_chapter($chapter, $mubook, $context)->trigger();
+        \mod_mubook\event\chapter_updated::create_from_chapter($chapter)->trigger();
 
         return $chapter;
     }
@@ -227,7 +227,7 @@ final class chapter {
         $cman = \core\di::get(\mod_mubook\local\content_manager::class);
         $contents = $DB->get_records('mubook_content', ['chapterid' => $record->id], 'sortorder DESC');
         foreach ($contents as $contentrecord) {
-            $instance = $cman->create_instance($contentrecord, $chapter, $mubook, $context);
+            $instance = $cman->create_instance($contentrecord, $chapter);
             $instance->delete();
         }
 
@@ -250,7 +250,7 @@ final class chapter {
 
         $trans->allow_commit();
 
-        \mod_mubook\event\chapter_deleted::create_from_chapter($chapter, $mubook, $context)->trigger();
+        \mod_mubook\event\chapter_deleted::create_from_chapter($chapter)->trigger();
     }
 
     /**
@@ -335,7 +335,7 @@ final class chapter {
         $record = $DB->get_record('mubook_chapter', ['id' => $record->id], '*', MUST_EXIST);
         $chapter = new chapter($record, $mubook, $context);
 
-        \mod_mubook\event\chapter_moved::create_from_chapter($chapter, $mubook, $context)->trigger();
+        \mod_mubook\event\chapter_moved::create_from_chapter($chapter)->trigger();
 
         return $chapter;
     }
@@ -519,7 +519,7 @@ final class chapter {
 
         $contents = [];
         foreach ($records as $record) {
-            $contents[$record->id] = $cman->create_instance($record, $this, $mubook, $context);
+            $contents[$record->id] = $cman->create_instance($record, $this);
         }
 
         return $contents;

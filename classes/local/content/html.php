@@ -31,11 +31,7 @@ use tool_mulib\local\mulib;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class html extends \mod_mubook\local\content {
-    /**
-     * Returns one line description of the content block instable.
-     *
-     * @return string
-     */
+    #[\Override]
     public function get_identification(): string {
         $ident = parent::get_identification();
         if (trim($this->data1 ?? '') === '') {

@@ -194,9 +194,9 @@ abstract class content {
         $trans->allow_commit();
 
         $record = $DB->get_record('mubook_content', ['id' => $record->id], '*', MUST_EXIST);
-        $content = $cman->create_instance($record, $chapter, $mubook, $context);
+        $content = $cman->create_instance($record, $chapter);
 
-        \mod_mubook\event\content_created::create_from_content($content, $chapter, $mubook, $context)->trigger();
+        \mod_mubook\event\content_created::create_from_content($content)->trigger();
 
         return $content;
     }
@@ -250,9 +250,9 @@ abstract class content {
         $trans->allow_commit();
 
         $record = $DB->get_record('mubook_content', ['id' => $record->id], '*', MUST_EXIST);
-        $content = $cman->create_instance($record, $chapter, $mubook, $context);
+        $content = $cman->create_instance($record, $chapter);
 
-        \mod_mubook\event\content_updated::create_from_content($this, $this->chapter, $this->mubook, $this->context)->trigger();
+        \mod_mubook\event\content_updated::create_from_content($this)->trigger();
 
         return $content;
     }
@@ -278,7 +278,7 @@ abstract class content {
 
         $trans->allow_commit();
 
-        \mod_mubook\event\content_deleted::create_from_content($this, $this->chapter, $this->mubook, $this->context)->trigger();
+        \mod_mubook\event\content_deleted::create_from_content($this)->trigger();
     }
 
     /**

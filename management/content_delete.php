@@ -60,7 +60,7 @@ $chapter = $toc->get_chapter($chapterrecord->id);
 if (!$chapter || $toc->is_orphaned_chapter($chapter->id)) {
     redirect($returnurl);
 }
-$content = $cman->create_instance($contentrecord, $chapter, $mubook, $context);
+$content = $cman->create_instance($contentrecord, $chapter);
 if (!$content->can_delete()) {
     redirect($returnurl);
 }

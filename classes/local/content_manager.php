@@ -90,11 +90,11 @@ final class content_manager {
      *
      * @param stdClass $record content record
      * @param chapter $chapter
-     * @param stdClass $mubook
-     * @param \context_module $context
      * @return content
      */
-    public function create_instance(stdClass $record, chapter $chapter, stdClass $mubook, \context_module $context): content {
+    public function create_instance(stdClass $record, chapter $chapter): content {
+        $mubook = $chapter->get_mubook();
+        $context = $chapter->get_context();
         if (!isset($this->classes[$record->type])) {
             return new content\unknown($record, $chapter, $mubook, $context);
         } else {

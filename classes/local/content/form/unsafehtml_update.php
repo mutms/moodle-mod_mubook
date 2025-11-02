@@ -94,10 +94,8 @@ final class unsafehtml_update extends \mod_mubook\local\form\content_update_base
     #[\Override]
     public static function after_db_update(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
         if (isset($data->files)) {
-            if (is_number($data->files)) {
-                if ($data->files) {
-                    file_save_draft_area_files($data->files, $context->id, 'mod_mubook', 'content', $record->id, self::get_content_files_options());
-                }
+            if (is_number($data->files) && $data->files) {
+                file_save_draft_area_files($data->files, $context->id, 'mod_mubook', 'content', $record->id, self::get_content_files_options());
             }
         }
     }

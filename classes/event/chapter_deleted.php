@@ -34,11 +34,12 @@ final class chapter_deleted extends \core\event\base {
      * Create instance of event.
      *
      * @param chapter $chapter
-     * @param stdClass $mubook
-     * @param \context_module $context
      * @return self
      */
-    public static function create_from_chapter(chapter $chapter, stdClass $mubook, \context_module $context): self {
+    public static function create_from_chapter(chapter $chapter): self {
+        $mubook = $chapter->get_mubook();
+        $context = $chapter->get_context();
+
         $data = [
             'context' => $context,
             'objectid' => $chapter->id,

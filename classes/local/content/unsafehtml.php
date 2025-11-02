@@ -21,6 +21,7 @@ namespace mod_mubook\local\content;
 
 use mod_mubook\local\toc;
 use stdClass;
+use tool_mulib\local\mulib;
 
 /**
  * Content in unsafe raw HTML format.
@@ -33,6 +34,15 @@ final class unsafehtml extends \mod_mubook\local\content {
     #[\Override]
     public static function is_unsafe(): bool {
         return true;
+    }
+
+    #[\Override]
+    public function get_identification(): string {
+        $ident = parent::get_identification();
+        if (trim($this->data1 ?? '') === '') {
+            return $ident;
+        }
+        return $ident . ' - ' . mulib::clean_string(trim(shorten_text(strip_tags($this->data1), 20)));
     }
 
     #[\Override]

@@ -93,7 +93,7 @@ if ($actions->has_items()) {
     $PAGE->add_header_action($renderer->render($actions));
 }
 
-\mod_mubook\event\chapter_viewed::create_from_chapter($chapter, $mubook, $context)->trigger();
+\mod_mubook\event\chapter_viewed::create_from_chapter($chapter)->trigger();
 
 $lastchapter = $toc->get_last_chapter();
 if ($lastchapter && $chapter->id == $lastchapter->id) {

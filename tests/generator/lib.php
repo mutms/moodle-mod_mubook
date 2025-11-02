@@ -84,6 +84,13 @@ class mod_mubook_generator extends \testing_module_generator {
         $cm = get_coursemodule_from_instance('mubook', $mubook->id, $mubook->course, false, MUST_EXIST);
         $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
         $context = context_module::instance($cm->id);
+        $chapter = new chapter($chapterrecord, $mubook, $context);
+
+        $changetounknown = false;
+        if ($record->type === 'unknown') {
+            $changetounknown = true;
+            $record->type = 'markdown';
+        }
 
         $cman = \core\di::get(\mod_mubook\local\content_manager::class);
         $classname = $cman->get_class($record->type);
@@ -95,6 +102,15 @@ class mod_mubook_generator extends \testing_module_generator {
             $record->sortorder = 0;
         }
 
-        return $classname::create($record);
+        $content = $classname::create($record);
+
+        if ($changetounknown) {
+            $DB->set_field('mubook_content', 'type', 'xyzunknowncyz', ['id' => $content->id]);
+            $DB->set_field('mubook_content', 'data1', null, ['id' => $content->id]);
+            $contentrecord = $DB->get_record('mubook_content', ['id' => $content->id], '*', MUST_EXIST);
+            $content = $cman->create_instance($contentrecord, $chapter);
+        }
+
+        return $content;
     }
 }

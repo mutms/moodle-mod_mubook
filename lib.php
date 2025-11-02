@@ -130,7 +130,7 @@ function mubook_delete_instance($id) {
         $chapter = new \mod_mubook\local\chapter($chapterrecord, $mubook, $context);
         $contents = $DB->get_records('mubook_content', ['chapterid' => $chapterrecord->id], 'sortorder DESC, id DESC');
         foreach ($contents as $content) {
-            $c = $cman->create_instance($content, $chapter, $mubook, $context);
+            $c = $cman->create_instance($content, $chapter);
             $c->delete();
         }
         \mod_mubook\local\chapter::delete($chapter->id, true);
@@ -301,7 +301,7 @@ function mubook_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
     }
 
     $chapter = new chapter($chapterrecord, $mubook, $context);
-    $content = $cman->create_instance($contentrecord, $chapter, $mubook, $context);
+    $content = $cman->create_instance($contentrecord, $chapter);
 
     if (!$content->can_view()) {
         return false;

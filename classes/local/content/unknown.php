@@ -33,6 +33,12 @@ use mod_mubook\local\chapter;
  */
 final class unknown extends \mod_mubook\local\content {
     #[\Override]
+    public function get_identification(): string {
+        $ident = parent::get_identification();
+        return $ident . ' (' . $this->type . ')';
+    }
+
+    #[\Override]
     public static function can_create(?chapter $chapter, stdClass $mubook, \context_module $context): bool {
         return false;
     }
