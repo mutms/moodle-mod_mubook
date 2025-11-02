@@ -290,6 +290,28 @@ final class toc {
     }
 
     /**
+     * Returns formatted chapter title with numbers.
+     *
+     * @param int $chapterid
+     * @return string
+     */
+    public function get_numbered_chapter_title(int $chapterid): string {
+        $chapter = $this->get_chapter($chapterid);
+        if (!$chapter) {
+            return '';
+        }
+        $title = $chapter->format_title();
+
+        $numbers = $this->format_chapter_numbers($chapterid);
+        if ($numbers === null) {
+            return $title;
+        }
+
+        return $numbers . ' ' . $title;
+    }
+
+
+    /**
      * Fix all sortorder fields of non-orphaned chapters if necessary.
      *
      * @param int $mubookid

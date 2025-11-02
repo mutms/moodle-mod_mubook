@@ -156,7 +156,7 @@ abstract class content {
     final public static function create(stdClass $data): self {
         global $DB;
 
-        $cman = \core\di::get(\mod_mubook\local\content_manager::class);
+        $cman = \core\di::get(content_manager::class);
 
         $chapterrecord = $DB->get_record('mubook_chapter', ['id' => $data->chapterid], '*', MUST_EXIST);
         $mubook = $DB->get_record('mubook', ['id' => $chapterrecord->mubookid], '*', MUST_EXIST);
@@ -170,8 +170,7 @@ abstract class content {
         $record = (object)[
             'type' => static::get_type(),
             'chapterid' => $data->chapterid,
-            'sortorder' => $data->sortorder,
-            'filter' => (int)(bool)($data->filter ?? 0),
+            'sortorder' => $data->sortorder ?? 0,
             'hidden' => (int)(bool)($data->hidden ?? 0),
             'timecreated' => $now,
             'timemodified' => $now,
@@ -211,14 +210,18 @@ abstract class content {
     final public function update(stdClass $data): self {
         global $DB;
 
-        $cman = \core\di::get(\mod_mubook\local\content_manager::class);
+        $cman = \core\di::get(content_manager::class);
+
+        if ($data->id != $this->record->id) {
+            throw new \core\exception\invalid_parameter_exception('content id mismatch');
+        }
 
         $contentrecord = $DB->get_record('mubook_content', ['id' => $data->id, 'type' => self::get_type()], '*', MUST_EXIST);
         $chapterrecord = $DB->get_record('mubook_chapter', ['id' => $contentrecord->chapterid], '*', MUST_EXIST);
         $mubook = $DB->get_record('mubook', ['id' => $chapterrecord->mubookid], '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('mubook', $mubook->id, $mubook->course, false, MUST_EXIST);
         $context = \context_module::instance($cm->id);
-        $chapter = new \mod_mubook\local\chapter($chapterrecord, $mubook, $context);
+        $chapter = new chapter($chapterrecord, $mubook, $context);
 
         $formclass = static::get_update_form_classname();
 
@@ -226,9 +229,6 @@ abstract class content {
             'id' => $data->id,
             'timemodified' => time(),
         ];
-        if (property_exists($data, 'filter')) {
-            $record->filter = (int)(bool)$data->filter;
-        }
         if (property_exists($data, 'hidden')) {
             $record->hidden = (int)(bool)$data->hidden;
         }
@@ -263,7 +263,7 @@ abstract class content {
     public function delete(): void {
         global $DB;
 
-        $cman = \core\di::get(\mod_mubook\local\content_manager::class);
+        $cman = \core\di::get(content_manager::class);
 
         $trans = $DB->start_delegated_transaction();
 
@@ -288,6 +288,33 @@ abstract class content {
      */
     final public function get_record(): stdClass {
         return clone($this->record);
+    }
+
+    /**
+     * Returns chapter.
+     *
+     * @return chapter
+     */
+    final public function get_chapter(): chapter {
+        return $this->chapter;
+    }
+
+    /**
+     * Returns mubook record.
+     *
+     * @return stdClass
+     */
+    public function get_mubook(): stdClass {
+        return $this->mubook;
+    }
+
+    /**
+     * Returns mubook context.
+     *
+     * @return \context_module
+     */
+    public function get_context(): \context_module {
+        return $this->context;
     }
 
     /**
@@ -332,7 +359,7 @@ abstract class content {
      * @return class-string<\mod_mubook\local\form\content_create_base>
      */
     public static function get_create_form_classname(): string {
-        return '\\mod_mubook\\local\\form\\content\\' . static::get_type() . '_create';
+        return '\\mod_mubook\\local\\content\\form\\' . static::get_type() . '_create';
     }
 
     /**
@@ -375,7 +402,7 @@ abstract class content {
      * @return class-string<\mod_mubook\local\form\content_update_base>
      */
     public static function get_update_form_classname(): string {
-        return '\\mod_mubook\\local\\form\\content\\' . static::get_type() . '_update';
+        return '\\mod_mubook\\local\\content\\form\\' . static::get_type() . '_update';
     }
 
     /**

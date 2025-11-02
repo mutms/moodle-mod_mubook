@@ -69,7 +69,7 @@ class renderer extends \plugin_renderer_base {
      * @return string
      */
     public function render_contents(chapter $chapter, toc $toc): string {
-        $contents = $chapter->get_contents($toc);
+        $contents = $chapter->get_contents();
 
         $html = '';
         foreach ($contents as $content) {

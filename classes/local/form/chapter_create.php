@@ -63,13 +63,13 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
                 $afteroptions = [];
                 $positions = [];
                 foreach ($topchapters as $chapter) {
-                    $optgroup = $chapter->get_numbered_title($toc);
+                    $optgroup = $toc->get_numbered_chapter_title($chapter->id);
                     $option = get_string('subchapter_position_first', 'mod_mubook', $optgroup);
                     $afteroptions[$optgroup][$chapter->id] = $option;
                     $positions[] = $chapter->id;
                     if (isset($subchapters[$chapter->id])) {
                         foreach ($subchapters[$chapter->id] as $subchapter) {
-                            $option = $subchapter->get_numbered_title($toc);
+                            $option = $toc->get_numbered_chapter_title($subchapter->id);
                             $option = get_string('subchapter_position_after', 'mod_mubook', $option);
                             $afteroptions[$optgroup][$subchapter->id] = $option;
                             $positions[] = $subchapter->id;
@@ -88,7 +88,7 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
                     0 => get_string('chapter_position_first', 'mod_mubook'),
                 ];
                 foreach ($topchapters as $chapter) {
-                    $option = $chapter->get_numbered_title($toc);
+                    $option = $toc->get_numbered_chapter_title($chapter->id);
                     $afteroptions[$chapter->id] = get_string('chapter_position_after', 'mod_mubook', $option);
                 }
                 $mform->addElement('select', 'position', get_string('chapter_position', 'mod_mubook'), $afteroptions);

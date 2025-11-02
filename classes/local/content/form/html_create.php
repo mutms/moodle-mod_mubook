@@ -17,20 +17,20 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace mod_mubook\local\form\content;
+namespace mod_mubook\local\content\form;
 
 use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
 
 /**
- * Create unsafe raw HTML content.
+ * Create HTML content.
  *
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class unsafehtml_create extends \mod_mubook\local\form\content_create_base {
+final class html_create extends \mod_mubook\local\form\content_create_base {
     #[\Override]
     protected function definition() {
         $mform = $this->_form;
@@ -41,16 +41,9 @@ final class unsafehtml_create extends \mod_mubook\local\form\content_create_base
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
 
-        $mform->addElement('textarea', 'text', get_string('content_type_unsafehtml', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
-
-        $mform->addElement('filemanager', 'files', get_string('content_files', 'mod_mubook'), null, self::get_content_files_options());
-
-        $mform->addElement(
-            'advcheckbox',
-            'unsafetrusted',
-            get_string('content_unsafetrusted', 'mod_mubook'),
-            get_string('content_unsafetrusted_confirmation', 'mod_mubook')
-        );
+        $options = self::get_content_editor_options($context);
+        $mform->addElement('editor', 'text_editor', get_string('content_text', 'mod_mubook'), ['rows' => 20], $options);
+        $mform->setDefault('text_editor', ['text' => '', 'format' => FORMAT_HTML]);
 
         $this->add_shared_content_elements();
 
@@ -58,11 +51,12 @@ final class unsafehtml_create extends \mod_mubook\local\form\content_create_base
     }
 
     /**
-     * Returns file manager options.
+     * Returns editor options.
      *
+     * @param \context_module $context
      * @return array
      */
-    public static function get_content_files_options(): array {
+    public static function get_content_editor_options(\context_module $context): array {
         global $CFG;
 
         return [
@@ -70,23 +64,39 @@ final class unsafehtml_create extends \mod_mubook\local\form\content_create_base
             'maxfiles' => 100,
             'subdirs' => 1,
             'accepted_types' => ['*'],
+            'context' => $context,
         ];
     }
 
     #[\Override]
     public static function before_db_insert(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
-        $record->data1 = $data->text ?? '';
-        $record->unsafetrusted = (int)(bool)($data->unsafetrusted ?? 0);
+        if (isset($data->text_editor['text'])) {
+            $record->data1 = $data->text_editor['text'];
+        } else if (isset($data->text)) {
+            $record->data1 = $data->text;
+        } else {
+            // This is meant for generators only.
+            $record->data1 = $data->data1 ?? '';
+        }
     }
 
     #[\Override]
     public static function after_db_insert(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
-        if (isset($data->files)) {
-            if (is_number($data->files)) {
-                if ($data->files) {
-                    file_save_draft_area_files($data->files, $context->id, 'mod_mubook', 'content', $record->id, self::get_content_files_options());
-                }
-            }
+        global $DB;
+
+        if (isset($data->text_editor['itemid'])) {
+            $data->text_editor['format'] = FORMAT_HTML;
+            $options = self::get_content_editor_options($context);
+            $data = file_postupdate_standard_editor(
+                $data,
+                'text',
+                $options,
+                $options['context'],
+                'mod_mubook',
+                'content',
+                $record->id
+            );
+            $DB->set_field('mubook_content', 'data1', $data->text, ['id' => $record->id]);
         }
     }
 }

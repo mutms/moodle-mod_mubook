@@ -17,23 +17,26 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace mod_mubook\local\form\content;
+namespace mod_mubook\local\content\form;
 
 use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
+use mod_mubook\local\content;
 
 /**
- * Create collapsible content.
+ * Update HTML content.
  *
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class collapsible_create extends \mod_mubook\local\form\content_create_base {
+final class html_update extends \mod_mubook\local\form\content_update_base {
     #[\Override]
     protected function definition() {
         $mform = $this->_form;
+        /** @var content $content */
+        $content = $this->_customdata['content'];
         /** @var chapter $chapter */
         $chapter = $this->_customdata['chapter'];
         /** @var toc $toc */
@@ -41,16 +44,20 @@ final class collapsible_create extends \mod_mubook\local\form\content_create_bas
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
 
-        $mform->addElement('text', 'label', get_string('content_type_collapsible_label_custom', 'mod_mubook'), ['size' => 40]);
-        $mform->setType('label', PARAM_TEXT);
-
         $options = self::get_content_editor_options($context);
+        $data = (object)[
+            'id' => $content->id,
+            'text' => $content->data1,
+            'textformat' => FORMAT_HTML,
+        ];
+
         $mform->addElement('editor', 'text_editor', get_string('content_text', 'mod_mubook'), ['rows' => 20], $options);
-        $mform->setDefault('text_editor', ['text' => '', 'format' => FORMAT_HTML]);
+        file_prepare_standard_editor($data, 'text', $options, $context, 'mod_mubook', 'content', $data->id);
+        $mform->setDefault('text_editor', $data->text_editor);
 
         $this->add_shared_content_elements();
 
-        $this->add_action_buttons(true, get_string('content_create', 'mod_mubook'));
+        $this->add_action_buttons(true, get_string('content_update', 'mod_mubook'));
     }
 
     /**
@@ -72,23 +79,20 @@ final class collapsible_create extends \mod_mubook\local\form\content_create_bas
     }
 
     #[\Override]
-    public static function before_db_insert(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
-        if (isset($data->text_editor['text'])) {
+    public static function before_db_update(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
+        if (property_exists($data, 'text_editor')) {
             $record->data1 = $data->text_editor['text'];
-        } else if (isset($data->text)) {
+        } else if (property_exists($data, 'text')) {
             $record->data1 = $data->text;
-        } else {
-            $record->data1 = $data->data1 ?? '';
         }
-
-        $record->data2 = $data->label ?? '';
     }
 
     #[\Override]
-    public static function after_db_insert(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
+    public static function after_db_update(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
         global $DB;
 
-        if (isset($data->text_editor)) {
+        if (isset($data->text_editor['itemid'])) {
+            $data->text_editor['format'] = FORMAT_HTML;
             $options = self::get_content_editor_options($context);
             $data = file_postupdate_standard_editor(
                 $data,
@@ -99,7 +103,9 @@ final class collapsible_create extends \mod_mubook\local\form\content_create_bas
                 'content',
                 $record->id
             );
-            $DB->set_field('mubook_content', 'data1', $data->text, ['id' => $record->id]);
+            if ($data->text !== $record->data1) {
+                $DB->set_field('mubook_content', 'data1', $data->text, ['id' => $record->id]);
+            }
         }
     }
 }

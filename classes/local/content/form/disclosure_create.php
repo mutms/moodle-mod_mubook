@@ -17,21 +17,20 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace mod_mubook\local\form\content;
+namespace mod_mubook\local\content\form;
 
 use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
-use mod_mubook\local\markdown_formatter;
 
 /**
- * Create Markdown text content.
+ * Create disclosure buttons.
  *
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class markdown_create extends \mod_mubook\local\form\content_create_base {
+final class disclosure_create extends \mod_mubook\local\form\content_create_base {
     #[\Override]
     protected function definition() {
         $mform = $this->_form;
@@ -42,46 +41,35 @@ final class markdown_create extends \mod_mubook\local\form\content_create_base {
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
 
-        $mform->addElement('textarea', 'text', get_string('content_text', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
+        $mform->addElement(
+            'static',
+            'target',
+            get_string('content_type_disclosure_target', 'mod_mubook'),
+            get_string('content_type_disclosure_target_info', 'mod_mubook')
+        );
 
-        $mform->addElement('filemanager', 'files', get_string('content_files', 'mod_mubook'), null, self::get_content_files_options());
+        $mform->addElement('text', 'labelshow', get_string('content_type_disclosure_show_custom', 'mod_mubook'), ['size' => 40]);
+        $mform->setType('labelshow', PARAM_TEXT);
+
+        $mform->addElement('text', 'labelhide', get_string('content_type_disclosure_hide_custom', 'mod_mubook'), ['size' => 40]);
+        $mform->setType('labelhide', PARAM_TEXT);
+
+        $mform->addElement('text', 'labelprinted', get_string('content_type_disclosure_printed_custom', 'mod_mubook'), ['size' => 40]);
+        $mform->setType('labelprinted', PARAM_TEXT);
 
         $this->add_shared_content_elements();
 
         $this->add_action_buttons(true, get_string('content_create', 'mod_mubook'));
-
-        // TODO: add preview.
-    }
-
-    /**
-     * Returns file manager options.
-     *
-     * @return array
-     */
-    public static function get_content_files_options(): array {
-        global $CFG;
-
-        return [
-            'maxbytes' => $CFG->maxbytes,
-            'maxfiles' => 100,
-            'subdirs' => 1,
-            'accepted_types' => ['*'],
-        ];
     }
 
     #[\Override]
     public static function before_db_insert(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
-        $record->data1 = $data->text ?? '';
-    }
+        $options = [];
 
-    #[\Override]
-    public static function after_db_insert(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
-        if (isset($data->files)) {
-            if (is_number($data->files)) {
-                if ($data->files) {
-                    file_save_draft_area_files($data->files, $context->id, 'mod_mubook', 'content', $record->id, self::get_content_files_options());
-                }
-            }
-        }
+        $options['labelshow'] = $data->labelshow ?? '';
+        $options['labelhide'] = $data->labelhide ?? '';
+        $options['labelprinted'] = $data->labelprinted ?? '';
+
+        $record->data1 = json_encode($options, JSON_UNESCAPED_UNICODE);
     }
 }

@@ -17,22 +17,21 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace mod_mubook\local\form\content;
+namespace mod_mubook\local\content\form;
 
 use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
 use mod_mubook\local\content;
-use mod_mubook\local\markdown_formatter;
 
 /**
- * Update collapsible content.
+ * Update unsafe raw HTML content.
  *
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class collapsiblemd_update extends \mod_mubook\local\form\content_update_base {
+final class unsafehtml_update extends \mod_mubook\local\form\content_update_base {
     #[\Override]
     protected function definition() {
         $mform = $this->_form;
@@ -45,11 +44,7 @@ final class collapsiblemd_update extends \mod_mubook\local\form\content_update_b
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
 
-        $mform->addElement('text', 'label', get_string('content_type_collapsible_label_custom', 'mod_mubook'), ['size' => 40]);
-        $mform->setType('label', PARAM_TEXT);
-        $mform->setDefault('label', $content->data2);
-
-        $mform->addElement('textarea', 'text', get_string('content_text', 'mod_mubook'), ['cols' => 50, 'rows' => 10]);
+        $mform->addElement('textarea', 'text', get_string('content_type_text', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
         $mform->setDefault('text', $content->data1);
 
         $mform->addElement('filemanager', 'files', get_string('content_files', 'mod_mubook'), null, self::get_content_files_options());
@@ -57,11 +52,17 @@ final class collapsiblemd_update extends \mod_mubook\local\form\content_update_b
         file_prepare_draft_area($draftitemid, $context->id, 'mod_mubook', 'content', $content->id, self::get_content_files_options());
         $mform->setDefault('files', $draftitemid);
 
+        $mform->addElement(
+            'advcheckbox',
+            'unsafetrusted',
+            get_string('content_unsafetrusted', 'mod_mubook'),
+            get_string('content_unsafetrusted_confirmation', 'mod_mubook')
+        );
+        $mform->setDefault('trusted', $content->unsafetrusted);
+
         $this->add_shared_content_elements();
 
         $this->add_action_buttons(true, get_string('content_update', 'mod_mubook'));
-
-        // TODO: add preview.
     }
 
     /**
@@ -85,8 +86,8 @@ final class collapsiblemd_update extends \mod_mubook\local\form\content_update_b
         if (property_exists($data, 'text')) {
             $record->data1 = $data->text;
         }
-        if (property_exists($data, 'label')) {
-            $record->data2 = $data->label;
+        if (property_exists($data, 'unsafetrusted')) {
+            $record->unsafetrusted = (int)(bool)$data->unsafetrusted;
         }
     }
 

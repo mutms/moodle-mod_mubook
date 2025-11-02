@@ -40,9 +40,9 @@ final class content_create_select extends \tool_mulib\local\ajax_form {
         $context = $toc->get_context();
 
         if ($chapter->parentid) {
-            $mform->addElement('static', 'statictitle', get_string('subchapter_title', 'mod_mubook'), $chapter->get_numbered_title($toc));
+            $mform->addElement('static', 'statictitle', get_string('subchapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
         } else {
-            $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $chapter->get_numbered_title($toc));
+            $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
         }
 
         $options = [];

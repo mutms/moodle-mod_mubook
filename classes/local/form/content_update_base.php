@@ -124,7 +124,7 @@ abstract class content_update_base extends \moodleform {
         $mform->setDefault('id', $content->id);
 
         $options = [];
-        foreach ($chapter->get_contents($toc) as $c) {
+        foreach ($chapter->get_contents() as $c) {
             $options[$c->sortorder] = $c->sortorder;
         }
         $mform->addElement('select', 'sortorder', get_string('content_sortorder', 'mod_mubook'), $options);

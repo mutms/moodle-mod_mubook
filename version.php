@@ -35,5 +35,5 @@ $plugin->supported = [500, 501];
 $plugin->release = 'mu-5.0.3-00';
 
 $plugin->dependencies = [
-    'tool_mulib' => 2025100650,
+    'tool_mulib' => 2025100650.01,
 ];

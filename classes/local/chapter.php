@@ -24,6 +24,7 @@ use core\exception\coding_exception;
 use core\exception\invalid_parameter_exception;
 use tool_mulib\output\ajax_form\button;
 use tool_mulib\output\ajax_form\link;
+use tool_mulib\local\mulib;
 
 /**
  * Book chapter.
@@ -494,37 +495,20 @@ final class chapter {
      * @return string
      */
     public function format_title(): string {
-        return format_string($this->title, true, ['context' => $this->context]);
-    }
-
-    /**
-     * Returns formatted chapter title with numbers.
-     *
-     * @param toc $toc
-     * @return string
-     */
-    public function get_numbered_title(toc $toc): string {
-        $title = $this->format_title();
-
-        $numbers = $toc->format_chapter_numbers($this->record->id);
-        if ($numbers === null) {
-            return $title;
-        }
-
-        return $numbers . ' ' . $title;
+        $title = format_string($this->title, true, ['context' => $this->context]);
+        return mulib::clean_string($title);
     }
 
     /**
      * Fetch chapter contents.
      *
-     * @param toc $toc
      * @return content[]
      */
-    public function get_contents(toc $toc): array {
+    public function get_contents(): array {
         global $DB;
 
-        $mubook = $toc->get_mubook();
-        $context = $toc->get_context();
+        $mubook = $this->get_mubook();
+        $context = $this->get_context();
 
         if ($this->record->mubookid != $mubook->id) {
             throw new coding_exception('mismatched toc');

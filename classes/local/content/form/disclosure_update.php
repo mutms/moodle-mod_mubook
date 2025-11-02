@@ -17,7 +17,7 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace mod_mubook\local\form\content;
+namespace mod_mubook\local\content\form;
 
 use stdClass;
 use mod_mubook\local\toc;
@@ -45,7 +45,7 @@ final class disclosure_update extends \mod_mubook\local\form\content_update_base
         $context = $toc->get_context();
 
         $nextinfo = null;
-        foreach ($chapter->get_contents($toc) as $c) {
+        foreach ($chapter->get_contents() as $c) {
             if ($c->sortorder == $content->sortorder + 1) {
                 $nextinfo = $c->get_identification();
                 break;

@@ -17,21 +17,22 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace mod_mubook\local\form\content;
+namespace mod_mubook\local\content\form;
 
 use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
 use mod_mubook\local\content;
+use mod_mubook\local\markdown_formatter;
 
 /**
- * Update HTML content.
+ * Update Markdown text content.
  *
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class html_update extends \mod_mubook\local\form\content_update_base {
+final class markdown_update extends \mod_mubook\local\form\content_update_base {
     #[\Override]
     protected function definition() {
         $mform = $this->_form;
@@ -44,29 +45,27 @@ final class html_update extends \mod_mubook\local\form\content_update_base {
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
 
-        $options = self::get_content_editor_options($context);
-        $data = (object)[
-            'id' => $content->id,
-            'text' => $content->data1,
-            'textformat' => FORMAT_HTML,
-        ];
+        $mform->addElement('textarea', 'text', get_string('content_text', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
+        $mform->setDefault('text', $content->data1);
 
-        $mform->addElement('editor', 'text_editor', get_string('content_text', 'mod_mubook'), ['rows' => 20], $options);
-        file_prepare_standard_editor($data, 'text', $options, $context, 'mod_mubook', 'content', $data->id);
-        $mform->setDefault('text_editor', $data->text_editor);
+        $mform->addElement('filemanager', 'files', get_string('content_files', 'mod_mubook'), null, self::get_content_files_options());
+        $draftitemid = file_get_submitted_draft_itemid('files');
+        file_prepare_draft_area($draftitemid, $context->id, 'mod_mubook', 'content', $content->id, self::get_content_files_options());
+        $mform->setDefault('files', $draftitemid);
 
         $this->add_shared_content_elements();
 
         $this->add_action_buttons(true, get_string('content_update', 'mod_mubook'));
+
+        // TODO: add preview.
     }
 
     /**
-     * Returns editor options.
+     * Returns file manager options.
      *
-     * @param \context_module $context
      * @return array
      */
-    public static function get_content_editor_options(\context_module $context): array {
+    public static function get_content_files_options(): array {
         global $CFG;
 
         return [
@@ -74,34 +73,23 @@ final class html_update extends \mod_mubook\local\form\content_update_base {
             'maxfiles' => 100,
             'subdirs' => 1,
             'accepted_types' => ['*'],
-            'context' => $context,
         ];
     }
 
     #[\Override]
     public static function before_db_update(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
-        if (property_exists($data, 'text_editor')) {
-            $record->data1 = $data->text_editor['text'];
+        if (property_exists($data, 'text')) {
+            $record->data1 = $data->text;
         }
     }
 
     #[\Override]
     public static function after_db_update(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
-        global $DB;
-
-        if (isset($data->text_editor)) {
-            $options = self::get_content_editor_options($context);
-            $data = file_postupdate_standard_editor(
-                $data,
-                'text',
-                $options,
-                $options['context'],
-                'mod_mubook',
-                'content',
-                $record->id
-            );
-            if ($data->text !== $record->data1) {
-                $DB->set_field('mubook_content', 'data1', $data->text, ['id' => $record->id]);
+        if (isset($data->files)) {
+            if (is_number($data->files)) {
+                if ($data->files) {
+                    file_save_draft_area_files($data->files, $context->id, 'mod_mubook', 'content', $record->id, self::get_content_files_options());
+                }
             }
         }
     }

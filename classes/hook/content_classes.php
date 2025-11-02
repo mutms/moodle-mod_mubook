@@ -37,11 +37,10 @@ final class content_classes {
      * Constructor.
      */
     public function __construct() {
-        $classes = \core_component::get_component_classes_in_namespace('mod_mubook', 'local\\content');
-        /** @var class-string<content> $classname */
-        foreach ($classes as $classname => $classpath) {
-            $this->register(call_user_func([$classname, 'get_type']), $classname);
-        }
+        $this->register('disclosure', content\disclosure::class);
+        $this->register('html', content\html::class);
+        $this->register('markdown', content\markdown::class);
+        $this->register('unsafehtml', content\unsafehtml::class);
         \core\di::get(\core\hook\manager::class)->dispatch($this);
     }
 

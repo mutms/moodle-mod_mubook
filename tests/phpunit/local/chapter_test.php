@@ -658,45 +658,7 @@ final class chapter_test extends \advanced_testcase {
             'title' => 'First chapter &<div>',
         ]);
 
-        $this->assertSame('First chapter &amp;', $chapter1->format_title());
-    }
-
-    public function test_get_numbered_title(): void {
-        global $DB;
-
-        $this->setAdminUser();
-        $course = $this->getDataGenerator()->create_course();
-        $mubook = $this->getDataGenerator()->create_module('mubook', [
-            'course' => $course->id,
-            'numbering' => '0',
-        ]);
-
-        $chapter1 = chapter::create((object)[
-            'mubookid' => $mubook->id,
-            'title' => 'First chapter',
-        ]);
-        $chapter2 = chapter::create((object)[
-            'mubookid' => $mubook->id,
-            'title' => 'Sub chapter',
-            'subchapter' => 1,
-            'position' => $chapter1->id,
-        ]);
-
-        $toc = new toc($mubook);
-        $this->assertSame('First chapter', $chapter1->get_numbered_title($toc));
-        $this->assertSame('Sub chapter', $chapter2->get_numbered_title($toc));
-
-        $DB->set_field('mubook', 'numbering', 1, ['id' => $mubook->id]);
-        $mubook = $DB->get_record('mubook', ['id' => $mubook->id]);
-        $toc = new toc($mubook);
-        $this->assertSame('1 First chapter', $chapter1->get_numbered_title($toc));
-        $this->assertSame('1.1 Sub chapter', $chapter2->get_numbered_title($toc));
-
-        $DB->set_field('mubook', 'numbering', 2, ['id' => $mubook->id]);
-        $mubook = $DB->get_record('mubook', ['id' => $mubook->id]);
-        $toc = new toc($mubook);
-        $this->assertSame('1. First chapter', $chapter1->get_numbered_title($toc));
-        $this->assertSame('1.1. Sub chapter', $chapter2->get_numbered_title($toc));
+        $this->assertSame('First chapter &#38;', $chapter1->format_title());
     }
 
     public function test_get_contents(): void {
@@ -730,7 +692,7 @@ final class chapter_test extends \advanced_testcase {
         $chapter1 = self::refetch_chapter($chapter1);
         $toc = new toc($mubook);
 
-        $contents = $chapter1->get_contents($toc);
+        $contents = $chapter1->get_contents();
         $this->assertSame([(int)$content1->id, (int)$content2->id], array_keys($contents));
         $this->assertSame('Hola!', $contents[$content1->id]->data1);
         $this->assertSame('hey!', $contents[$content2->id]->data1);

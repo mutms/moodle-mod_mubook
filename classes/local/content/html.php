@@ -21,6 +21,7 @@ namespace mod_mubook\local\content;
 
 use mod_mubook\local\toc;
 use mod_mubook\local\html_formatter;
+use tool_mulib\local\mulib;
 
 /**
  * Content in HTML format.
@@ -30,6 +31,19 @@ use mod_mubook\local\html_formatter;
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class html extends \mod_mubook\local\content {
+    /**
+     * Returns one line description of the content block instable.
+     *
+     * @return string
+     */
+    public function get_identification(): string {
+        $ident = parent::get_identification();
+        if (trim($this->data1 ?? '') === '') {
+            return $ident;
+        }
+        return $ident . ' - ' . mulib::clean_string(trim(shorten_text(strip_tags($this->data1), 20)));
+    }
+
     #[\Override]
     public function render(\renderer_base $output, toc $toc, bool $editing, int $firstheading, int $headingoffset = 0): string {
         $context = $toc->get_context();

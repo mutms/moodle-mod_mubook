@@ -138,7 +138,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function render_contents(chapter $chapter, toc $toc): string {
         $editing = $this->page->user_is_editing();
-        $contents = $chapter->get_contents($toc);
+        $contents = $chapter->get_contents();
 
         $html = '';
         foreach ($contents as $content) {

@@ -36,9 +36,9 @@ final class chapter_delete extends \tool_mulib\local\ajax_form {
         $toc = $this->_customdata['toc'];
 
         if ($chapter->parentid) {
-            $mform->addElement('static', 'statictitle', get_string('subchapter_title', 'mod_mubook'), $chapter->get_numbered_title($toc));
+            $mform->addElement('static', 'statictitle', get_string('subchapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
         } else {
-            $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $chapter->get_numbered_title($toc));
+            $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
         }
 
         $mform->addElement('hidden', 'id');
@@ -50,7 +50,7 @@ final class chapter_delete extends \tool_mulib\local\ajax_form {
             $subchapters = [];
             foreach ($toc->get_chapters() as $ch) {
                 if ($ch->parentid == $chapter->id) {
-                    $subchapters[] = $ch->get_numbered_title($toc);
+                    $subchapters[] = $toc->get_numbered_chapter_title($ch->id);
                 }
             }
             $mform->addElement('static', 'subchapters', get_string('subchapters', 'mod_mubook'), implode('<br/>', $subchapters));

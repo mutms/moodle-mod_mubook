@@ -45,7 +45,7 @@ final class chapter_move extends \tool_mulib\local\ajax_form {
             }
         }
 
-        $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $chapter->get_numbered_title($toc));
+        $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
 
         if ($chapter->parentid || !isset($subchapters[$chapter->id])) {
             $mform->addElement('advcheckbox', 'subchapter', get_string('subchapter', 'mod_mubook'));
@@ -64,7 +64,7 @@ final class chapter_move extends \tool_mulib\local\ajax_form {
             $options[0] = get_string('chapter_position_first', 'mod_mubook');
         }
         foreach ($topchapters as $ch) {
-            $title = $ch->get_numbered_title($toc);
+            $title = $toc->get_numbered_chapter_title($ch->id);
             if ($ch->id == $chapter->id) {
                 $options[$ch->id] = get_string('choosedots');
             } else {
@@ -100,7 +100,7 @@ final class chapter_move extends \tool_mulib\local\ajax_form {
                     $options[''][$ch->id] = get_string('choosedots');
                     continue;
                 }
-                $optgroup = $ch->get_numbered_title($toc);
+                $optgroup = $toc->get_numbered_chapter_title($ch->id);
                 $options[$optgroup][$ch->id] = get_string('subchapter_position_first', 'mod_mubook', $ch->format_title());
 
                 if (isset($subchapters[$ch->id])) {
@@ -110,7 +110,7 @@ final class chapter_move extends \tool_mulib\local\ajax_form {
                             $options[$optgroup][$subch->id] = get_string('choosedots');
                             continue;
                         }
-                        $title = $subch->get_numbered_title($toc);
+                        $title = $toc->get_numbered_chapter_title($subch->id);
                         $options[$optgroup][$subch->id] = get_string('subchapter_position_after', 'mod_mubook', $title);
                     }
                 }

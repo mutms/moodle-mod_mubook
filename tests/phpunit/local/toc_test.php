@@ -550,6 +550,44 @@ final class toc_test extends \advanced_testcase {
         $this->assertSame(null, $toc->format_chapter_numbers($orphaned1->id));
     }
 
+    public function test_get_numbered_chapter_title(): void {
+        global $DB;
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $mubook = $this->getDataGenerator()->create_module('mubook', [
+            'course' => $course->id,
+            'numbering' => '0',
+        ]);
+
+        $chapter1 = chapter::create((object)[
+            'mubookid' => $mubook->id,
+            'title' => 'First chapter',
+        ]);
+        $chapter2 = chapter::create((object)[
+            'mubookid' => $mubook->id,
+            'title' => 'Sub chapter',
+            'subchapter' => 1,
+            'position' => $chapter1->id,
+        ]);
+
+        $toc = new toc($mubook);
+        $this->assertSame('First chapter', $toc->get_numbered_chapter_title($chapter1->id));
+        $this->assertSame('Sub chapter', $toc->get_numbered_chapter_title($chapter2->id));
+
+        $DB->set_field('mubook', 'numbering', 1, ['id' => $mubook->id]);
+        $mubook = $DB->get_record('mubook', ['id' => $mubook->id]);
+        $toc = new toc($mubook);
+        $this->assertSame('1 First chapter', $toc->get_numbered_chapter_title($chapter1->id));
+        $this->assertSame('1.1 Sub chapter', $toc->get_numbered_chapter_title($chapter2->id));
+
+        $DB->set_field('mubook', 'numbering', 2, ['id' => $mubook->id]);
+        $mubook = $DB->get_record('mubook', ['id' => $mubook->id]);
+        $toc = new toc($mubook);
+        $this->assertSame('1. First chapter', $toc->get_numbered_chapter_title($chapter1->id));
+        $this->assertSame('1.1. Sub chapter', $toc->get_numbered_chapter_title($chapter2->id));
+    }
+
     public function test_fix_sortorders(): void {
         global $DB;
 

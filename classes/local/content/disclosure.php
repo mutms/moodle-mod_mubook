@@ -35,7 +35,7 @@ final class disclosure extends \mod_mubook\local\content {
         $options = (object)json_decode($this->data1 ?? '[]');
 
         $next = null;
-        foreach ($this->chapter->get_contents($toc) as $c) {
+        foreach ($this->chapter->get_contents() as $c) {
             if ($c->sortorder == $this->sortorder + 1) {
                 $next = $c;
                 break;
@@ -75,7 +75,7 @@ final class disclosure extends \mod_mubook\local\content {
      */
     public static function callback_content_post_render(content_post_render $hook): void {
         $targettedby = null;
-        foreach ($hook->chapter->get_contents($hook->toc) as $content) {
+        foreach ($hook->chapter->get_contents() as $content) {
             if ($content->type !== 'disclosure') {
                 continue;
             }

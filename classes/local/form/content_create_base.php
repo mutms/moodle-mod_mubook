@@ -136,7 +136,7 @@ abstract class content_create_base extends \moodleform {
         $mform->setDefault('fromcreatechapterid', $fromcreatechapterid);
 
         $options = [];
-        foreach ($chapter->get_contents($toc) as $c) {
+        foreach ($chapter->get_contents() as $c) {
             $options[$c->sortorder] = $c->sortorder;
         }
         if ($options) {

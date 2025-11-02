@@ -17,27 +17,24 @@
 // phpcs:disable moodle.Files.BoilerplateComment.CommentEndedTooSoon
 // phpcs:disable moodle.Files.LineLength.TooLong
 
-namespace mod_mubook\local\form\content;
+namespace mod_mubook\local\content\form;
 
 use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
-use mod_mubook\local\content;
 use mod_mubook\local\markdown_formatter;
 
 /**
- * Update Markdown text content.
+ * Create Markdown text content.
  *
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class markdown_update extends \mod_mubook\local\form\content_update_base {
+final class markdown_create extends \mod_mubook\local\form\content_create_base {
     #[\Override]
     protected function definition() {
         $mform = $this->_form;
-        /** @var content $content */
-        $content = $this->_customdata['content'];
         /** @var chapter $chapter */
         $chapter = $this->_customdata['chapter'];
         /** @var toc $toc */
@@ -46,16 +43,12 @@ final class markdown_update extends \mod_mubook\local\form\content_update_base {
         $context = $toc->get_context();
 
         $mform->addElement('textarea', 'text', get_string('content_text', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
-        $mform->setDefault('text', $content->data1);
 
         $mform->addElement('filemanager', 'files', get_string('content_files', 'mod_mubook'), null, self::get_content_files_options());
-        $draftitemid = file_get_submitted_draft_itemid('files');
-        file_prepare_draft_area($draftitemid, $context->id, 'mod_mubook', 'content', $content->id, self::get_content_files_options());
-        $mform->setDefault('files', $draftitemid);
 
         $this->add_shared_content_elements();
 
-        $this->add_action_buttons(true, get_string('content_update', 'mod_mubook'));
+        $this->add_action_buttons(true, get_string('content_create', 'mod_mubook'));
 
         // TODO: add preview.
     }
@@ -77,14 +70,12 @@ final class markdown_update extends \mod_mubook\local\form\content_update_base {
     }
 
     #[\Override]
-    public static function before_db_update(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
-        if (property_exists($data, 'text')) {
-            $record->data1 = $data->text;
-        }
+    public static function before_db_insert(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
+        $record->data1 = $data->text ?? '';
     }
 
     #[\Override]
-    public static function after_db_update(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
+    public static function after_db_insert(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
         if (isset($data->files)) {
             if (is_number($data->files)) {
                 if ($data->files) {
