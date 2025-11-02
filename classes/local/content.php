@@ -181,12 +181,12 @@ abstract class content {
         if ($record->sortorder < 1) {
             $record->sortorder = 1 + (int)$DB->get_field('mubook_content', 'MAX(sortorder)', ['chapterid' => $record->chapterid]);
         }
-        $cman->vacate_sortorder($record->chapterid, $record->sortorder);
+        self::vacate_sortorder($record->chapterid, $record->sortorder);
 
         $formclass::before_db_insert($record, $data, $chapter, $mubook, $context);
 
         $record->id = $DB->insert_record('mubook_content', $record);
-        $cman->fix_sortorders($chapter->id);
+        self::fix_sortorders($chapter->id);
         $record = $DB->get_record('mubook_content', ['id' => $record->id], '*', MUST_EXIST);
 
         $formclass::after_db_insert($record, $data, $chapter, $mubook, $context);
@@ -236,13 +236,13 @@ abstract class content {
         $trans = $DB->start_delegated_transaction();
 
         if (property_exists($data, 'sortorder')) {
-            $cman->move_to_sortorder($chapterrecord->id, $contentrecord->sortorder, $data->sortorder);
+            self::move_to_sortorder($chapterrecord->id, $contentrecord->sortorder, $data->sortorder);
         }
 
         $formclass::before_db_update($record, $data, $chapter, $mubook, $context);
 
         $DB->update_record('mubook_content', $record);
-        $cman->fix_sortorders($chapter->id);
+        self::fix_sortorders($chapter->id);
         $record = $DB->get_record('mubook_content', ['id' => $record->id], '*', MUST_EXIST);
 
         $formclass::after_db_update($record, $data, $chapter, $mubook, $context);
@@ -274,11 +274,78 @@ abstract class content {
             $fs->delete_area_files($this->context->id, 'mod_mubook', $area, $this->record->id);
         }
 
-        $cman->fix_sortorders($this->chapter->id);
+        self::fix_sortorders($this->chapter->id);
 
         $trans->allow_commit();
 
         \mod_mubook\event\content_deleted::create_from_content($this)->trigger();
+    }
+
+    /**
+     * Vacate sortorder position.
+     *
+     * @param int $chapterid
+     * @param int $sortorder
+     * @return void
+     */
+    private static function vacate_sortorder(int $chapterid, int $sortorder): void {
+        global $DB;
+
+        $sql = "UPDATE {mubook_content}
+                   SET sortorder = sortorder + 1
+                 WHERE chapterid = :chapterid AND sortorder >= :sortorder";
+        $params = ['chapterid' => $chapterid, 'sortorder' => $sortorder];
+        $DB->execute($sql, $params);
+    }
+
+    /**
+     * Change content sortorder to different value.
+     *
+     * @param int $chapterid
+     * @param int $sortorder1
+     * @param int $sortorder2
+     * @return void
+     */
+    private static function move_to_sortorder(int $chapterid, int $sortorder1, int $sortorder2): void {
+        global $DB;
+
+        $DB->set_field('mubook_content', 'sortorder', -1, ['chapterid' => $chapterid, 'sortorder' => $sortorder1]);
+
+        if ($sortorder1 < $sortorder2) {
+            $sql = "UPDATE {mubook_content}
+                       SET sortorder = sortorder - 1
+                     WHERE chapterid = :chapterid AND sortorder > :sortorder1 AND sortorder <= :sortorder2";
+            $params = ['chapterid' => $chapterid, 'sortorder1' => $sortorder1, 'sortorder2' => $sortorder2];
+            $DB->execute($sql, $params);
+        } else if ($sortorder1 > $sortorder2) {
+            $sql = "UPDATE {mubook_content}
+                       SET sortorder = sortorder + 1
+                     WHERE chapterid = :chapterid AND sortorder < :sortorder1 AND sortorder >= :sortorder2";
+            $params = ['chapterid' => $chapterid, 'sortorder1' => $sortorder1, 'sortorder2' => $sortorder2];
+            $DB->execute($sql, $params);
+        }
+
+        $DB->set_field('mubook_content', 'sortorder', $sortorder2, ['chapterid' => $chapterid, 'sortorder' => -1]);
+    }
+
+    /**
+     * Fix sortorder for all contents of given chapter.
+     *
+     * @param int $chapterid
+     * @return void
+     */
+    private static function fix_sortorders(int $chapterid): void {
+        global $DB;
+
+        $contents = $DB->get_records('mubook_content', ['chapterid' => $chapterid], 'sortorder ASC, id ASC', 'id, sortorder');
+
+        $i = 0;
+        foreach ($contents as $content) {
+            $i++;
+            if ($content->sortorder != $i) {
+                $DB->set_field('mubook_content', 'sortorder', $i, ['id' => $content->id]);
+            }
+        }
     }
 
     /**

@@ -80,10 +80,6 @@ final class markdown_formatter {
 
         $headingoffset = $options['headingoffset'] ?? 0;
 
-        if ($filebase !== null) {
-            $markdown = str_replace('@@PLUGINFILE@@/', rtrim($filebase, '/') . '/', $markdown);
-        }
-
         $config = [
             'allow_unsafe_links' => false,
             'max_nesting_level' => 20,
@@ -175,7 +171,9 @@ final class markdown_formatter {
                 $url = $node->getUrl();
                 $title = $node->getTitle();
                 if ($this->filebase !== null) {
-                    if (str_starts_with($url, './')) {
+                    if (str_starts_with($url, '@@PLUGINFILE@@/')) {
+                        $url = $this->filebase . substr($url, strlen('@@PLUGINFILE@@/'));
+                    } else if (str_starts_with($url, './')) {
                         $url = $this->filebase . substr($url, 2);
                     } else if (!str_starts_with($url, '/') && !preg_match('/^[a-zA-Z]+:/', $url)) {
                         $url = $this->filebase . $url;
@@ -198,7 +196,9 @@ final class markdown_formatter {
                 $text = $childRenderer->renderNodes($node->children());
                 $title = $node->getTitle();
                 if ($this->filebase !== null && trim($url ?? '') !== '' && !str_starts_with($url, '#')) {
-                    if (str_starts_with($url, './')) {
+                    if (str_starts_with($url, '@@PLUGINFILE@@/')) {
+                        $url = $this->filebase . substr($url, strlen('@@PLUGINFILE@@/'));
+                    } else if (str_starts_with($url, './')) {
                         $url = $this->filebase . substr($url, 2);
                     } else if (!str_starts_with($url, '/') && !preg_match('/^[a-zA-Z]+:/', $url)) {
                         $url = $this->filebase . $url;
