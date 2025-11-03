@@ -53,11 +53,39 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
      * @param bool $editing
      */
     public function __construct(chapter $chapter, toc $toc, url $pageurl, bool $editing) {
-        if ($chapter->parentid) {
-            parent::__construct(get_string('subchapter_actions', 'mod_mubook'));
+        $mubook = $toc->get_mubook();
+        $context = $toc->get_context();
+        $orphaned = $toc->is_orphaned_chapter($chapter->id);
+
+        $viewallurl = new url('/mod/mubook/viewall.php', ['id' => $context->instanceid]);
+        $viewurl = new url('/mod/mubook/view.php', ['id' => $context->instanceid]);
+        $viewchapterurl = new url('/mod/mubook/viewchapter.php', ['id' => $chapter->id]);
+
+        $isviewurl = $pageurl->compare($viewurl, URL_MATCH_BASE);
+        $isviewchapterurl = $pageurl->compare($viewchapterurl, URL_MATCH_BASE);
+
+        $chaptertitle = $chapter->format_title();
+
+        if ($isviewurl) {
+            if ($chapter->parentid) {
+                $label = get_string('subchapter_actions_a', 'mod_mubook', $chaptertitle);
+            } else {
+                $label = get_string('chapter_actions_a', 'mod_mubook', $chaptertitle);
+            }
         } else {
-            parent::__construct(get_string('chapter_actions', 'mod_mubook'));
+            if ($chapter->parentid) {
+                if ($isviewchapterurl && $pageurl->param('id') != $chapter->id) {
+                    $label = get_string('subchapter_actions_a', 'mod_mubook', $chaptertitle);
+                } else {
+                    $label = get_string('subchapter_actions', 'mod_mubook');
+                }
+            } else {
+                $label = get_string('chapter_actions', 'mod_mubook');
+            }
         }
+
+        parent::__construct($label);
+
         $this->chapter = $chapter;
         $this->toc = $toc;
         $this->pageurl = $pageurl;
@@ -68,22 +96,11 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
             // use book_actions if there are any extras in normal mode.
             return;
         }
-
-        $mubook = $toc->get_mubook();
-        $context = $toc->get_context();
-        $orphaned = $toc->is_orphaned_chapter($chapter->id);
-
-        $viewallurl = new url('/mod/mubook/viewall.php', ['id' => $context->instanceid]);
         if ($pageurl->compare($viewallurl, URL_MATCH_BASE)) {
             // Do not clutter viewall page with any actions,
             // use book_actions if there are any extras needed.
             return;
         }
-        $viewurl = new url('/mod/mubook/view.php', ['id' => $context->instanceid]);
-        $viewchapterurl = new url('/mod/mubook/viewchapter.php', ['id' => $chapter->id]);
-
-        $isviewurl = $pageurl->compare($viewurl);
-        $isviewchapterurl = $pageurl->compare($viewchapterurl);
 
         $cman = \core\di::get(\mod_mubook\local\content_manager::class);
 

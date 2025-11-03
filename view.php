@@ -74,7 +74,7 @@ if ($PAGE->user_is_editing()) {
             $button = $link->create_button(true, false, true);
             $headeractions = $renderer->render($button);
         } else {
-            $link = chapter::get_create_link($mubook, 0, false);
+            $link = chapter::get_create_link($mubook, 0, false, 0);
             $button = $link->create_button(true, false, false);
             $headeractions = $renderer->render($button);
         }

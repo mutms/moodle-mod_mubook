@@ -60,8 +60,8 @@ class mod_mubook_generator extends \testing_module_generator {
         $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
         $context = context_module::instance($cm->id);
 
+        $this->chaptercount++;
         if (empty($record->title)) {
-            $this->chaptercount++;
             $record->title = 'Chapter ' . $this->chaptercount;
         }
 

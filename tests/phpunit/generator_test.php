@@ -115,6 +115,16 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame('Chapter XXX 2', $chapter2->title);
         $this->assertSame('1', $chapter2->sortorder);
         $this->assertSame(null, $chapter2->originjson);
+
+        $chapter3 = $generator->create_chapter([
+            'mubookid' => $mubook->id,
+        ]);
+        $this->assertInstanceOf(chapter::class, $chapter3);
+        $this->assertSame($mubook->id, $chapter3->mubookid);
+        $this->assertSame(null, $chapter3->parentid);
+        $this->assertSame('Chapter 3', $chapter3->title);
+        $this->assertSame('2', $chapter3->sortorder);
+        $this->assertSame(null, $chapter3->originjson);
     }
 
     public function test_create_chapter_content(): void {

@@ -80,7 +80,19 @@ if ($form->is_cancelled()) {
     $toc = \mod_mubook\local\toc::fix_sortorders($mubook->id);
     $returnurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $chapter->id]);
 
-    if (!empty($data->contentcreate)) {
+    if (empty($data->contentcreate)) {
+        if ($fromcreatechapterid == 0) {
+            $returnurl = new \core\url('/mod/mubook/view.php', ['id' => $cm->id]);
+        } else if ($fromcreatechapterid > 0) {
+            if ($chapter->parentid) {
+                if ($fromcreatechapterid == $chapter->parentid) {
+                    $returnurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $fromcreatechapterid]);
+                } else {
+                    $returnurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $chapter->parentid]);
+                }
+            }
+        }
+    } else {
         $cman = \core\di::get(\mod_mubook\local\content_manager::class);
         $contentclasses = $cman->get_available_classes();
         if (isset($contentclasses[$data->contentcreate])) {

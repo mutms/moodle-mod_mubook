@@ -104,7 +104,11 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
             $mform->setDefault('position', 0);
         }
 
-        $mform->addElement('text', 'title', get_string('chapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+        if ($subchapter) {
+            $mform->addElement('text', 'title', get_string('subchapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+        } else {
+            $mform->addElement('text', 'title', get_string('chapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+        }
         $mform->addRule('title', get_string('required'), 'required', null, 'client');
         $mform->setType('title', PARAM_TEXT);
 
@@ -129,7 +133,7 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
             }
         }
         \core_collator::asort($options);
-        $options[''] = get_string('no');
+        $options[''] = get_string('none');
         $mform->addElement('select', 'contentcreate', get_string('content_create', 'mod_mubook'), $options);
         if (isset($options[$mubook->contentdefault])) {
             $mform->setDefault('contentcreate', $mubook->contentdefault);

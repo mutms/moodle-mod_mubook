@@ -32,6 +32,7 @@ $string['book_printedby'] = 'Printed by';
 $string['book_toc'] = 'Table of contents';
 $string['book_viewall'] = 'View all chapters';
 $string['chapter_actions'] = 'Chapter actions';
+$string['chapter_actions_a'] = 'Chapter actions: {$a}';
 $string['chapter_create'] = 'Add chapter';
 $string['chapter_delete'] = 'Delete chapter';
 $string['chapter_first_a'] = 'First chapter {$a}';
@@ -123,6 +124,7 @@ $string['restoreothertrustunsafe_desc'] = 'For security reasons it is not recomm
 If disabled then every unsafe content instance restored from backups from other sites will have to be marked as trusted manually.';
 $string['subchapter'] = 'Sub-chapter';
 $string['subchapter_actions'] = 'Sub-chapter actions';
+$string['subchapter_actions_a'] = 'Sub-chapter actions: {$a}';
 $string['subchapter_create'] = 'Add sub-chapter';
 $string['subchapter_delete'] = 'Delete sub-chapter';
 $string['subchapter_move'] = 'Move sub-chapter';

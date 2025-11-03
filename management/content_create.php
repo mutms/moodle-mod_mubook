@@ -82,9 +82,14 @@ if ($form->is_cancelled()) {
         $returnurl = new url('/mod/mubook/view.php', ['id' => $cm->id]);
         $returnurl->set_anchor('mubook-chapter-' . $chapter->id);
     } else if ($fromcreatechapterid > 0) {
-        $from = $toc->get_chapter($fromcreatechapterid);
-        if ($from) {
-            $returnurl = new url('/mod/mubook/viewchapter.php', ['id' => $from->id]);
+        if ($chapter->parentid) {
+            if ($fromcreatechapterid == $chapter->parentid) {
+                $returnurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $fromcreatechapterid]);
+            } else {
+                $returnurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $chapter->parentid]);
+            }
+        } else {
+            $returnurl = new url('/mod/mubook/viewchapter.php', ['id' => $fromcreatechapterid]);
         }
     }
     redirect($returnurl);

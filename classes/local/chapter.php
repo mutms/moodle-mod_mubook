@@ -94,7 +94,9 @@ final class chapter {
                 $parent = $afterchapter;
             }
         } else {
-            if ($data->position ?? null) {
+            if (!isset($data->position)) {
+                $sortorder = 1 + (int)$DB->get_field('mubook_chapter', 'MAX(sortorder)', ['mubookid' => $mubook->id, 'parentid' => null]);
+            } else if ($data->position) {
                 $afterchapter = $DB->get_record('mubook_chapter', ['id' => $data->position, 'mubookid' => $mubook->id, 'parentid' => null]);
                 if ($afterchapter) {
                     $sortorder = $afterchapter->sortorder + 1;
