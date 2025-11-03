@@ -38,7 +38,7 @@ final class course_module_instance_list_viewed extends \core\event\course_module
             'context' => \context_course::instance($course->id),
         ];
         /** @var self $event */
-        $event = \mod_book\event\course_module_instance_list_viewed::create($params);
+        $event = self::create($params);
         $event->add_record_snapshot('course', $course);
         return $event;
     }

@@ -59,7 +59,7 @@ final class all_chapters_viewed extends \core\event\base {
 
     #[\Override]
     public function get_url() {
-        return new \core\url('/mod/book/viewall.php', ['id' => $this->contextinstanceid]);
+        return new \core\url('/mod/mubook/viewall.php', ['id' => $this->contextinstanceid]);
     }
 
     #[\Override]

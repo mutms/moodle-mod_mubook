@@ -58,12 +58,12 @@ final class chapter_deleted extends \core\event\base {
 
     #[\Override]
     public static function get_name() {
-        return get_string('event_chapter_updated', 'mod_mubook');
+        return get_string('event_chapter_deleted', 'mod_mubook');
     }
 
     #[\Override]
     public function get_url() {
-        return new \core\url('/mod/book/view.php', ['id' => $this->contextinstanceid]);
+        return new \core\url('/mod/mubook/view.php', ['id' => $this->contextinstanceid]);
     }
 
     #[\Override]

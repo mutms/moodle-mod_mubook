@@ -62,7 +62,7 @@ final class chapter_created extends \core\event\base {
 
     #[\Override]
     public function get_url() {
-        return new \core\url('/mod/book/viewchapter.php', ['id' => $this->objectid]);
+        return new \core\url('/mod/mubook/viewchapter.php', ['id' => $this->objectid]);
     }
 
     #[\Override]

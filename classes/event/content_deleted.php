@@ -69,7 +69,7 @@ final class content_deleted extends \core\event\base {
 
     #[\Override]
     public function get_url() {
-        return new \core\url('/mod/book/viewchapter.php', ['id' => $this->other['chapterid']]);
+        return new \core\url('/mod/mubook/viewchapter.php', ['id' => $this->other['chapterid']]);
     }
 
     #[\Override]
