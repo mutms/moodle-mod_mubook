@@ -290,6 +290,28 @@ final class chapter_test extends \advanced_testcase {
 
         $chapterx = $generator->create_chapter(['mubookid' => $mubook2->id]);
 
+        $subchapter1x1 = chapter::move($subchapter1x1->id, true, $subchapter1x2->id);
+        $subchapter1x1 = self::refetch_chapter($subchapter1x1);
+        $subchapter1x2 = self::refetch_chapter($subchapter1x2);
+        $subchapter1x3 = self::refetch_chapter($subchapter1x3);
+        $this->assertSame($chapter1->id, $subchapter1x1->parentid);
+        $this->assertSame($chapter1->id, $subchapter1x2->parentid);
+        $this->assertSame($chapter1->id, $subchapter1x3->parentid);
+        $this->assertSame('1', $subchapter1x2->sortorder);
+        $this->assertSame('2', $subchapter1x1->sortorder);
+        $this->assertSame('3', $subchapter1x3->sortorder);
+
+        $subchapter1x1 = chapter::move($subchapter1x1->id, true, $chapter1->id);
+        $subchapter1x1 = self::refetch_chapter($subchapter1x1);
+        $subchapter1x2 = self::refetch_chapter($subchapter1x2);
+        $subchapter1x3 = self::refetch_chapter($subchapter1x3);
+        $this->assertSame($chapter1->id, $subchapter1x1->parentid);
+        $this->assertSame($chapter1->id, $subchapter1x2->parentid);
+        $this->assertSame($chapter1->id, $subchapter1x3->parentid);
+        $this->assertSame('1', $subchapter1x1->sortorder);
+        $this->assertSame('2', $subchapter1x2->sortorder);
+        $this->assertSame('3', $subchapter1x3->sortorder);
+
         $subchapter2x2 = chapter::move($subchapter1x2->id, true, $chapter2->id);
         $subchapter1x1 = self::refetch_chapter($subchapter1x1);
         $subchapter1x3 = self::refetch_chapter($subchapter1x3);

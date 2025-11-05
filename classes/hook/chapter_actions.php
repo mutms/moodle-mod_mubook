@@ -120,13 +120,18 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
         if ($chapter->can_move()) {
             if ($orphaned || count($chapters) > 1) {
                 $link = $chapter->get_move_link();
+                if ($isviewurl) {
+                    $link->set_submitted_action($link::SUBMITTED_ACTION_RELOAD);
+                }
                 $this->add_ajax_form($link);
             }
         }
 
         if ($chapter->can_delete()) {
             $link = $chapter->get_delete_link();
-            if ($pageurl->compare($viewchapterurl, URL_MATCH_BASE) && !$isviewchapterurl) {
+            if ($isviewurl) {
+                $link->set_submitted_action($link::SUBMITTED_ACTION_RELOAD);
+            } else if ($isviewchapterurl && $pageurl->param('id') != $chapter->id) {
                 $link->set_submitted_action($link::SUBMITTED_ACTION_RELOAD);
             }
             $this->add_ajax_form($link);

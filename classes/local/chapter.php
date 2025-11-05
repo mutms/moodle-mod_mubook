@@ -97,10 +97,8 @@ final class chapter {
             if (!isset($data->position)) {
                 $sortorder = 1 + (int)$DB->get_field('mubook_chapter', 'MAX(sortorder)', ['mubookid' => $mubook->id, 'parentid' => null]);
             } else if ($data->position) {
-                $afterchapter = $DB->get_record('mubook_chapter', ['id' => $data->position, 'mubookid' => $mubook->id, 'parentid' => null]);
-                if ($afterchapter) {
-                    $sortorder = $afterchapter->sortorder + 1;
-                }
+                $afterchapter = $DB->get_record('mubook_chapter', ['id' => $data->position, 'mubookid' => $mubook->id, 'parentid' => null], '*', MUST_EXIST);
+                $sortorder = $afterchapter->sortorder + 1;
             }
         }
 
@@ -277,6 +275,7 @@ final class chapter {
             }
         }
 
+        $oldparentid = $record->parentid;
         $sortorder = 1;
         $parent = null;
         if ($subchapter) {
@@ -290,27 +289,14 @@ final class chapter {
         } else {
             if ($position) {
                 $afterchapter = $DB->get_record('mubook_chapter', ['id' => $position, 'mubookid' => $mubook->id, 'parentid' => null], '*', MUST_EXIST);
-                if ($afterchapter) {
-                    $sortorder = $afterchapter->sortorder + 1;
-                }
+                $sortorder = $afterchapter->sortorder + 1;
             }
         }
+        $newparentid = $parent->id ?? null;
 
         $trans = $DB->start_delegated_transaction();
 
-        $sql = new \tool_mulib\local\sql(
-            "UPDATE {mubook_chapter}
-                SET sortorder = sortorder - 1
-              WHERE mubookid = :mubookid AND sortorder > :sortorder /* parent */",
-            ['mubookid' => $record->mubookid, 'sortorder' => $record->sortorder]
-        );
-        if ($record->parentid) {
-            $sql->replace_comment('parent', "AND parentid = ?", [$record->parentid]);
-        } else {
-            $sql->replace_comment('parent', "AND parentid IS NULL");
-        }
-        $DB->execute($sql->sql, $sql->params);
-
+        // Vacate sortorder.
         $sql = new \tool_mulib\local\sql(
             "UPDATE {mubook_chapter}
                 SET sortorder = sortorder + 1
@@ -331,6 +317,22 @@ final class chapter {
             'timemodified' => time(),
         ];
         $DB->update_record('mubook_chapter', $update);
+
+        // Fix sort orders.
+        $parentids = [$oldparentid];
+        if ($oldparentid != $newparentid) {
+            $parentids[] = $newparentid;
+        }
+        foreach ($parentids as $parentid) {
+            $chapters = $DB->get_records('mubook_chapter', ['mubookid' => $mubook->id, 'parentid' => $parentid], 'sortorder ASC, id ASC', 'id, sortorder');
+            $i = 0;
+            foreach ($chapters as $ch) {
+                $i++;
+                if ($ch->sortorder != $i) {
+                    $DB->set_field('mubook_chapter', 'sortorder', $i, ['id' => $ch->id]);
+                }
+            }
+        }
 
         $trans->allow_commit();
 
@@ -467,7 +469,7 @@ final class chapter {
         } else {
             $action = new link($url, get_string('chapter_move', 'mod_mubook'), 't/move');
         }
-        $action->set_submitted_action($action::SUBMITTED_ACTION_RELOAD);
+        $action->set_submitted_action($action::SUBMITTED_ACTION_REDIRECT);
         return $action;
     }
 

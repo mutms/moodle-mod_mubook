@@ -62,6 +62,14 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
             if ($subchapter) {
                 $afteroptions = [];
                 $positions = [];
+                if ($fromcreatechapterid > 0) {
+                    $from = $toc->get_chapter($fromcreatechapterid);
+                    if ($from && isset($topchapters[$from->id])) {
+                        // Restrict to creation in one parent chapter only,
+                        // this must be the viewchapter page.
+                        $topchapters = [$from->id => $topchapters[$from->id]];
+                    }
+                }
                 foreach ($topchapters as $chapter) {
                     $optgroup = $toc->get_numbered_chapter_title($chapter->id);
                     $option = get_string('subchapter_position_first', 'mod_mubook', $optgroup);
@@ -80,8 +88,10 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
                 $mform->addElement('selectgroups', 'position', get_string('subchapter_position', 'mod_mubook'), $afteroptions);
                 if (in_array($position, $positions)) {
                     $mform->setDefault('position', $position);
-                } else {
+                } else if (in_array($toc->get_last_chapter()->id, $positions)) {
                     $mform->setDefault('position', $toc->get_last_chapter()->id);
+                } else if ($fromcreatechapterid > 0 && in_array($fromcreatechapterid, $positions)) {
+                    $mform->setDefault('position', $fromcreatechapterid);
                 }
             } else {
                 $afteroptions = [

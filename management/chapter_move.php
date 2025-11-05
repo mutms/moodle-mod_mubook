@@ -70,6 +70,10 @@ if ($form->is_cancelled()) {
     }
     $toc = \mod_mubook\local\toc::fix_sortorders($mubook->id);
 
+    if ($chapter->parentid) {
+        $returnurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $chapter->parentid]);
+    }
+
     $form->ajax_form_submitted($returnurl);
 }
 

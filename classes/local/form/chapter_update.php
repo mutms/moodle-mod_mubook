@@ -32,7 +32,11 @@ final class chapter_update extends \tool_mulib\local\ajax_form {
         $mform = $this->_form;
         $chapter = $this->_customdata['chapter'];
 
-        $mform->addElement('text', 'title', get_string('chapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+        if ($chapter->parentid) {
+            $mform->addElement('text', 'title', get_string('subchapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+        } else {
+            $mform->addElement('text', 'title', get_string('chapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+        }
         $mform->addRule('title', get_string('required'), 'required', null, 'client');
         $mform->setType('title', PARAM_TEXT);
         $mform->setDefault('title', $chapter->title);
