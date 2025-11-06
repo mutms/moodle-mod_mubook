@@ -4,6 +4,7 @@
     }
 
     .header-action {
+        /* stylelint-disable-next-line declaration-no-important */
         white-space: nowrap !important;
     }
 
