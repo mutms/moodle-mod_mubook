@@ -75,7 +75,7 @@ Feature: Students may navigate chapters in mod_mubook
     And "Podkapitola 3" "text" should appear after "Podkapitola 2" "text"
     And "Treti kapitola" "text" should appear after "Podkapitola 3" "text"
     And "Podkapitola X" "text" should appear after "Treti kapitola" "text"
-    
+
     When I follow "Druha kapitola"
     And I should not see "This is an intro"
     And I click on "Book actions" "link_or_button"
