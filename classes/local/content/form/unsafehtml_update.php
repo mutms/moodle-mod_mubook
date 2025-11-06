@@ -44,7 +44,7 @@ final class unsafehtml_update extends \mod_mubook\local\form\content_update_base
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
 
-        $mform->addElement('textarea', 'text', get_string('content_type_text', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
+        $mform->addElement('textarea', 'text', get_string('content_type_unsafehtml', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
         $mform->setDefault('text', $content->data1);
 
         $mform->addElement('filemanager', 'files', get_string('content_files', 'mod_mubook'), null, self::get_content_files_options());

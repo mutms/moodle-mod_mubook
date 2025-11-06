@@ -55,7 +55,7 @@ final class content_actions extends \tool_mulib\output\dropdown {
      * @param bool $editing
      */
     public function __construct(content $content, chapter $chapter, toc $toc, url $pageurl, bool $editing) {
-        parent::__construct(get_string('content_actions', 'mod_mubook'));
+        parent::__construct(get_string('content_actions_a', 'mod_mubook', $content->sortorder));
         $this->content = $content;
         $this->chapter = $chapter;
         $this->toc = $toc;

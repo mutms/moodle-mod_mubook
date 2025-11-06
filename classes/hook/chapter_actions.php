@@ -169,19 +169,19 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
                     $this->add_ajax_form($link);
                 }
             }
+        }
 
-            if ($isviewchapterurl) {
-                if ($chapter->parentid) {
-                    $link = $cman->get_create_content_link($chapter, 0);
-                    $this->button = $link->create_button(true, false, true);
-                } else {
-                    if ($cman->can_create_content($chapter, $mubook, $context)) {
-                        if ($this->has_items()) {
-                            $this->add_divider();
-                        }
-                        $link = $cman->get_create_content_link($chapter, 0);
-                        $this->add_ajax_form($link);
+        if ($isviewchapterurl && $cman->can_create_content($chapter, $mubook, $context)) {
+            if ($chapter->parentid) {
+                $link = $cman->get_create_content_link($chapter, 0);
+                $this->button = $link->create_button(true, false, true);
+            } else {
+                if ($cman->can_create_content($chapter, $mubook, $context)) {
+                    if ($this->has_items()) {
+                        $this->add_divider();
                     }
+                    $link = $cman->get_create_content_link($chapter, 0);
+                    $this->add_ajax_form($link);
                 }
             }
         }
