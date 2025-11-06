@@ -156,7 +156,6 @@ Feature: Students may navigate chapters in mod_mubook
     And I should see "Prvni kapitola"
     And I should see "Test jedna text"
 
-
   Scenario: Students may be forbidden to see all chapters in Interactive book
     Given the following "mod_mubook > chapters" exist:
       | mubook      | title          | subchapter | positionafter  |

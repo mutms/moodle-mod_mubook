@@ -3,6 +3,10 @@
         min-height: 140px;
     }
 
+    .header-action {
+        white-space: nowrap !important;
+    }
+
     #mubook-toc {
         .mubook-chapter-numbers {
             display: inline-block;
