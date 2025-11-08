@@ -28,12 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 
 /** @var stdClass $plugin */
 $plugin->component = 'mod_mubook';
-$plugin->version = 2025103150;
+$plugin->version = 2025110850;
 $plugin->requires = 2025041400;
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->supported = [500, 501];
 $plugin->release = 'mu-5.0.3-00';
 
 $plugin->dependencies = [
-    'tool_mulib' => 2025100650.01,
+    'tool_mulib' => 2025110850,
 ];
