@@ -1,5 +1,7 @@
 # Interactive book for Moodle™ LMS
 
+![Moodle Plugin CI](https://github.com/mutms/moodle-mod_mubook/actions/workflows/moodle-ci.yml/badge.svg)
+
 Interactive book module is the successor to original Book module for Moodle. It is part of [MuTMS](https://github.com/mutms/) suite of plugins.
 
 ## New features and improvements
