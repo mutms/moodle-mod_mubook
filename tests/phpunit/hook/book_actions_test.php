@@ -65,13 +65,13 @@ final class book_actions_test extends \advanced_testcase {
         $called = false;
         $actions = new book_actions($toc, $viewpageurl, false);
         $this->assertTrue($called);
-        $this->assertFalse($actions->has_items());
+        $this->assertFalse($actions->dropdown->has_items());
 
         $this->setUser($user2);
         $called = false;
         $actions = new book_actions($toc, $viewpageurl, false);
         $this->assertTrue($called);
-        $this->assertFalse($actions->has_items());
+        $this->assertFalse($actions->dropdown->has_items());
 
         $chapter = $generator->create_chapter(['mubookid' => $mubook->id]);
         $toc = new \mod_mubook\local\toc($mubook);
@@ -80,12 +80,12 @@ final class book_actions_test extends \advanced_testcase {
         $called = false;
         $actions = new book_actions($toc, $viewpageurl, false);
         $this->assertTrue($called);
-        $this->assertTrue($actions->has_items());
+        $this->assertTrue($actions->dropdown->has_items());
 
         $this->setUser($user2);
         $called = false;
         $actions = new book_actions($toc, $viewpageurl, false);
         $this->assertTrue($called);
-        $this->assertTrue($actions->has_items());
+        $this->assertTrue($actions->dropdown->has_items());
     }
 }

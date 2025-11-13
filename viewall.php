@@ -72,8 +72,8 @@ $renderer = $PAGE->get_renderer('mod_mubook', 'viewall');
 
 $headeractions = $OUTPUT->render_from_template('mod_mubook/print', []);
 $actions = new \mod_mubook\hook\book_actions($toc, $PAGE->url, $PAGE->user_is_editing());
-if ($actions->has_items()) {
-    $headeractions .= $renderer->render($actions);
+if ($actions->dropdown->has_items()) {
+    $headeractions .= $renderer->render($actions->dropdown);
 }
 $PAGE->add_header_action($headeractions);
 

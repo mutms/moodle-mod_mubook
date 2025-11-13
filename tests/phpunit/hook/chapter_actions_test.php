@@ -66,22 +66,22 @@ final class chapter_actions_test extends \advanced_testcase {
         $called = false;
         $actions = new chapter_actions($chapter, $toc, $viewpageurl, false);
         $this->assertFalse($called);
-        $this->assertFalse($actions->has_items());
+        $this->assertFalse($actions->dropdown->has_items());
 
         $called = false;
         $actions = new chapter_actions($chapter, $toc, $viewpageurl, true);
         $this->assertTrue($called);
-        $this->assertFalse($actions->has_items());
+        $this->assertFalse($actions->dropdown->has_items());
 
         $this->setUser($user2);
         $called = false;
         $actions = new chapter_actions($chapter, $toc, $viewpageurl, false);
         $this->assertFalse($called);
-        $this->assertFalse($actions->has_items());
+        $this->assertFalse($actions->dropdown->has_items());
 
         $called = false;
         $actions = new chapter_actions($chapter, $toc, $viewpageurl, true);
         $this->assertTrue($called);
-        $this->assertTrue($actions->has_items());
+        $this->assertTrue($actions->dropdown->has_items());
     }
 }

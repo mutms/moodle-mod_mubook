@@ -39,6 +39,11 @@ Additional features:
 
 * content files are accessible via relative links or @@PLUGINFILE@@ prefix
 
+## Installation from plugins database
+
+1. Install [Additional tools library for MuTMS plugins](https://moodle.org/plugins/view.php?id=3560) plugin
+2. Install [interactive book](https://moodle.org/plugins/view.php?id=3822) plugin
+
 ## Installation via git
 
 ```bash

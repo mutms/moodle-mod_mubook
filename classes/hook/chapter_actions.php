@@ -32,7 +32,7 @@ use tool_mulib\output\ajax_form\button;
  */
 #[\core\attribute\label('Interactive book chapter actions dropdown')]
 #[\core\attribute\tags('mod_mubook')]
-final class chapter_actions extends \tool_mulib\output\dropdown {
+final class chapter_actions {
     /** @var chapter */
     public $chapter;
     /** @var toc */
@@ -43,6 +43,9 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
     public $editing;
     /** @var button */
     protected $button;
+
+    /** @var \tool_mulib\output\dropdown */
+    public $dropdown;
 
     /**
      * Chapter actions dropdown constructor.
@@ -84,7 +87,7 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
             }
         }
 
-        parent::__construct($label);
+        $this->dropdown = new \tool_mulib\output\dropdown($label);
 
         $this->chapter = $chapter;
         $this->toc = $toc;
@@ -114,7 +117,7 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
 
         if ($chapter->can_update()) {
             $link = $chapter->get_update_link();
-            $this->add_ajax_form($link);
+            $this->dropdown->add_ajax_form($link);
         }
 
         if ($chapter->can_move()) {
@@ -123,7 +126,7 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
                 if ($isviewurl) {
                     $link->set_submitted_action($link::SUBMITTED_ACTION_RELOAD);
                 }
-                $this->add_ajax_form($link);
+                $this->dropdown->add_ajax_form($link);
             }
         }
 
@@ -134,7 +137,7 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
             } else if ($isviewchapterurl && $pageurl->param('id') != $chapter->id) {
                 $link->set_submitted_action($link::SUBMITTED_ACTION_RELOAD);
             }
-            $this->add_ajax_form($link);
+            $this->dropdown->add_ajax_form($link);
         }
 
         if (!$orphaned && chapter::can_create($mubook, $context)) {
@@ -162,11 +165,11 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
             }
 
             if ($links) {
-                if ($this->has_items()) {
-                    $this->add_divider();
+                if ($this->dropdown->has_items()) {
+                    $this->dropdown->add_divider();
                 }
                 foreach ($links as $link) {
-                    $this->add_ajax_form($link);
+                    $this->dropdown->add_ajax_form($link);
                 }
             }
         }
@@ -177,11 +180,11 @@ final class chapter_actions extends \tool_mulib\output\dropdown {
                 $this->button = $link->create_button(true, false, true);
             } else {
                 if ($cman->can_create_content($chapter, $mubook, $context)) {
-                    if ($this->has_items()) {
-                        $this->add_divider();
+                    if ($this->dropdown->has_items()) {
+                        $this->dropdown->add_divider();
                     }
                     $link = $cman->get_create_content_link($chapter, 0);
-                    $this->add_ajax_form($link);
+                    $this->dropdown->add_ajax_form($link);
                 }
             }
         }

@@ -1,5 +1,11 @@
 # Changelog
 
+## mu-4.5.7-01
+
+Release date: 14/11/2025
+
+* Fixed tool_mulib dependency error during installation.
+
 ## mu-4.5.7-00
 
 Release date: 08/11/2025
