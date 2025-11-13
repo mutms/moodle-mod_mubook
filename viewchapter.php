@@ -89,8 +89,8 @@ $PAGE->activityheader->set_hidecompletion(true);
 $PAGE->activityheader->set_description('');
 
 $actions = new \mod_mubook\hook\book_actions($toc, $PAGE->url, $PAGE->user_is_editing());
-if ($actions->has_items()) {
-    $PAGE->add_header_action($renderer->render($actions));
+if ($actions->dropdown->has_items()) {
+    $PAGE->add_header_action($renderer->render($actions->dropdown));
 }
 
 \mod_mubook\event\chapter_viewed::create_from_chapter($chapter)->trigger();

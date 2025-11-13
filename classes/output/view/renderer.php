@@ -75,7 +75,7 @@ class renderer extends \plugin_renderer_base {
                 'title' => $chapter->format_title(),
                 'subchapters' => [],
                 'url' => new \core\url('/mod/mubook/viewchapter.php', ['id' => $chapter->id]),
-                'actions' => $actions->has_items() ? $this->render($actions) : null,
+                'actions' => $actions->dropdown->has_items() ? $this->render($actions->dropdown) : null,
             ];
             if (isset($subchapters[$chapter->id])) {
                 if (!$editing && count($subchapters[$chapter->id]) > 2) {
@@ -88,7 +88,7 @@ class renderer extends \plugin_renderer_base {
                         'numbers' => $toc->format_chapter_numbers($subchapter->id),
                         'title' => $subchapter->format_title(),
                         'url' => new \core\url('/mod/mubook/viewchapter.php', ['id' => $subchapter->id]),
-                        'actions' => $actions->has_items() ? $this->render($actions) : null,
+                        'actions' => $actions->dropdown->has_items() ? $this->render($actions->dropdown) : null,
                     ];
                 }
             }
@@ -108,7 +108,7 @@ class renderer extends \plugin_renderer_base {
                     'numbers' => null,
                     'title' => $subchapter->format_title(),
                     'url' => new \core\url('/mod/mubook/viewchapter.php', ['id' => $subchapter->id]),
-                    'actions' => $actions->has_items() ? $this->render($actions) : null,
+                    'actions' => $actions->dropdown->has_items() ? $this->render($actions->dropdown) : null,
                 ];
             }
         }

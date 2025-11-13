@@ -33,7 +33,7 @@ use core\url;
  */
 #[\core\attribute\label('Interactive book content actions dropdown')]
 #[\core\attribute\tags('mod_mubook')]
-final class content_actions extends \tool_mulib\output\dropdown {
+final class content_actions {
     /** @var content */
     public $content;
     /** @var chapter */
@@ -45,6 +45,9 @@ final class content_actions extends \tool_mulib\output\dropdown {
     /** @var bool */
     public $editing;
 
+    /** @var \tool_mulib\output\dropdown */
+    public $dropdown;
+
     /**
      * Content actions dropdown constructor.
      *
@@ -55,7 +58,7 @@ final class content_actions extends \tool_mulib\output\dropdown {
      * @param bool $editing
      */
     public function __construct(content $content, chapter $chapter, toc $toc, url $pageurl, bool $editing) {
-        parent::__construct(get_string('content_actions_a', 'mod_mubook', $content->sortorder));
+        $this->dropdown = new \tool_mulib\output\dropdown(get_string('content_actions_a', 'mod_mubook', $content->sortorder));
         $this->content = $content;
         $this->chapter = $chapter;
         $this->toc = $toc;
@@ -69,12 +72,12 @@ final class content_actions extends \tool_mulib\output\dropdown {
 
         if ($content->can_update()) {
             $url = $content->get_update_url();
-            $this->add_item(get_string('content_update', 'mod_mubook'), $url, new pix_icon('i/edit', ''));
+            $this->dropdown->add_item(get_string('content_update', 'mod_mubook'), $url, new pix_icon('i/edit', ''));
         }
 
         if ($content->can_delete()) {
             $link = $content->get_delete_link();
-            $this->add_ajax_form($link);
+            $this->dropdown->add_ajax_form($link);
         }
 
         \core\di::get(\core\hook\manager::class)->dispatch($this);

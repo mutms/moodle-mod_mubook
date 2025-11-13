@@ -31,13 +31,16 @@ use core\url;
  */
 #[\core\attribute\label('Interactive book actions dropdown')]
 #[\core\attribute\tags('mod_mubook')]
-final class book_actions extends \tool_mulib\output\dropdown {
+final class book_actions {
     /** @var toc */
     public $toc;
     /** @var string */
     public $pageurl;
     /** @var bool */
     public $editing;
+
+    /** @var \tool_mulib\output\dropdown */
+    public $dropdown;
 
     /**
      * Book actions dropdown constructor.
@@ -47,7 +50,7 @@ final class book_actions extends \tool_mulib\output\dropdown {
      * @param bool $editing
      */
     public function __construct(toc $toc, url $pageurl, bool $editing) {
-        parent::__construct(get_string('book_actions', 'mod_mubook'));
+        $this->dropdown = new \tool_mulib\output\dropdown(get_string('book_actions', 'mod_mubook'));
         $this->toc = $toc;
         $this->pageurl = $pageurl;
         $this->editing = $editing;
@@ -58,13 +61,13 @@ final class book_actions extends \tool_mulib\output\dropdown {
             $viewall = new url('/mod/mubook/viewall.php', ['id' => $context->instanceid]);
             if (!$pageurl->compare($viewall, URL_MATCH_BASE)) {
                 if (has_capability('mod/mubook:viewall', $context)) {
-                    $this->add_item(get_string('book_viewall', 'mod_mubook'), $viewall, new pix_icon('viewall', '', 'mod_mubook'));
+                    $this->dropdown->add_item(get_string('book_viewall', 'mod_mubook'), $viewall, new pix_icon('viewall', '', 'mod_mubook'));
                 }
             }
             $viewurl = new url('/mod/mubook/view.php', ['id' => $context->instanceid]);
             if (!$pageurl->compare($viewurl, URL_MATCH_BASE)) {
                 if (has_capability('mod/mubook:view', $context)) {
-                    $this->add_item(get_string('book_toc', 'mod_mubook'), $viewurl, new pix_icon('toc', '', 'mod_mubook'));
+                    $this->dropdown->add_item(get_string('book_toc', 'mod_mubook'), $viewurl, new pix_icon('toc', '', 'mod_mubook'));
                 }
             }
         }

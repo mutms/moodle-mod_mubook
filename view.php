@@ -81,8 +81,8 @@ if ($PAGE->user_is_editing()) {
     }
 }
 $actions = new \mod_mubook\hook\book_actions($toc, $PAGE->url, $PAGE->user_is_editing());
-if ($actions->has_items()) {
-    $headeractions .= $renderer->render($actions);
+if ($actions->dropdown->has_items()) {
+    $headeractions .= $renderer->render($actions->dropdown);
 }
 if ($headeractions) {
     $PAGE->add_header_action($headeractions);

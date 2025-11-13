@@ -52,8 +52,8 @@ class renderer extends \plugin_renderer_base {
         if ($actions->get_extra_button()) {
             $actionshtml .= $this->render($actions->get_extra_button());
         }
-        if ($actions->has_items()) {
-            $actionshtml .= $this->render($actions);
+        if ($actions->dropdown->has_items()) {
+            $actionshtml .= $this->render($actions->dropdown);
         }
         if ($actionshtml === '') {
             $actionshtml = null;
@@ -123,7 +123,7 @@ class renderer extends \plugin_renderer_base {
                 'numbers' => $toc->format_chapter_numbers($subchapter->id),
                 'title' => $subchapter->format_title(),
                 'url' => new \core\url('/mod/mubook/viewchapter.php', ['id' => $subchapter->id]),
-                'actions' => $actions->has_items() ? $this->render($actions) : null,
+                'actions' => $actions->dropdown->has_items() ? $this->render($actions->dropdown) : null,
             ];
         }
         return $data;
@@ -166,7 +166,7 @@ class renderer extends \plugin_renderer_base {
                 'type' => $content::get_type(),
                 'editing' => $editing,
                 'hidden' => (bool)$content->hidden,
-                'actions' => $actions->has_items() ? $this->render($actions) : null,
+                'actions' => $actions->dropdown->has_items() ? $this->render($actions->dropdown) : null,
                 'html' => $contenthtml,
             ];
             $html .= $this->render_from_template('mod_mubook/content', $data);
