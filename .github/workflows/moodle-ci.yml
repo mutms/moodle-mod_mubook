@@ -11,7 +11,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:14
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -30,19 +30,37 @@ jobs:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
 
+      mysqli:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ''
+          MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+          MYSQL_CHARACTER_SET_SERVER: "utf8mb4"
+          MYSQL_COLLATION_SERVER: "utf8mb4_unicode_ci"
+        ports:
+          - 3304:3306
+        options: --health-cmd="mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 3
+
     strategy:
       fail-fast: false
       matrix:
         include:
-          - php: '8.2'
+          - php: '8.1'
             moodle-branch: 'MOODLE_405_STABLE'
             database: pgsql
+            dbport: 5432
+          - php: '8.2'
+            moodle-branch: 'MOODLE_405_STABLE'
+            database: mysqli
+            dbport: 3304
           - php: '8.3'
             moodle-branch: 'MOODLE_405_STABLE'
             database: pgsql
+            dbport: 5432
           - php: '8.1'
             moodle-branch: 'MOODLE_405_STABLE'
             database: mariadb
+            dbport: 3306
 
     steps:
       - name: Check out repository code
@@ -71,10 +89,10 @@ jobs:
       - name: Install moodle-plugin-ci
         run: |
           moodle-plugin-ci add-plugin --branch MOODLE_405_STABLE mutms/moodle-tool_mulib
-          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
-
+          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --db-port=${{ matrix.dbport }}
         env:
           DB: ${{ matrix.database }}
+          DBPORT: ${{ matrix.dbport }}
           MOODLE_REPO: https://github.com/mutms/moodle.git
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
 
