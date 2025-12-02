@@ -123,9 +123,9 @@ final class chapter {
             ['mubookid' => $record->mubookid, 'sortorder' => $record->sortorder]
         );
         if ($record->parentid) {
-            $sql->replace_comment('parent', "AND parentid = ?", [$record->parentid]);
+            $sql = $sql->replace_comment('parent', "AND parentid = ?", [$record->parentid]);
         } else {
-            $sql->replace_comment('parent', "AND parentid IS NULL");
+            $sql = $sql->replace_comment('parent', "AND parentid IS NULL");
         }
         $DB->execute($sql->sql, $sql->params);
 
@@ -242,9 +242,9 @@ final class chapter {
             ['mubookid' => $record->mubookid, 'sortorder' => $record->sortorder]
         );
         if ($record->parentid) {
-            $sql->replace_comment('parent', "AND parentid = ?", [$record->parentid]);
+            $sql = $sql->replace_comment('parent', "AND parentid = ?", [$record->parentid]);
         } else {
-            $sql->replace_comment('parent', "AND parentid IS NULL");
+            $sql = $sql->replace_comment('parent', "AND parentid IS NULL");
         }
         $DB->execute($sql->sql, $sql->params);
 
@@ -304,9 +304,9 @@ final class chapter {
             ['mubookid' => $record->mubookid, 'sortorder' => $sortorder]
         );
         if ($parent) {
-            $sql->replace_comment('parent', "AND parentid = ?", [$parent->id]);
+            $sql = $sql->replace_comment('parent', "AND parentid = ?", [$parent->id]);
         } else {
-            $sql->replace_comment('parent', "AND parentid IS NULL");
+            $sql = $sql->replace_comment('parent', "AND parentid IS NULL");
         }
         $DB->execute($sql->sql, $sql->params);
 
