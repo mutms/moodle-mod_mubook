@@ -6,7 +6,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## [Unreleased]
 
-- No changes
+### Changed
+
+- Updated required libraries
 
 ## [mu-5.0.4-03] - 2025-12-31
 
