@@ -4,44 +4,44 @@ Plugin versioning is derived from Moodle releases, it does not comply with the s
 
 The format of this change log follows the advice given at [Keep a CHANGELOG](https://keepachangelog.com).
 
-## [Unreleased]
+## [Unreleased](https://github.com/mutms/moodle-mod_mubook/compare/v4.5.10.01...HEAD)
 
 - No changes
 
-## [v4.5.10.01] - 2026-02-12
+## [v4.5.10.01](https://github.com/mutms/moodle-mod_mubook/compare/mu-4.5.9-01...v4.5.10.01) - 2026-02-12
 
 ### Changed
 
 - Switched to new release number format to prepare for composer support
 
-## [mu-4.5.9-01] - 2026-02-08
+## [mu-4.5.9-01](https://github.com/mutms/moodle-mod_mubook/compare/mu-4.5.8-04...mu-4.5.9-01) - 2026-02-08
 
 - No changes
 
-## [mu-4.5.8-04] - 2026-01-25
+## [mu-4.5.8-04](https://github.com/mutms/moodle-mod_mubook/compare/mu-4.5.8-03...mu-4.5.8-04) - 2026-01-25
 
 ### Changed
 
 - Updated required libraries
 
-## [mu-4.5.8-03] - 2025-12-31
+## [mu-4.5.8-03](https://github.com/mutms/moodle-mod_mubook/compare/mu-4.5.8-02...mu-4.5.8-03) - 2025-12-31
 
 ### Changed
 
 - Switched to new change log format
 
-## [mu-4.5.8-02] - 2025-12-16
+## [mu-4.5.8-02](https://github.com/mutms/moodle-mod_mubook/compare/mu-4.5.8-01...mu-4.5.8-02) - 2025-12-16
 
 - No changes.
 
-## [mu-4.5.8-01] - 2025-12-08
+## [mu-4.5.8-01](https://github.com/mutms/moodle-mod_mubook/compare/mu-4.5.7-01...mu-4.5.8-01) - 2025-12-08
 
 - Updated use of sql fragments API.
 
-## [mu-4.5.7-01] - 2025-11-14
+## [mu-4.5.7-01](https://github.com/mutms/moodle-mod_mubook/compare/mu-4.5.7-00...mu-4.5.7-01) - 2025-11-14
 
 - Fixed tool_mulib dependency error during installation.
 
-## [mu-4.5.7-00] - 2025-11-08
+## [mu-4.5.7-00](https://github.com/mutms/moodle-mod_mubook/tree/mu-4.5.7-00) - 2025-11-08
 
 Initial preview release of new Interactive book module.
