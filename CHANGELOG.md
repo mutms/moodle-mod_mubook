@@ -6,7 +6,9 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 ## [Unreleased](https://github.com/mutms/moodle-mod_mubook/compare/v4.5.10.02...HEAD)
 
-- No changes
+### Fixed
+
+- Fixed non-function "Trusted unsafe content" checkbox to allow JavaScript in Unsafe Raw HTML content
 
 ## [v4.5.10.02](https://github.com/mutms/moodle-mod_mubook/compare/v4.5.10.01...v4.5.10.02) - 2026-03-01
 
