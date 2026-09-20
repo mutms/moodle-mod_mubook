@@ -37,7 +37,7 @@ final class markdown extends \mod_mubook\local\content {
             return $ident;
         }
         $text = str_replace('# ', '', $this->data1);
-        return $ident . ' - ' . mulib::clean_string(trim(shorten_text($text, 20)));
+        return $ident . ' - ' . clean_string(trim(shorten_text($text, 20)));
     }
 
     #[\Override]

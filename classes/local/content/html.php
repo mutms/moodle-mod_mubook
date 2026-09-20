@@ -37,7 +37,7 @@ final class html extends \mod_mubook\local\content {
         if (trim($this->data1 ?? '') === '') {
             return $ident;
         }
-        return $ident . ' - ' . mulib::clean_string(trim(shorten_text(strip_tags($this->data1), 20)));
+        return $ident . ' - ' . clean_string(trim(shorten_text(strip_tags($this->data1), 20)));
     }
 
     #[\Override]

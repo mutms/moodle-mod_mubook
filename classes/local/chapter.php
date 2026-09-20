@@ -500,7 +500,7 @@ final class chapter {
      */
     public function format_title(): string {
         $title = format_string($this->title, true, ['context' => $this->context]);
-        return mulib::clean_string($title);
+        return clean_string($title);
     }
 
     /**
