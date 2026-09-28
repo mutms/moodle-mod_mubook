@@ -32,19 +32,19 @@ Feature: Editors may manage chapters in mod_mubook
     And I should see "Add chapter"
 
     When I press "Add chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title | Treti kapitola |
       | Add content   | None           |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Treti kapitola"
 
     When I press "Add chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter position | First chapter   |
       | Chapter title    | Prvni kapitola  |
       | Add content      | HTML text       |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
     And I press "Cancel"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
@@ -52,11 +52,11 @@ Feature: Editors may manage chapters in mod_mubook
     And "Treti kapitola" "text" should appear after "Prvni kapitola" "text"
 
     When I press "Add chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter position | After 1 Prvni kapitola |
       | Chapter title    | Druha kapitola         |
       | Add content      | None                   |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And I should see "Druha kapitola"
@@ -65,10 +65,10 @@ Feature: Editors may manage chapters in mod_mubook
     And "Treti kapitola" "text" should appear after "Druha kapitola" "text"
 
     When I press "Add chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title    | Pata kapitola          |
       | Add content      | None                   |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And I should see "Druha kapitola"
@@ -80,10 +80,10 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Treti kapitola" "link_or_button"
     And I click on "Add chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title    | Ctvrta kapitola        |
       | Add content      | None                   |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And I should see "Druha kapitola"
@@ -97,10 +97,10 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Druha kapitola" "link_or_button"
     And I click on "Add sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter title | Podkapitola 2         |
       | Add content       | None                  |
-    And I click on "Add sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And I should see "Druha kapitola"
@@ -116,11 +116,11 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Druha kapitola" "link_or_button"
     And I click on "Add sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter position | First in 2 Druha kapitola |
       | Sub-chapter title    | Podkapitola 1             |
       | Add content          | None                      |
-    And I click on "Add sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And I should see "Druha kapitola"
@@ -138,10 +138,10 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Druha kapitola" "link_or_button"
     And I click on "Add sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter title    | Podkapitola 4             |
       | Add content          | HTML text                 |
-    And I click on "Add sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add sub-chapter" "button" in the "dialog[open]" "css_element"
     And I press "Cancel"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
@@ -162,11 +162,11 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Treti kapitola" "link_or_button"
     And I click on "Add sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter position | After 2.2 Podkapitola 2 |
       | Sub-chapter title    | Podkapitola 3           |
       | Add content          | None                    |
-    And I click on "Add sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And I should see "Druha kapitola"
@@ -190,43 +190,43 @@ Feature: Editors may manage chapters in mod_mubook
     Given I am on the "Test book 1" "mubook activity" page logged in as "teacher1"
     And I turn editing mode on
     And I press "Add chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title | Prvni kapitola |
       | Add content   | None           |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
     And I press "Add chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title | Druha kapitola |
       | Add content   | None           |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
 
     When I follow "Prvni kapitola"
     And I should see "Add sub-chapter"
 
     When I press "Add sub-chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter title    | Podkapitola 2 |
       | Add content          | None          |
-    And I click on "Add sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "Podkapitola 2"
 
     When I press "Add sub-chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter position | First in 1 Prvni kapitola |
       | Sub-chapter title    | Podkapitola 1             |
       | Add content          | HTML text                 |
-    And I click on "Add sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add sub-chapter" "button" in the "dialog[open]" "css_element"
     And I press "Cancel"
     Then I should see "Podkapitola 1"
     And "Podkapitola 2" "text" should appear after "Podkapitola 1" "text"
 
     When I press "Add sub-chapter"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
+    And the following muform fields in the "dialog[open]" "css_element" match:
       | Sub-chapter position | After 1.2 Podkapitola 2 |
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter title    | Podkapitola 3  |
       | Add content          | None           |
-    And I click on "Add sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "Podkapitola 1"
     And "Podkapitola 2" "text" should appear after "Podkapitola 1" "text"
     And "Podkapitola 3" "text" should appear after "Podkapitola 2" "text"
@@ -244,9 +244,9 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Prvni kapitola" "link_or_button"
     And I click on "Update chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title    | Erste Kapitel         |
-    And I click on "Update chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Erste Kapitel"
     And "Druha kapitola" "text" should appear after "Erste Kapitel" "text"
@@ -256,9 +256,9 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Sub-chapter actions: Podkapitola 2" "link_or_button"
     And I click on "Update sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter title    | Unterkapitel 2         |
-    And I click on "Update sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Erste Kapitel"
     And "Druha kapitola" "text" should appear after "Erste Kapitel" "text"
@@ -270,9 +270,9 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Sub-chapter actions: Podkapitola 1" "link_or_button"
     And I click on "Update sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter title    | Unterkapitel 1         |
-    And I click on "Update sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should see "Druha kapitola"
     And "Unterkapitel 1" "text" should appear after "Druha kapitola" "text"
@@ -280,9 +280,9 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Update chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title    | Zweite Kapitel        |
-    And I click on "Update chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update chapter" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should see "Zweite Kapitel"
     And "Unterkapitel 1" "text" should appear after "Zweite Kapitel" "text"
@@ -303,7 +303,7 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Prvni kapitola" "link_or_button"
     And I click on "Delete chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should not see "Prvni kapitola"
     And "Podkapitola 1" "text" should appear after "Druha kapitola" "text"
@@ -314,7 +314,7 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Sub-chapter actions: Podkapitola 2" "link_or_button"
     And I click on "Delete sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should not see "Prvni kapitola"
     And I should not see "Podkapitola 2"
@@ -325,11 +325,11 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Druha kapitola" "link_or_button"
     And I click on "Delete chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete chapter" "button" in the "dialog[open]" "css_element"
     And I should see "Required"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Confirm deletion of 2 sub-chapters | 1 |
-    And I click on "Delete chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should not see "Prvni kapitola"
     And I should not see "Druha kapitola"
@@ -354,7 +354,7 @@ Feature: Editors may manage chapters in mod_mubook
     And I follow "Druha kapitola"
     When I click on "Sub-chapter actions: Podkapitola 2" "link_or_button"
     And I click on "Delete sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should not see "Prvni kapitola"
     And I should not see "Treti kapitola"
@@ -363,11 +363,11 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Delete chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete chapter" "button" in the "dialog[open]" "css_element"
     And I should see "Required"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Confirm deletion of 2 sub-chapters | 1 |
-    And I click on "Delete chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And I should not see "Druha kapitola"
@@ -376,7 +376,7 @@ Feature: Editors may manage chapters in mod_mubook
     And I follow "Podkapitola X"
     When I click on "Sub-chapter actions" "link_or_button"
     And I click on "Delete sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should see "Treti kapitola"
     And I should not see "Podkapitola X"
@@ -396,14 +396,14 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Prvni kapitola" "link_or_button"
     And I click on "Move chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And the following fields in the ".modal-dialog" "css_element" match these values:
+    And the following muform fields in the "dialog[open]" "css_element" match:
       | Sub-chapter      | 0         |
       | Chapter position | Choose... |
-    And I click on "Move chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move chapter" "button" in the "dialog[open]" "css_element"
     And I should see "Required"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter position | After 2 Druha kapitola |
-    And I click on "Move chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Druha kapitola"
     And "Podkapitola 1" "text" should appear after "Druha kapitola" "text"
@@ -415,9 +415,9 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Prvni kapitola" "link_or_button"
     And I click on "Move chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter position | First chapter |
-    And I click on "Move chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And "Druha kapitola" "text" should appear after "Prvni kapitola" "text"
@@ -429,10 +429,10 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Prvni kapitola" "link_or_button"
     And I click on "Move chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter          | 1                       |
       | Sub-chapter position | After 2.2 Podkapitola 2 |
-    And I click on "Move chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Druha kapitola"
     And "Podkapitola 1" "text" should appear after "Druha kapitola" "text"
@@ -444,9 +444,9 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Sub-chapter actions: Prvni kapitola" "link_or_button"
     And I click on "Move sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter position | First in Treti kapitola |
-    And I click on "Move sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Druha kapitola"
     And "Podkapitola 1" "text" should appear after "Druha kapitola" "text"
@@ -458,10 +458,10 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Sub-chapter actions: Prvni kapitola" "link_or_button"
     And I click on "Move sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter      | 0             |
       | Chapter position | First chapter |
-    And I click on "Move sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And "Druha kapitola" "text" should appear after "Prvni kapitola" "text"
@@ -473,9 +473,9 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Chapter actions: Druha kapitola" "link_or_button"
     And I click on "Move chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter position | After 3 Treti kapitola |
-    And I click on "Move chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
     And "Treti kapitola" "text" should appear after "Prvni kapitola" "text"
@@ -501,9 +501,9 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Sub-chapter actions: Podkapitola 1" "link_or_button"
     And I click on "Move sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter position | After 2.2 Podkapitola 2 |
-    And I click on "Move sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should see "Druha kapitola"
     And "Podkapitola 2" "text" should appear after "Druha kapitola" "text"
@@ -512,9 +512,9 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Sub-chapter actions: Podkapitola 1" "link_or_button"
     And I click on "Move sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter position | First in Druha kapitola |
-    And I click on "Move sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should see "Druha kapitola"
     And "Podkapitola 1" "text" should appear after "Druha kapitola" "text"
@@ -523,18 +523,18 @@ Feature: Editors may manage chapters in mod_mubook
 
     When I click on "Sub-chapter actions: Podkapitola 1" "link_or_button"
     And I click on "Move sub-chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Sub-chapter position | First in Prvni kapitola |
-    And I click on "Move sub-chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move sub-chapter" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should see "Prvni kapitola"
     And "Podkapitola 1" "text" should appear after "Prvni kapitola" "text"
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Move chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter position | After 3 Treti kapitola |
-    And I click on "Move chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Move chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Druha kapitola"
     And "Podkapitola 2" "text" should appear after "Druha kapitola" "text"
@@ -567,23 +567,23 @@ Feature: Editors may manage chapters in mod_mubook
     And I should see "Add chapter"
 
     When I press "Add chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title    | Prvni kapitola  |
       | Add content      | None            |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Prvni kapitola"
 
     When I click on "Chapter actions: Prvni kapitola" "link_or_button"
     And I click on "Update chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title    | Erste Kapitel         |
-    And I click on "Update chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Update chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should see "Erste Kapitel"
 
     When I click on "Chapter actions: Erste Kapitel" "link_or_button"
     And I click on "Delete chapter" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete chapter" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete chapter" "button" in the "dialog[open]" "css_element"
     Then I should see "This is an intro"
     And I should not see "Erste Kapitel"

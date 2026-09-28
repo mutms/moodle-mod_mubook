@@ -19,6 +19,12 @@
 
 namespace mod_mubook\local\form;
 
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+
 /**
  * Delete chapter content instance.
  *
@@ -26,33 +32,27 @@ namespace mod_mubook\local\form;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class content_delete extends \tool_mulib\local\ajax_form {
+final class content_delete extends form {
     #[\Override]
-    protected function definition() {
-        global $OUTPUT;
-
-        $mform = $this->_form;
+    protected function definition(): void {
         /** @var \mod_mubook\local\content $content */
-        $content = $this->_customdata['content'];
+        $content = $this->get_extra_data()['content'];
         /** @var \mod_mubook\local\chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
+        $chapter = $this->get_extra_data()['chapter'];
         /** @var \mod_mubook\local\toc $toc */
-        $toc = $this->_customdata['toc'];
-        $mubook = $toc->get_mubook();
-        $context = $toc->get_context();
+        $toc = $this->get_extra_data()['toc'];
 
+        $title = $toc->get_numbered_chapter_title($chapter->id);
         if ($chapter->parentid) {
-            $mform->addElement('static', 'statictitle', get_string('subchapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
+            $this->add(new info('statictitle', get_string('subchapter_title', 'mod_mubook'), $title, info::PLAIN));
         } else {
-            $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
+            $this->add(new info('statictitle', get_string('chapter_title', 'mod_mubook'), $title, info::PLAIN));
         }
 
-        $mform->addElement('static', 'staticidentif', $content->get_identification());
+        $this->add(new info('staticidentif', '', $content->get_identification(), info::PLAIN));
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $content->id);
-
-        $this->add_action_buttons(true, get_string('content_delete', 'mod_mubook'));
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('content_delete', 'mod_mubook')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

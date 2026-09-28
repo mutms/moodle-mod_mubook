@@ -23,6 +23,10 @@ use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
 use mod_mubook\local\content;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\filemanager;
+use tool_mulib\muform\element\textarea;
+use tool_mulib\muform\util\file_area;
 
 /**
  * Update unsafe raw HTML content.
@@ -33,36 +37,32 @@ use mod_mubook\local\content;
  */
 final class unsafehtml_update extends \mod_mubook\local\form\content_update_base {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        /** @var content $content */
-        $content = $this->_customdata['content'];
-        /** @var chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
-        /** @var toc $toc */
-        $toc = $this->_customdata['toc'];
-        $mubook = $toc->get_mubook();
-        $context = $toc->get_context();
+    protected function definition(): void {
+        $text = new textarea('text', get_string('content_type_unsafehtml', 'mod_mubook'), ['type' => 'rawtext', 'rows' => 20]);
+        $this->add($text);
 
-        $mform->addElement('textarea', 'text', get_string('content_type_unsafehtml', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
-        $mform->setDefault('text', $content->data1);
+        $files = new filemanager('files', get_string('content_files', 'mod_mubook'), 100, null, true);
+        $this->add($files);
 
-        $mform->addElement('filemanager', 'files', get_string('content_files', 'mod_mubook'), null, self::get_content_files_options());
-        $draftitemid = file_get_submitted_draft_itemid('files');
-        file_prepare_draft_area($draftitemid, $context->id, 'mod_mubook', 'content', $content->id, self::get_content_files_options());
-        $mform->setDefault('files', $draftitemid);
-
-        $mform->addElement(
-            'advcheckbox',
+        $trusted = new checkbox(
             'unsafetrusted',
             get_string('content_unsafetrusted', 'mod_mubook'),
             get_string('content_unsafetrusted_confirmation', 'mod_mubook')
         );
-        $mform->setDefault('unsafetrusted', $content->unsafetrusted);
+        $this->add($trusted);
 
         $this->add_shared_content_elements();
 
-        $this->add_action_buttons(true, get_string('content_update', 'mod_mubook'));
+        $this->add_content_buttons(get_string('content_update', 'mod_mubook'));
+    }
+
+    #[\Override]
+    protected static function get_content_current_data(content $content, \context_module $context): array {
+        return [
+            'text' => $content->data1,
+            'files' => new file_area($context, 'mod_mubook', 'content', $content->id),
+            'unsafetrusted' => (int)$content->unsafetrusted,
+        ];
     }
 
     /**

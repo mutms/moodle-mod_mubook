@@ -19,6 +19,14 @@
 
 namespace mod_mubook\local\form;
 
+use mod_mubook\muform\tagarea\chapter as chapter_tagarea;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\tags;
+use tool_mulib\muform\element\text;
+use tool_mulib\muform\form;
+
 /**
  * Update a chapter.
  *
@@ -26,49 +34,27 @@ namespace mod_mubook\local\form;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class chapter_update extends \tool_mulib\local\ajax_form {
+final class chapter_update extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        $chapter = $this->_customdata['chapter'];
+    protected function definition(): void {
+        $chapter = $this->get_extra_data()['chapter'];
 
         if ($chapter->parentid) {
-            $mform->addElement('text', 'title', get_string('subchapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+            $title = new text('title', get_string('subchapter_title', 'mod_mubook'), ['maxlength' => 1333]);
         } else {
-            $mform->addElement('text', 'title', get_string('chapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+            $title = new text('title', get_string('chapter_title', 'mod_mubook'), ['maxlength' => 1333]);
         }
-        $mform->addRule('title', get_string('required'), 'required', null, 'client');
-        $mform->setType('title', PARAM_TEXT);
-        $mform->setDefault('title', $chapter->title);
+        $title->set_required(true);
+        $this->add($title);
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $chapter->id);
+        $this->add(new tags('tags', get_string('tags'), new chapter_tagarea($chapter->mubookid, $chapter->id)));
 
-        if (\core_tag_tag::is_enabled('mod_mubook', 'mubook_chapter')) {
-            $mform->addElement(
-                'tags',
-                'tags',
-                get_string('tags'),
-                ['component' => 'mod_mubook', 'itemtype' => 'mubook_chapter']
-            );
-            $tags = \core_tag_tag::get_item_tags_array('mod_mubook', 'mubook_chapter', $chapter->id);
-            if ($tags) {
-                $mform->setDefault('tags', $tags);
-            }
-        }
-
+        $this->add(new buttons('buttons'));
         if ($chapter->parentid) {
-            $this->add_action_buttons(true, get_string('subchapter_update', 'mod_mubook'));
+            $this->add(new submit('submit', get_string('subchapter_update', 'mod_mubook')), 'buttons');
         } else {
-            $this->add_action_buttons(true, get_string('chapter_update', 'mod_mubook'));
+            $this->add(new submit('submit', get_string('chapter_update', 'mod_mubook')), 'buttons');
         }
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        return $errors;
+        $this->add(new cancel(), 'buttons');
     }
 }

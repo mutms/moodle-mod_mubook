@@ -19,6 +19,13 @@
 
 namespace mod_mubook\local\form;
 
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+
 /**
  * Delete a chapter.
  *
@@ -26,24 +33,20 @@ namespace mod_mubook\local\form;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class chapter_delete extends \tool_mulib\local\ajax_form {
+final class chapter_delete extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
+    protected function definition(): void {
         /** @var \mod_mubook\local\chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
+        $chapter = $this->get_extra_data()['chapter'];
         /** @var \mod_mubook\local\toc $toc */
-        $toc = $this->_customdata['toc'];
+        $toc = $this->get_extra_data()['toc'];
 
+        $title = $toc->get_numbered_chapter_title($chapter->id);
         if ($chapter->parentid) {
-            $mform->addElement('static', 'statictitle', get_string('subchapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
+            $this->add(new info('statictitle', get_string('subchapter_title', 'mod_mubook'), $title, info::PLAIN));
         } else {
-            $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
+            $this->add(new info('statictitle', get_string('chapter_title', 'mod_mubook'), $title, info::PLAIN));
         }
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $chapter->id);
 
         $count = self::count_subchapters($chapter);
         if ($count) {
@@ -53,31 +56,19 @@ final class chapter_delete extends \tool_mulib\local\ajax_form {
                     $subchapters[] = $toc->get_numbered_chapter_title($ch->id);
                 }
             }
-            $mform->addElement('static', 'subchapters', get_string('subchapters', 'mod_mubook'), implode('<br/>', $subchapters));
-            $mform->addElement('advcheckbox', 'deletesubchapters', get_string('subchapters_delete_a', 'mod_mubook', $count));
+            $this->add(new info('subchapters', get_string('subchapters', 'mod_mubook'), implode("\n", $subchapters), info::PLAIN));
+            $delete = new checkbox('deletesubchapters', get_string('subchapters_delete_a', 'mod_mubook', $count));
+            $delete->set_required(true);
+            $this->add($delete);
         }
 
+        $this->add(new buttons('buttons'));
         if ($chapter->parentid) {
-            $this->add_action_buttons(true, get_string('subchapter_delete', 'mod_mubook'));
+            $this->add(new submit('submit', get_string('subchapter_delete', 'mod_mubook')), 'buttons');
         } else {
-            $this->add_action_buttons(true, get_string('chapter_delete', 'mod_mubook'));
+            $this->add(new submit('submit', get_string('chapter_delete', 'mod_mubook')), 'buttons');
         }
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        /** @var \mod_mubook\local\chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
-
-        if (self::count_subchapters($chapter)) {
-            if (!$data['deletesubchapters']) {
-                $errors['deletesubchapters'] = get_string('required');
-            }
-        }
-
-        return $errors;
+        $this->add(new cancel(), 'buttons');
     }
 
     /**

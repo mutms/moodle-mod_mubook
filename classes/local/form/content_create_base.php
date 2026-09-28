@@ -24,11 +24,12 @@ use mod_mubook\local\toc;
 use core\url;
 use core\exception\coding_exception;
 use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
-
-/** @var $CFG stdClass */
-require_once($CFG->dirroot . '/lib/formslib.php');
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\select;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
 
 /**
  * Base class for content creation forms.
@@ -37,7 +38,7 @@ require_once($CFG->dirroot . '/lib/formslib.php');
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class content_create_base extends \moodleform {
+abstract class content_create_base extends form {
     /**
      * Returns relevant content type name.
      *
@@ -58,17 +59,29 @@ abstract class content_create_base extends \moodleform {
     /**
      * Create instance of the form.
      *
+     * @param url $url form target url, the page with all its parameters
      * @param chapter $chapter
      * @param int $sortorder
      * @param toc $toc
      * @param int $fromcreatechapterid
      * @return static
      */
-    public static function init_form(chapter $chapter, int $sortorder, toc $toc, int $fromcreatechapterid): static {
+    public static function init_form(url $url, chapter $chapter, int $sortorder, toc $toc, int $fromcreatechapterid): static {
         return new static(
-            null,
+            $url,
+            static::get_content_current_data($toc->get_context()),
             ['chapter' => $chapter, 'sortorder' => $sortorder, 'toc' => $toc, 'fromcreatechapterid' => $fromcreatechapterid],
         );
+    }
+
+    /**
+     * Initial data of type specific elements.
+     *
+     * @param \context_module $context
+     * @return array
+     */
+    protected static function get_content_current_data(\context_module $context): array {
+        return [];
     }
 
     /**
@@ -113,27 +126,13 @@ abstract class content_create_base extends \moodleform {
      * @return void
      */
     public function add_shared_content_elements(): void {
-        $mform = $this->_form;
         /** @var chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
+        $chapter = $this->get_extra_data()['chapter'];
         /** @var int $sortorder */
-        $sortorder = $this->_customdata['sortorder'];
+        $sortorder = $this->get_extra_data()['sortorder'];
         /** @var toc $toc */
-        $toc = $this->_customdata['toc'];
+        $toc = $this->get_extra_data()['toc'];
         $context = $toc->get_context();
-        $fromcreatechapterid = $this->_customdata['fromcreatechapterid'];
-
-        $mform->addElement('hidden', 'chapterid');
-        $mform->setType('chapterid', PARAM_INT);
-        $mform->setDefault('chapterid', $chapter->id);
-
-        $mform->addElement('hidden', 'type');
-        $mform->setType('type', PARAM_ALPHANUM);
-        $mform->setDefault('type', static::get_content_type());
-
-        $mform->addElement('hidden', 'fromcreatechapterid');
-        $mform->setType('fromcreatechapterid', PARAM_INT);
-        $mform->setDefault('fromcreatechapterid', $fromcreatechapterid);
 
         $options = [];
         foreach ($chapter->get_contents() as $c) {
@@ -144,18 +143,29 @@ abstract class content_create_base extends \moodleform {
         } else {
             $options[1] = 1;
         }
-        $mform->addElement('select', 'sortorder', get_string('content_sortorder', 'mod_mubook'), $options);
-        $mform->setDefault('sortorder', $sortorder);
+        $options = array_map('strval', $options);
+        $select = new select('sortorder', get_string('content_sortorder', 'mod_mubook'), $options);
+        if (isset($options[$sortorder])) {
+            $select->set_default((string)$sortorder);
+        }
+        $this->add($select);
 
         if (has_capability('mod/mubook:viewhiddencontent', $context)) {
-            $mform->addElement('advcheckbox', 'hidden', get_string('content_hidden', 'mod_mubook'));
-        } else {
-            $mform->addElement('hidden', 'hidden');
-            $mform->setType('hidden', PARAM_INT);
-            $mform->setConstant('hidden', 0);
+            $this->add(new checkbox('hidden', get_string('content_hidden', 'mod_mubook')));
         }
 
         // TODO: add group selection.
+    }
+
+    /**
+     * Add form buttons.
+     *
+     * @param string $label submit button label
+     */
+    protected function add_content_buttons(string $label): void {
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', $label), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 
     /**

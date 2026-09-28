@@ -25,11 +25,11 @@
  */
 
 use mod_mubook\local\chapter;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
+/** @var core_renderer $OUTPUT */
 
 require('../../../config.php');
 
@@ -51,10 +51,21 @@ $currenturl = new \core\url('/mod/mubook/management/chapter_create.php', ['muboo
 if ($position) {
     $currenturl->param('position', $position);
 }
+if ($subchapter) {
+    $currenturl->param('subchapter', 1);
+}
+if ($fromcreatechapterid >= 0) {
+    $currenturl->param('fromcreatechapterid', $fromcreatechapterid);
+}
 $returnurl = new \core\url('/mod/mubook/view.php', ['id' => $cm->id]);
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string($subchapter ? 'subchapter_create' : 'chapter_create', 'mod_mubook');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+
+$handler = handler::from_request();
 
 // Check chapter permissions.
 if (!chapter::can_create($mubook, $context)) {
@@ -66,7 +77,7 @@ if (!$toc->get_chapters()) {
     $subchapter = 0;
 }
 
-$form = new \mod_mubook\local\form\chapter_create(null, [
+$form = new \mod_mubook\local\form\chapter_create($currenturl, [], [
     'toc' => $toc,
     'position' => $position,
     'subchapter' => $subchapter,
@@ -74,8 +85,12 @@ $form = new \mod_mubook\local\form\chapter_create(null, [
 ]);
 
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
-} else if ($data = $form->get_data()) {
+    $handler->cancelled($returnurl);
+}
+if ($data = $form->get_data()) {
+    $data->mubookid = $mubook->id;
+    $data->subchapter = $subchapter;
+    $data->position = (int)($data->position ?? 0);
     $chapter = chapter::create($data);
     $toc = \mod_mubook\local\toc::fix_sortorders($mubook->id);
     $returnurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $chapter->id]);
@@ -105,7 +120,7 @@ if ($form->is_cancelled()) {
         }
     }
 
-    $form->ajax_form_submitted($returnurl);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);

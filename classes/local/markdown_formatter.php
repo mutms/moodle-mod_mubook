@@ -71,7 +71,7 @@ final class markdown_formatter {
      * @return string
      */
     public static function convert_to_html(string $markdown, array $options = []): string {
-        require_once(__DIR__ . '/../../vendor/autoload.php');
+        \tool_mulib\local\vendor_loader::register(__DIR__ . '/../../vendor');
 
         $firstheading = $options['firstheading'] ?? 1;
         $firstheading = min(6, max(1, $firstheading));

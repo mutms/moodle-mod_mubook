@@ -23,6 +23,8 @@ use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
 use mod_mubook\local\content;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\text;
 
 /**
  * Update disclosure button.
@@ -33,16 +35,11 @@ use mod_mubook\local\content;
  */
 final class disclosure_update extends \mod_mubook\local\form\content_update_base {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
+    protected function definition(): void {
         /** @var content $content */
-        $content = $this->_customdata['content'];
+        $content = $this->get_extra_data()['content'];
         /** @var chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
-        /** @var toc $toc */
-        $toc = $this->_customdata['toc'];
-        $mubook = $toc->get_mubook();
-        $context = $toc->get_context();
+        $chapter = $this->get_extra_data()['chapter'];
 
         $nextinfo = null;
         foreach ($chapter->get_contents() as $c) {
@@ -54,30 +51,25 @@ final class disclosure_update extends \mod_mubook\local\form\content_update_base
         if (!$nextinfo) {
             $nextinfo = get_string('content_type_disclosure_target_none', 'mod_mubook');
         }
-        $mform->addElement(
-            'static',
-            'target',
-            get_string('content_type_disclosure_target', 'mod_mubook'),
-            $nextinfo
-        );
+        $this->add(new info('target', get_string('content_type_disclosure_target', 'mod_mubook'), $nextinfo, info::PLAIN));
 
-        $options = (object)json_decode($content->data1 ?? '[]');
-
-        $mform->addElement('text', 'labelshow', get_string('content_type_disclosure_show_custom', 'mod_mubook'), ['size' => 40]);
-        $mform->setType('labelshow', PARAM_TEXT);
-        $mform->setDefault('labelshow', $options->labelshow ?? '');
-
-        $mform->addElement('text', 'labelhide', get_string('content_type_disclosure_hide_custom', 'mod_mubook'), ['size' => 40]);
-        $mform->setType('labelhide', PARAM_TEXT);
-        $mform->setDefault('labelhide', $options->labelhide ?? '');
-
-        $mform->addElement('text', 'labelprinted', get_string('content_type_disclosure_printed_custom', 'mod_mubook'), ['size' => 40]);
-        $mform->setType('labelprinted', PARAM_TEXT);
-        $mform->setDefault('labelprinted', $options->labelprinted ?? '');
+        $this->add(new text('labelshow', get_string('content_type_disclosure_show_custom', 'mod_mubook')));
+        $this->add(new text('labelhide', get_string('content_type_disclosure_hide_custom', 'mod_mubook')));
+        $this->add(new text('labelprinted', get_string('content_type_disclosure_printed_custom', 'mod_mubook')));
 
         $this->add_shared_content_elements();
 
-        $this->add_action_buttons(true, get_string('content_update', 'mod_mubook'));
+        $this->add_content_buttons(get_string('content_update', 'mod_mubook'));
+    }
+
+    #[\Override]
+    protected static function get_content_current_data(content $content, \context_module $context): array {
+        $options = (object)json_decode($content->data1 ?? '[]');
+        return [
+            'labelshow' => $options->labelshow ?? '',
+            'labelhide' => $options->labelhide ?? '',
+            'labelprinted' => $options->labelprinted ?? '',
+        ];
     }
 
     #[\Override]

@@ -369,7 +369,7 @@ final class unknown_test extends \advanced_testcase {
         $link = $content1->get_delete_link();
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/content_delete.php?id={$content1->id}",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
     }
 

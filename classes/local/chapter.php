@@ -19,11 +19,12 @@
 
 namespace mod_mubook\local;
 
+use tool_mulib\muform\handler\dialog;
 use stdClass;
 use core\exception\coding_exception;
 use core\exception\invalid_parameter_exception;
-use tool_mulib\output\ajax_form\button;
-use tool_mulib\output\ajax_form\link;
+use tool_mulib\output\muform\dialog\button;
+use tool_mulib\output\muform\dialog\link;
 use tool_mulib\local\mulib;
 
 /**
@@ -165,7 +166,10 @@ final class chapter {
         }
 
         if ($record->title === $data->title) {
-            // Nothing to update.
+            // Only tags may have changed.
+            if (isset($data->tags)) {
+                \core_tag_tag::set_item_tags('mod_mubook', 'mubook_chapter', $record->id, $context, $data->tags);
+            }
             return new chapter($record, $mubook, $context);
         }
 
@@ -431,7 +435,7 @@ final class chapter {
         } else {
             $action = new link($url, get_string('chapter_create', 'mod_mubook'), 'chapter', 'mod_mubook');
         }
-        $action->set_submitted_action($action::SUBMITTED_ACTION_REDIRECT);
+        $action->set_submitted_action(dialog::ACTION_REDIRECT);
         return $action;
     }
 
@@ -450,7 +454,7 @@ final class chapter {
         } else {
             $action = new link($url, get_string('chapter_update', 'mod_mubook'), 'i/edit');
         }
-        $action->set_submitted_action($action::SUBMITTED_ACTION_RELOAD);
+        $action->set_submitted_action(dialog::ACTION_RELOAD);
         return $action;
     }
 
@@ -469,7 +473,7 @@ final class chapter {
         } else {
             $action = new link($url, get_string('chapter_move', 'mod_mubook'), 't/move');
         }
-        $action->set_submitted_action($action::SUBMITTED_ACTION_REDIRECT);
+        $action->set_submitted_action(dialog::ACTION_REDIRECT);
         return $action;
     }
 
@@ -489,7 +493,7 @@ final class chapter {
             $action = new link($url, get_string('chapter_delete', 'mod_mubook'), 'i/delete');
         }
         $action->add_class('text-danger');
-        $action->set_submitted_action($action::SUBMITTED_ACTION_REDIRECT);
+        $action->set_submitted_action(dialog::ACTION_REDIRECT);
         return $action;
     }
 

@@ -22,11 +22,11 @@ Feature: Admins may manage Unsafe raw HTML content in mod_mubook
     And I turn editing mode on
 
     When I press "Add chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title | Prvni kapitola  |
       | Add content   | Unsafe raw HTML |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields to these values:
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields:
       | Unsafe raw HTML           | Sample text one <script>document.write('<p>XSSTEST1</p>');</script> |
     And I press "Add content"
     Then I should not see "This is an intro"
@@ -36,10 +36,10 @@ Feature: Admins may manage Unsafe raw HTML content in mod_mubook
 
     When I click on "Content 1 actions" "link_or_button"
     And I click on "Update content" "link" in the ".dropdown-menu.show" "css_element"
-    And the following fields match these values:
+    And the following muform fields match:
       | Unsafe raw HTML           | Sample text one <script>document.write('<p>XSSTEST1</p>');</script> |
       | unsafetrusted             | 0                                                                   |
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Unsafe raw HTML           | Sample text ONE <script>document.write('<p>XSSTEST1</p>');</script> |
       | unsafetrusted             | 1                                                                   |
     And I press "Update content"
@@ -50,10 +50,10 @@ Feature: Admins may manage Unsafe raw HTML content in mod_mubook
 
     When I click on "Content 1 actions" "link_or_button"
     And I click on "Update content" "link" in the ".dropdown-menu.show" "css_element"
-    And the following fields match these values:
+    And the following muform fields match:
       | Unsafe raw HTML           | Sample text ONE <script>document.write('<p>XSSTEST1</p>');</script> |
       | unsafetrusted             | 1                                                                   |
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Unsafe raw HTML           | Sample text one <script>document.write('<p>XSSTEST1</p>');</script> |
       | unsafetrusted             | 0                                                                   |
     And I press "Update content"
@@ -64,10 +64,10 @@ Feature: Admins may manage Unsafe raw HTML content in mod_mubook
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Add content" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Add content | Unsafe raw HTML |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields to these values:
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields:
       | Unsafe raw HTML           | Sample text two <script>document.write('<p>XSSTEST2</p>');</script> |
       | unsafetrusted             | 1                                                                   |
     And I press "Add content"
@@ -79,17 +79,17 @@ Feature: Admins may manage Unsafe raw HTML content in mod_mubook
 
     When I click on "Content 2 actions" "link_or_button"
     And I click on "Update content" "link" in the ".dropdown-menu.show" "css_element"
-    And the following fields match these values:
+    And the following muform fields match:
       | Unsafe raw HTML           | Sample text two <script>document.write('<p>XSSTEST2</p>');</script> |
       | unsafetrusted             | 1                                                                   |
     And I press "Cancel"
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Add content" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Add content | Unsafe raw HTML |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields to these values:
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields:
       | Unsafe raw HTML | Sample text three <script>document.write('<p>XSSTEST3</p>');</script> |
       | Position        | 2                                                                     |
     And I press "Add content"
@@ -102,7 +102,7 @@ Feature: Admins may manage Unsafe raw HTML content in mod_mubook
 
     When I click on "Content 2 actions" "link_or_button"
     And I click on "Delete content" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete content" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete content" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should not see "Sample text three"
     And "Sample text two" "text" should appear after "Sample text one" "text"

@@ -25,11 +25,11 @@
  */
 
 use mod_mubook\local\chapter;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
+/** @var core_renderer $OUTPUT */
 
 require('../../../config.php');
 
@@ -50,6 +50,11 @@ $returnurl = new \core\url('/mod/mubook/view.php', ['id' => $cm->id]);
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string($chapterrecord->parentid ? 'subchapter_move' : 'chapter_move', 'mod_mubook');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+
+$handler = handler::from_request();
 
 // Check chapter permissions.
 $chapter = new chapter($chapterrecord, $mubook, $context);
@@ -59,14 +64,14 @@ if (!$chapter->can_move()) {
 
 $toc = new \mod_mubook\local\toc($mubook);
 
-$form = new \mod_mubook\local\form\chapter_move(null, ['chapter' => $chapter, 'toc' => $toc]);
+$form = new \mod_mubook\local\form\chapter_move($currenturl, [], ['chapter' => $chapter, 'toc' => $toc]);
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
-    if ($data->subchapter) {
-        $chapter = chapter::move($data->id, true, $data->positionsubchapter);
+    if (!empty($data->subchapter)) {
+        $chapter = chapter::move($chapter->id, true, (int)$data->positionsubchapter);
     } else {
-        $chapter = chapter::move($data->id, false, $data->positionchapter);
+        $chapter = chapter::move($chapter->id, false, (int)$data->positionchapter);
     }
     $toc = \mod_mubook\local\toc::fix_sortorders($mubook->id);
 
@@ -74,7 +79,7 @@ if ($form->is_cancelled()) {
         $returnurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $chapter->parentid]);
     }
 
-    $form->ajax_form_submitted($returnurl);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);

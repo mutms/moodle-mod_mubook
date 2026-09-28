@@ -78,7 +78,7 @@ final class content_actions {
 
         if ($content->can_delete()) {
             $link = $content->get_delete_link();
-            $this->dropdown->add_ajax_form($link);
+            $this->dropdown->add_dialog($link);
         }
 
         \core\di::get(\core\hook\manager::class)->dispatch($this);

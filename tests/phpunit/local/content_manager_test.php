@@ -147,7 +147,7 @@ final class content_manager_test extends \advanced_testcase {
         $link = $cman->get_create_content_link($chapter, 3);
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/content_create_select.php?chapterid={$chapter->id}&sortorder=3",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
     }
 }

@@ -25,11 +25,11 @@
  */
 
 use mod_mubook\local\chapter;
+use tool_mulib\muform\handler;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
+/** @var core_renderer $OUTPUT */
 
 require('../../../config.php');
 
@@ -50,6 +50,11 @@ $returnurl = new \core\url('/mod/mubook/viewchapter.php', ['id' => $chapterrecor
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string($chapterrecord->parentid ? 'subchapter_delete' : 'chapter_delete', 'mod_mubook');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+
+$handler = handler::from_request();
 
 // Check chapter permissions.
 $chapter = new chapter($chapterrecord, $mubook, $context);
@@ -59,11 +64,11 @@ if (!$chapter->can_delete()) {
 
 $toc = new \mod_mubook\local\toc($mubook);
 
-$form = new \mod_mubook\local\form\chapter_delete(null, ['chapter' => $chapter, 'toc' => $toc]);
+$form = new \mod_mubook\local\form\chapter_delete($currenturl, [], ['chapter' => $chapter, 'toc' => $toc]);
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
-    chapter::delete($data->id, true);
+    chapter::delete($chapter->id, true);
     $toc = \mod_mubook\local\toc::fix_sortorders($mubook->id);
 
     if ($chapter->parentid) {
@@ -71,7 +76,7 @@ if ($form->is_cancelled()) {
     } else {
         $returnurl = new \core\url('/mod/mubook/view.php', ['id' => $cm->id]);
     }
-    $form->ajax_form_submitted($returnurl);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);

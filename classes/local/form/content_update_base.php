@@ -25,10 +25,13 @@ use mod_mubook\local\content;
 use core\url;
 use core\exception\coding_exception;
 use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once($CFG->dirroot . '/lib/formslib.php');
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\select;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
 
 /**
  * Base class for content update forms.
@@ -37,7 +40,7 @@ require_once($CFG->dirroot . '/lib/formslib.php');
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class content_update_base extends \moodleform {
+abstract class content_update_base extends form {
     /**
      * Returns relevant content type name.
      *
@@ -58,13 +61,29 @@ abstract class content_update_base extends \moodleform {
     /**
      * Create instance of the form.
      *
+     * @param url $url form target url
      * @param content $content
      * @param chapter $chapter
      * @param toc $toc
      * @return static
      */
-    public static function init_form(content $content, chapter $chapter, toc $toc): static {
-        return new static(null, ['content' => $content, 'chapter' => $chapter, 'toc' => $toc]);
+    public static function init_form(url $url, content $content, chapter $chapter, toc $toc): static {
+        $current = static::get_content_current_data($content, $toc->get_context()) + [
+            'sortorder' => (string)$content->sortorder,
+            'hidden' => (int)$content->hidden,
+        ];
+        return new static($url, $current, ['content' => $content, 'chapter' => $chapter, 'toc' => $toc]);
+    }
+
+    /**
+     * Current data of type specific elements.
+     *
+     * @param content $content
+     * @param \context_module $context
+     * @return array
+     */
+    protected static function get_content_current_data(content $content, \context_module $context): array {
+        return [];
     }
 
     /**
@@ -110,35 +129,39 @@ abstract class content_update_base extends \moodleform {
      * @return void
      */
     public function add_shared_content_elements(): void {
-        $mform = $this->_form;
         /** @var content $content */
-        $content = $this->_customdata['content'];
+        $content = $this->get_extra_data()['content'];
         /** @var chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
+        $chapter = $this->get_extra_data()['chapter'];
         /** @var toc $toc */
-        $toc = $this->_customdata['toc'];
+        $toc = $this->get_extra_data()['toc'];
         $context = $toc->get_context();
-
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $content->id);
 
         $options = [];
         foreach ($chapter->get_contents() as $c) {
-            $options[$c->sortorder] = $c->sortorder;
+            $options[$c->sortorder] = (string)$c->sortorder;
         }
-        $mform->addElement('select', 'sortorder', get_string('content_sortorder', 'mod_mubook'), $options);
-        $mform->setDefault('sortorder', $content->sortorder);
+        $this->add(new select('sortorder', get_string('content_sortorder', 'mod_mubook'), $options));
 
         if (has_capability('mod/mubook:viewhiddencontent', $context)) {
-            $mform->addElement('advcheckbox', 'hidden', get_string('content_hidden', 'mod_mubook'));
-            $mform->setDefault('hidden', $content->hidden);
+            $this->add(new checkbox('hidden', get_string('content_hidden', 'mod_mubook')));
         } else {
             $hidden = $content->hidden ? get_string('yes') : get_string('no');
-            $mform->addElement('static', 'statichidden', get_string('content_hidden', 'mod_mubook'), $hidden);
+            $this->add(new info('statichidden', get_string('content_hidden', 'mod_mubook'), $hidden));
         }
 
         // TODO: add group selection.
+    }
+
+    /**
+     * Add form buttons.
+     *
+     * @param string $label submit button label
+     */
+    protected function add_content_buttons(string $label): void {
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', $label), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 
     /**

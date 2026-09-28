@@ -22,6 +22,8 @@ namespace mod_mubook\local\content\form;
 use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\text;
 
 /**
  * Create disclosure buttons.
@@ -32,34 +34,17 @@ use mod_mubook\local\chapter;
  */
 final class disclosure_create extends \mod_mubook\local\form\content_create_base {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        /** @var chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
-        /** @var toc $toc */
-        $toc = $this->_customdata['toc'];
-        $mubook = $toc->get_mubook();
-        $context = $toc->get_context();
+    protected function definition(): void {
+        $info = get_string('content_type_disclosure_target_info', 'mod_mubook');
+        $this->add(new info('target', get_string('content_type_disclosure_target', 'mod_mubook'), $info));
 
-        $mform->addElement(
-            'static',
-            'target',
-            get_string('content_type_disclosure_target', 'mod_mubook'),
-            get_string('content_type_disclosure_target_info', 'mod_mubook')
-        );
-
-        $mform->addElement('text', 'labelshow', get_string('content_type_disclosure_show_custom', 'mod_mubook'), ['size' => 40]);
-        $mform->setType('labelshow', PARAM_TEXT);
-
-        $mform->addElement('text', 'labelhide', get_string('content_type_disclosure_hide_custom', 'mod_mubook'), ['size' => 40]);
-        $mform->setType('labelhide', PARAM_TEXT);
-
-        $mform->addElement('text', 'labelprinted', get_string('content_type_disclosure_printed_custom', 'mod_mubook'), ['size' => 40]);
-        $mform->setType('labelprinted', PARAM_TEXT);
+        $this->add(new text('labelshow', get_string('content_type_disclosure_show_custom', 'mod_mubook')));
+        $this->add(new text('labelhide', get_string('content_type_disclosure_hide_custom', 'mod_mubook')));
+        $this->add(new text('labelprinted', get_string('content_type_disclosure_printed_custom', 'mod_mubook')));
 
         $this->add_shared_content_elements();
 
-        $this->add_action_buttons(true, get_string('content_create', 'mod_mubook'));
+        $this->add_content_buttons(get_string('content_create', 'mod_mubook'));
     }
 
     #[\Override]

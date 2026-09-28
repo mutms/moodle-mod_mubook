@@ -20,6 +20,13 @@
 
 namespace mod_mubook\local\form;
 
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\select;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+
 /**
  * Content type selection for creation.
  *
@@ -27,22 +34,21 @@ namespace mod_mubook\local\form;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class content_create_select extends \tool_mulib\local\ajax_form {
+final class content_create_select extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
+    protected function definition(): void {
         /** @var \mod_mubook\local\chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
-        $sortorder = $this->_customdata['sortorder'];
+        $chapter = $this->get_extra_data()['chapter'];
         /** @var \mod_mubook\local\toc $toc */
-        $toc = $this->_customdata['toc'];
+        $toc = $this->get_extra_data()['toc'];
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
 
+        $title = $toc->get_numbered_chapter_title($chapter->id);
         if ($chapter->parentid) {
-            $mform->addElement('static', 'statictitle', get_string('subchapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
+            $this->add(new info('statictitle', get_string('subchapter_title', 'mod_mubook'), $title, info::PLAIN));
         } else {
-            $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
+            $this->add(new info('statictitle', get_string('chapter_title', 'mod_mubook'), $title, info::PLAIN));
         }
 
         $options = [];
@@ -57,20 +63,15 @@ final class content_create_select extends \tool_mulib\local\ajax_form {
             }
         }
         \core_collator::asort($options);
-        $mform->addElement('select', 'type', get_string('content_create', 'mod_mubook'), $options);
-        $mform->addRule('type', get_string('required'), 'required', null, 'client');
+        $type = new select('type', get_string('content_create', 'mod_mubook'), $options);
+        $type->set_required(true);
         if (isset($options[$mubook->contentdefault])) {
-            $mform->setDefault('type', $mubook->contentdefault);
+            $type->set_default($mubook->contentdefault);
         }
+        $this->add($type);
 
-        $mform->addElement('hidden', 'chapterid');
-        $mform->setType('chapterid', PARAM_INT);
-        $mform->setDefault('chapterid', $chapter->id);
-
-        $mform->addElement('hidden', 'sortorder');
-        $mform->setType('sortorder', PARAM_INT);
-        $mform->setDefault('sortorder', $sortorder);
-
-        $this->add_action_buttons(true, get_string('continue'));
+        $this->add(new buttons('buttons'));
+        $this->add(new submit('submit', get_string('continue')), 'buttons');
+        $this->add(new cancel(), 'buttons');
     }
 }

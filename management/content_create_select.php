@@ -26,12 +26,12 @@
  */
 
 use core\url;
+use tool_mulib\muform\handler;
 use mod_mubook\local\toc;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
+/** @var core_renderer $OUTPUT */
 
 require('../../../config.php');
 
@@ -53,6 +53,11 @@ $returnurl = new url('/mod/mubook/viewchapter.php', ['id' => $chapterid]);
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('content_create', 'mod_mubook');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+
+$handler = handler::from_request();
 
 $cman = \core\di::get(\mod_mubook\local\content_manager::class);
 $toc = new toc($mubook);
@@ -62,15 +67,15 @@ if (!$chapter || $toc->is_orphaned_chapter($chapter->id)) {
     redirect($returnurl);
 }
 
-$form = new \mod_mubook\local\form\content_create_select(null, ['chapter' => $chapter, 'sortorder' => $sortorder, 'toc' => $toc]);
+$form = new \mod_mubook\local\form\content_create_select($currenturl, [], ['chapter' => $chapter, 'toc' => $toc]);
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
     $classname = $cman->get_class($data->type);
     if ($classname && $classname::can_create($chapter, $mubook, $context)) {
-        $createurl = $classname::get_create_url($chapter, $data->sortorder);
-        $form->ajax_form_submitted($createurl);
+        $createurl = $classname::get_create_url($chapter, $sortorder);
+        $handler->submitted($createurl);
     }
 }
 
-$form->ajax_form_render();
+$handler->render($form);

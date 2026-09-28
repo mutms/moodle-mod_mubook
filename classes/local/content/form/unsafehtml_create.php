@@ -22,6 +22,9 @@ namespace mod_mubook\local\content\form;
 use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\filemanager;
+use tool_mulib\muform\element\textarea;
 
 /**
  * Create unsafe raw HTML content.
@@ -32,29 +35,23 @@ use mod_mubook\local\chapter;
  */
 final class unsafehtml_create extends \mod_mubook\local\form\content_create_base {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        /** @var chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
-        /** @var toc $toc */
-        $toc = $this->_customdata['toc'];
-        $mubook = $toc->get_mubook();
-        $context = $toc->get_context();
+    protected function definition(): void {
+        $text = new textarea('text', get_string('content_type_unsafehtml', 'mod_mubook'), ['type' => 'rawtext', 'rows' => 20]);
+        $this->add($text);
 
-        $mform->addElement('textarea', 'text', get_string('content_type_unsafehtml', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
+        $files = new filemanager('files', get_string('content_files', 'mod_mubook'), 100, null, true);
+        $this->add($files);
 
-        $mform->addElement('filemanager', 'files', get_string('content_files', 'mod_mubook'), null, self::get_content_files_options());
-
-        $mform->addElement(
-            'advcheckbox',
+        $trusted = new checkbox(
             'unsafetrusted',
             get_string('content_unsafetrusted', 'mod_mubook'),
             get_string('content_unsafetrusted_confirmation', 'mod_mubook')
         );
+        $this->add($trusted);
 
         $this->add_shared_content_elements();
 
-        $this->add_action_buttons(true, get_string('content_create', 'mod_mubook'));
+        $this->add_content_buttons(get_string('content_create', 'mod_mubook'));
     }
 
     /**

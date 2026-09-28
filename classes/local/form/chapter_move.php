@@ -19,6 +19,15 @@
 
 namespace mod_mubook\local\form;
 
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\checkbox;
+use tool_mulib\muform\element\info;
+use tool_mulib\muform\element\select;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\form;
+use tool_mulib\muform\util\options;
+
 /**
  * Move a chapter.
  *
@@ -26,13 +35,12 @@ namespace mod_mubook\local\form;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class chapter_move extends \tool_mulib\local\ajax_form {
+final class chapter_move extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
+    protected function definition(): void {
         /** @var \mod_mubook\local\toc $toc */
-        $toc = $this->_customdata['toc'];
-        $chapter = $this->_customdata['chapter'];
+        $toc = $this->get_extra_data()['toc'];
+        $chapter = $this->get_extra_data()['chapter'];
 
         $firstchapter = $toc->get_first_chapter();
         $topchapters = [];
@@ -45,18 +53,14 @@ final class chapter_move extends \tool_mulib\local\ajax_form {
             }
         }
 
-        $mform->addElement('static', 'statictitle', get_string('chapter_title', 'mod_mubook'), $toc->get_numbered_chapter_title($chapter->id));
+        $title = $toc->get_numbered_chapter_title($chapter->id);
+        $this->add(new info('statictitle', get_string('chapter_title', 'mod_mubook'), $title, info::PLAIN));
 
-        if ($chapter->parentid || !isset($subchapters[$chapter->id])) {
-            $mform->addElement('advcheckbox', 'subchapter', get_string('subchapter', 'mod_mubook'));
-            $mform->setDefault('subchapter', (int)!empty($chapter->parentid));
-            $showsubchapter = true;
-        } else {
-            $mform->addElement('hidden', 'subchapter');
-            $mform->setType('subchapter', PARAM_INT);
-            $mform->setDefault('subchapter', 0);
-            $mform->setConstant('subchapter', 0);
-            $showsubchapter = false;
+        $showsubchapter = ($chapter->parentid || !isset($subchapters[$chapter->id]));
+        if ($showsubchapter) {
+            $subchapter = new checkbox('subchapter', get_string('subchapter', 'mod_mubook'));
+            $subchapter->set_default((int)!empty($chapter->parentid));
+            $this->add($subchapter);
         }
 
         $options = [];
@@ -71,86 +75,84 @@ final class chapter_move extends \tool_mulib\local\ajax_form {
                 $options[$ch->id] = get_string('chapter_position_after', 'mod_mubook', $title);
             }
         }
-        $mform->addElement('select', 'positionchapter', get_string('chapter_position', 'mod_mubook'), $options);
+        $positionchapter = new select('positionchapter', get_string('chapter_position', 'mod_mubook'), $options);
         if ($toc->is_orphaned_chapter($chapter->id)) {
             if ($topchapters) {
                 $lasttopchapterid = array_key_last($topchapters);
                 if (isset($options[$lasttopchapterid])) {
-                    $mform->setDefault('positionchapter', $lasttopchapterid);
+                    $positionchapter->set_default((string)$lasttopchapterid);
                 }
             }
         } else if ($chapter->parentid) {
             if (isset($options[$chapter->parentid])) {
-                $mform->setDefault('positionchapter', $chapter->parentid);
+                $positionchapter->set_default((string)$chapter->parentid);
             }
         } else {
             if (isset($options[$chapter->id])) {
-                $mform->setDefault('positionchapter', $chapter->id);
+                $positionchapter->set_default((string)$chapter->id);
             }
         }
+        $this->add($positionchapter);
 
         if ($showsubchapter) {
-            $mform->hideIf('positionchapter', 'subchapter', 'eq', 1);
-
-            $options = [];
+            $options = new options();
             $positions = [];
             foreach ($topchapters as $ch) {
                 $positions[] = $ch->id;
                 if ($ch->id == $chapter->id) {
-                    $options[''][$ch->id] = get_string('choosedots');
+                    $options->add_options([$ch->id => get_string('choosedots')]);
                     continue;
                 }
                 $optgroup = $toc->get_numbered_chapter_title($ch->id);
-                $options[$optgroup][$ch->id] = get_string('subchapter_position_first', 'mod_mubook', $ch->format_title());
+                $groupoptions = [$ch->id => get_string('subchapter_position_first', 'mod_mubook', $ch->format_title())];
 
                 if (isset($subchapters[$ch->id])) {
                     foreach ($subchapters[$ch->id] as $subch) {
                         $positions[] = $subch->id;
                         if ($subch->id == $chapter->id) {
-                            $options[$optgroup][$subch->id] = get_string('choosedots');
+                            $groupoptions[$subch->id] = get_string('choosedots');
                             continue;
                         }
                         $title = $toc->get_numbered_chapter_title($subch->id);
-                        $options[$optgroup][$subch->id] = get_string('subchapter_position_after', 'mod_mubook', $title);
+                        $groupoptions[$subch->id] = get_string('subchapter_position_after', 'mod_mubook', $title);
                     }
                 }
+                $options->add_optgroup($optgroup, $groupoptions);
             }
-            $mform->addElement('selectgroups', 'positionsubchapter', get_string('subchapter_position', 'mod_mubook'), $options);
+            $positionsubchapter = new select('positionsubchapter', get_string('subchapter_position', 'mod_mubook'), $options);
             if (in_array($chapter->id, $positions)) {
-                $mform->setDefault('positionsubchapter', $chapter->id);
+                $positionsubchapter->set_default((string)$chapter->id);
             } else {
-                $mform->setDefault('positionsubchapter', end($positions));
+                $positionsubchapter->set_default((string)end($positions));
             }
-            $mform->hideIf('positionsubchapter', 'subchapter', 'eq', 0);
+            $this->add($positionsubchapter);
+
+            $dm = $this->get_display_manager();
+            $dm->hide_if('positionchapter', 'subchapter', 'checked');
+            $dm->hide_if('positionsubchapter', 'subchapter', 'notchecked');
         }
 
-        $mform->addElement('hidden', 'id');
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $chapter->id);
-
+        $this->add(new buttons('buttons'));
         if ($chapter->parentid) {
-            $this->add_action_buttons(true, get_string('subchapter_move', 'mod_mubook'));
+            $this->add(new submit('submit', get_string('subchapter_move', 'mod_mubook')), 'buttons');
         } else {
-            $this->add_action_buttons(true, get_string('chapter_move', 'mod_mubook'));
+            $this->add(new submit('submit', get_string('chapter_move', 'mod_mubook')), 'buttons');
         }
+        $this->add(new cancel(), 'buttons');
     }
 
     #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
+    protected function validation(array $data, array &$allerrors): void {
+        $chapter = $this->get_extra_data()['chapter'];
 
-        $chapter = $this->_customdata['chapter'];
-
-        if ($data['subchapter']) {
+        if (!empty($data['subchapter'])) {
             if ($data['positionsubchapter'] == $chapter->id) {
-                $errors['positionsubchapter'] = get_string('required');
+                $allerrors['positionsubchapter'][] = get_string('required');
             }
         } else {
             if ($data['positionchapter'] == $chapter->id) {
-                $errors['positionchapter'] = get_string('required');
+                $allerrors['positionchapter'][] = get_string('required');
             }
         }
-
-        return $errors;
     }
 }

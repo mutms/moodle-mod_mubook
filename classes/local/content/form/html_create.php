@@ -22,6 +22,7 @@ namespace mod_mubook\local\content\form;
 use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
+use tool_mulib\muform\element\editor;
 
 /**
  * Create HTML content.
@@ -32,22 +33,18 @@ use mod_mubook\local\chapter;
  */
 final class html_create extends \mod_mubook\local\form\content_create_base {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        /** @var chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
-        /** @var toc $toc */
-        $toc = $this->_customdata['toc'];
-        $mubook = $toc->get_mubook();
-        $context = $toc->get_context();
-
-        $options = self::get_content_editor_options($context);
-        $mform->addElement('editor', 'text_editor', get_string('content_text', 'mod_mubook'), ['rows' => 20], $options);
-        $mform->setDefault('text_editor', ['text' => '', 'format' => FORMAT_HTML]);
+    protected function definition(): void {
+        $text = new editor('text', get_string('content_text', 'mod_mubook'), 100, true, ['rows' => 20]);
+        $this->add($text);
 
         $this->add_shared_content_elements();
 
-        $this->add_action_buttons(true, get_string('content_create', 'mod_mubook'));
+        $this->add_content_buttons(get_string('content_create', 'mod_mubook'));
+    }
+
+    #[\Override]
+    protected static function get_content_current_data(\context_module $context): array {
+        return ['textformat' => FORMAT_HTML];
     }
 
     /**
@@ -84,7 +81,10 @@ final class html_create extends \mod_mubook\local\form\content_create_base {
     public static function after_db_insert(stdClass $record, stdClass $data, chapter $chapter, stdClass $mubook, \context_module $context): void {
         global $DB;
 
-        if (isset($data->text_editor['itemid'])) {
+        if (!empty($data->textdraftitemid)) {
+            // The muform editor value already links files with @@PLUGINFILE@@.
+            file_save_draft_area_files($data->textdraftitemid, $context->id, 'mod_mubook', 'content', $record->id, self::get_content_editor_options($context));
+        } else if (isset($data->text_editor['itemid'])) {
             $data->text_editor['format'] = FORMAT_HTML;
             $options = self::get_content_editor_options($context);
             $data = file_postupdate_standard_editor(

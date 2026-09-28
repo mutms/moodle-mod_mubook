@@ -73,16 +73,18 @@ if (!$currenturl->compare($expectedurl, URL_MATCH_BASE)) {
 $formclass = $content->get_update_form_classname();
 $formclass::setup_content_page($chapter, $toc);
 
-$form = $formclass::init_form($content, $chapter, $toc);
+$form = $formclass::init_form($currenturl, $content, $chapter, $toc);
 
 if ($form->is_cancelled()) {
     redirect($returnurl);
 } else if ($data = $form->get_data()) {
+    $data->id = $content->id;
+    $data->sortorder = (int)$data->sortorder;
     $content = $content->update($data);
     redirect($returnurl);
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('content_update_a', 'mod_mubook', $content::get_name()));
-echo $form->render();
+echo $form->render($OUTPUT);
 echo $OUTPUT->footer();

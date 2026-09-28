@@ -50,6 +50,9 @@ require_capability('mod/mubook:view', $context);
 require_capability('mod/mubook:editcontent', $context);
 
 $currenturl = new url('/mod/mubook/management/content_create.php', ['chapterid' => $chapterid, 'type' => $type, 'sortorder' => $sortorder]);
+if ($fromcreatechapterid >= 0) {
+    $currenturl->param('fromcreatechapterid', $fromcreatechapterid);
+}
 $returnurl = new url('/mod/mubook/viewchapter.php', ['id' => $chapterid]);
 
 $PAGE->set_context($context);
@@ -75,7 +78,7 @@ if (!$currenturl->compare($expectedurl, URL_MATCH_BASE)) {
 $formclass = $classname::get_create_form_classname();
 $formclass::setup_content_page($chapter, $toc);
 
-$form = $formclass::init_form($chapter, $sortorder, $toc, $fromcreatechapterid);
+$form = $formclass::init_form($currenturl, $chapter, $sortorder, $toc, $fromcreatechapterid);
 
 if ($form->is_cancelled()) {
     if ($fromcreatechapterid === 0) {
@@ -94,11 +97,13 @@ if ($form->is_cancelled()) {
     }
     redirect($returnurl);
 } else if ($data = $form->get_data()) {
+    $data->chapterid = $chapter->id;
+    $data->sortorder = (int)$data->sortorder;
     $content = $classname::create($data);
     redirect($returnurl);
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('content_create_a', 'mod_mubook', $classname::get_name()));
-echo $form->render();
+echo $form->render($OUTPUT);
 echo $OUTPUT->footer();

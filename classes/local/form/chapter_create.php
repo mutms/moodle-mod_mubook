@@ -20,6 +20,16 @@
 
 namespace mod_mubook\local\form;
 
+use mod_mubook\muform\tagarea\chapter as chapter_tagarea;
+use tool_mulib\muform\element\buttons;
+use tool_mulib\muform\element\cancel;
+use tool_mulib\muform\element\select;
+use tool_mulib\muform\element\submit;
+use tool_mulib\muform\element\tags;
+use tool_mulib\muform\element\text;
+use tool_mulib\muform\form;
+use tool_mulib\muform\util\options;
+
 /**
  * Create a new chapter.
  *
@@ -27,25 +37,16 @@ namespace mod_mubook\local\form;
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class chapter_create extends \tool_mulib\local\ajax_form {
+final class chapter_create extends form {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
+    protected function definition(): void {
         /** @var \mod_mubook\local\toc $toc */
-        $toc = $this->_customdata['toc'];
-        $subchapter = $this->_customdata['subchapter'];
-        $position = $this->_customdata['position'];
-        $fromcreatechapterid = $this->_customdata['fromcreatechapterid'];
+        $toc = $this->get_extra_data()['toc'];
+        $subchapter = $this->get_extra_data()['subchapter'];
+        $position = $this->get_extra_data()['position'];
+        $fromcreatechapterid = $this->get_extra_data()['fromcreatechapterid'];
         $mubook = $toc->get_mubook();
         $context = $toc->get_context();
-
-        $mform->addElement('hidden', 'subchapter');
-        $mform->setType('subchapter', PARAM_BOOL);
-        $mform->setDefault('subchapter', $subchapter);
-
-        $mform->addElement('hidden', 'fromcreatechapterid');
-        $mform->setType('fromcreatechapterid', PARAM_INT);
-        $mform->setDefault('fromcreatechapterid', $fromcreatechapterid);
 
         $topchapters = [];
         $subchapters = [];
@@ -60,7 +61,7 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
         if ($topchapters) {
             // Always use chapter numbers here.
             if ($subchapter) {
-                $afteroptions = [];
+                $afteroptions = new options();
                 $positions = [];
                 if ($fromcreatechapterid > 0) {
                     $from = $toc->get_chapter($fromcreatechapterid);
@@ -72,27 +73,28 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
                 }
                 foreach ($topchapters as $chapter) {
                     $optgroup = $toc->get_numbered_chapter_title($chapter->id);
-                    $option = get_string('subchapter_position_first', 'mod_mubook', $optgroup);
-                    $afteroptions[$optgroup][$chapter->id] = $option;
+                    $groupoptions = [$chapter->id => get_string('subchapter_position_first', 'mod_mubook', $optgroup)];
                     $positions[] = $chapter->id;
                     if (isset($subchapters[$chapter->id])) {
                         foreach ($subchapters[$chapter->id] as $subchapter) {
                             $option = $toc->get_numbered_chapter_title($subchapter->id);
-                            $option = get_string('subchapter_position_after', 'mod_mubook', $option);
-                            $afteroptions[$optgroup][$subchapter->id] = $option;
+                            $groupoptions[$subchapter->id] = get_string('subchapter_position_after', 'mod_mubook', $option);
                             $positions[] = $subchapter->id;
                         }
                     }
+                    $afteroptions->add_optgroup($optgroup, $groupoptions);
                 }
 
-                $mform->addElement('selectgroups', 'position', get_string('subchapter_position', 'mod_mubook'), $afteroptions);
+                $select = new select('position', get_string('subchapter_position', 'mod_mubook'), $afteroptions);
                 if (in_array($position, $positions)) {
-                    $mform->setDefault('position', $position);
+                    $select->set_default((string)$position);
                 } else if (in_array($toc->get_last_chapter()->id, $positions)) {
-                    $mform->setDefault('position', $toc->get_last_chapter()->id);
+                    $select->set_default((string)$toc->get_last_chapter()->id);
                 } else if ($fromcreatechapterid > 0 && in_array($fromcreatechapterid, $positions)) {
-                    $mform->setDefault('position', $fromcreatechapterid);
+                    $select->set_default((string)$fromcreatechapterid);
                 }
+                $select->set_required(true);
+                $this->add($select);
             } else {
                 $afteroptions = [
                     0 => get_string('chapter_position_first', 'mod_mubook'),
@@ -101,35 +103,26 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
                     $option = $toc->get_numbered_chapter_title($chapter->id);
                     $afteroptions[$chapter->id] = get_string('chapter_position_after', 'mod_mubook', $option);
                 }
-                $mform->addElement('select', 'position', get_string('chapter_position', 'mod_mubook'), $afteroptions);
+                $select = new select('position', get_string('chapter_position', 'mod_mubook'), $afteroptions);
                 if (isset($afteroptions[$position])) {
-                    $mform->setDefault('position', $position);
+                    $select->set_default((string)$position);
                 } else {
-                    $mform->setDefault('position', array_key_last($afteroptions));
+                    $select->set_default((string)array_key_last($afteroptions));
                 }
+                $select->set_required(true);
+                $this->add($select);
             }
-        } else {
-            $mform->addElement('hidden', 'position');
-            $mform->setType('position', PARAM_INT);
-            $mform->setDefault('position', 0);
         }
 
-        if ($subchapter) {
-            $mform->addElement('text', 'title', get_string('subchapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+        if ($this->get_extra_data()['subchapter']) {
+            $title = new text('title', get_string('subchapter_title', 'mod_mubook'), ['maxlength' => 1333]);
         } else {
-            $mform->addElement('text', 'title', get_string('chapter_title', 'mod_mubook'), 'maxlength="1333" size="50"');
+            $title = new text('title', get_string('chapter_title', 'mod_mubook'), ['maxlength' => 1333]);
         }
-        $mform->addRule('title', get_string('required'), 'required', null, 'client');
-        $mform->setType('title', PARAM_TEXT);
+        $title->set_required(true);
+        $this->add($title);
 
-        if (\core_tag_tag::is_enabled('mod_mubook', 'mubook_chapter')) {
-            $mform->addElement(
-                'tags',
-                'tags',
-                get_string('tags'),
-                ['component' => 'mod_mubook', 'itemtype' => 'mubook_chapter']
-            );
-        }
+        $this->add(new tags('tags', get_string('tags'), new chapter_tagarea($mubook->id, null)));
 
         $options = [];
         $cman = \core\di::get(\mod_mubook\local\content_manager::class);
@@ -144,26 +137,18 @@ final class chapter_create extends \tool_mulib\local\ajax_form {
         }
         \core_collator::asort($options);
         $options[''] = get_string('none');
-        $mform->addElement('select', 'contentcreate', get_string('content_create', 'mod_mubook'), $options);
+        $contentcreate = new select('contentcreate', get_string('content_create', 'mod_mubook'), $options);
         if (isset($options[$mubook->contentdefault])) {
-            $mform->setDefault('contentcreate', $mubook->contentdefault);
+            $contentcreate->set_default($mubook->contentdefault);
         }
+        $this->add($contentcreate);
 
-        $mform->addElement('hidden', 'mubookid');
-        $mform->setType('mubookid', PARAM_INT);
-        $mform->setDefault('mubookid', $mubook->id);
-
-        if ($subchapter) {
-            $this->add_action_buttons(true, get_string('subchapter_create', 'mod_mubook'));
+        $this->add(new buttons('buttons'));
+        if ($this->get_extra_data()['subchapter']) {
+            $this->add(new submit('submit', get_string('subchapter_create', 'mod_mubook')), 'buttons');
         } else {
-            $this->add_action_buttons(true, get_string('chapter_create', 'mod_mubook'));
+            $this->add(new submit('submit', get_string('chapter_create', 'mod_mubook')), 'buttons');
         }
-    }
-
-    #[\Override]
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-
-        return $errors;
+        $this->add(new cancel(), 'buttons');
     }
 }

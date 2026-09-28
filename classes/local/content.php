@@ -19,10 +19,11 @@
 
 namespace mod_mubook\local;
 
+use tool_mulib\muform\handler\dialog;
 use stdClass;
 use core\exception\coding_exception;
 use core\url;
-use tool_mulib\output\ajax_form\link;
+use tool_mulib\output\muform\dialog\link;
 
 /**
  * Chapter content base class.
@@ -501,7 +502,7 @@ abstract class content {
         );
         $link = new link($url, get_string('content_delete', 'mod_mubook'), 'i/delete');
         $link->add_class('text-danger');
-        $link->set_submitted_action($link::SUBMITTED_ACTION_RELOAD);
+        $link->set_submitted_action(dialog::ACTION_RELOAD);
 
         return $link;
     }

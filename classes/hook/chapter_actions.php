@@ -19,10 +19,11 @@
 
 namespace mod_mubook\hook;
 
+use tool_mulib\muform\handler\dialog;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
 use core\url;
-use tool_mulib\output\ajax_form\button;
+use tool_mulib\output\muform\dialog\button;
 
 /**
  * Hook for adding of interactive book chapter actions.
@@ -118,27 +119,27 @@ final class chapter_actions {
 
         if ($chapter->can_update()) {
             $link = $chapter->get_update_link();
-            $this->dropdown->add_ajax_form($link);
+            $this->dropdown->add_dialog($link);
         }
 
         if ($chapter->can_move()) {
             if ($orphaned || count($chapters) > 1) {
                 $link = $chapter->get_move_link();
                 if ($isviewurl) {
-                    $link->set_submitted_action($link::SUBMITTED_ACTION_RELOAD);
+                    $link->set_submitted_action(dialog::ACTION_RELOAD);
                 }
-                $this->dropdown->add_ajax_form($link);
+                $this->dropdown->add_dialog($link);
             }
         }
 
         if ($chapter->can_delete()) {
             $link = $chapter->get_delete_link();
             if ($isviewurl) {
-                $link->set_submitted_action($link::SUBMITTED_ACTION_RELOAD);
+                $link->set_submitted_action(dialog::ACTION_RELOAD);
             } else if ($isviewchapterurl && $pageurl->param('id') != $chapter->id) {
-                $link->set_submitted_action($link::SUBMITTED_ACTION_RELOAD);
+                $link->set_submitted_action(dialog::ACTION_RELOAD);
             }
-            $this->dropdown->add_ajax_form($link);
+            $this->dropdown->add_dialog($link);
         }
 
         if (!$orphaned && chapter::can_create($mubook, $context)) {
@@ -170,7 +171,7 @@ final class chapter_actions {
                     $this->dropdown->add_divider();
                 }
                 foreach ($links as $link) {
-                    $this->dropdown->add_ajax_form($link);
+                    $this->dropdown->add_dialog($link);
                 }
             }
         }
@@ -185,7 +186,7 @@ final class chapter_actions {
                         $this->dropdown->add_divider();
                     }
                     $link = $cman->get_create_content_link($chapter, 0);
-                    $this->dropdown->add_ajax_form($link);
+                    $this->dropdown->add_dialog($link);
                 }
             }
         }

@@ -25,12 +25,12 @@
  */
 
 use core\url;
+use tool_mulib\muform\handler;
 use mod_mubook\local\toc;
 
 /** @var moodle_database $DB */
 /** @var moodle_page $PAGE */
-
-define('AJAX_SCRIPT', true);
+/** @var core_renderer $OUTPUT */
 
 require('../../../config.php');
 
@@ -52,6 +52,11 @@ $returnurl = new url('/mod/mubook/viewchapter.php', ['id' => $chapterrecord->id]
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
+$title = get_string('content_delete', 'mod_mubook');
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+
+$handler = handler::from_request();
 
 $cman = \core\di::get(\mod_mubook\local\content_manager::class);
 $toc = new toc($mubook);
@@ -65,12 +70,12 @@ if (!$content->can_delete()) {
     redirect($returnurl);
 }
 
-$form = new \mod_mubook\local\form\content_delete(null, ['content' => $content, 'chapter' => $chapter, 'toc' => $toc]);
+$form = new \mod_mubook\local\form\content_delete($currenturl, [], ['content' => $content, 'chapter' => $chapter, 'toc' => $toc]);
 if ($form->is_cancelled()) {
-    $form->ajax_form_cancelled($returnurl);
+    $handler->cancelled($returnurl);
 } else if ($data = $form->get_data()) {
     $content->delete();
-    $form->ajax_form_submitted($returnurl);
+    $handler->submitted($returnurl);
 }
 
-$form->ajax_form_render();
+$handler->render($form);

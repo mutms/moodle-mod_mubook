@@ -19,8 +19,9 @@
 
 namespace mod_mubook\local;
 
+use tool_mulib\muform\handler\dialog;
 use stdClass;
-use tool_mulib\output\ajax_form\link;
+use tool_mulib\output\muform\dialog\link;
 use core\url;
 
 /**
@@ -133,7 +134,7 @@ final class content_manager {
             ['chapterid' => $chapter->id, 'sortorder' => $sortorder]
         );
         $action = new link($url, get_string('content_create', 'mod_mubook'), 'content_create', 'mod_mubook');
-        $action->set_submitted_action($action::SUBMITTED_ACTION_REDIRECT);
+        $action->set_submitted_action(dialog::ACTION_REDIRECT);
         return $action;
     }
 }

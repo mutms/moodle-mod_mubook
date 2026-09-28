@@ -22,11 +22,11 @@ Feature: Editors may manage Markdown content in mod_mubook
     And I turn editing mode on
 
     When I press "Add chapter"
-    And I set the following fields in the ".modal-dialog" "css_element" to these values:
+    And I set the following muform fields in the "dialog[open]" "css_element":
       | Chapter title | Prvni kapitola |
       | Add content   | Markdown text      |
-    And I click on "Add chapter" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields to these values:
+    And I click on "Add chapter" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields:
       | Text | Sample text one |
     And I press "Add content"
     Then I should not see "This is an intro"
@@ -35,10 +35,10 @@ Feature: Editors may manage Markdown content in mod_mubook
 
     When I click on "Content 1 actions" "link_or_button"
     And I click on "Update content" "link" in the ".dropdown-menu.show" "css_element"
-    And the following fields match these values:
+    And the following muform fields match:
       | Text           | Sample text one |
       | Hidden content | 0               |
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Text           | Sample text ONE |
       | Hidden content | 1               |
     And I press "Update content"
@@ -49,11 +49,11 @@ Feature: Editors may manage Markdown content in mod_mubook
 
     When I click on "Content 1 actions" "link_or_button"
     And I click on "Update content" "link" in the ".dropdown-menu.show" "css_element"
-    And the following fields match these values:
+    And the following muform fields match:
       | Text           | Sample text ONE |
       | Hidden content | 1               |
       | Position       | 1               |
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Text           | Sample text one |
       | Hidden content | 0               |
     And I press "Update content"
@@ -63,13 +63,13 @@ Feature: Editors may manage Markdown content in mod_mubook
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Add content" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Add content | Markdown text |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And the following fields match these values:
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And the following muform fields match:
       | Position       | 2               |
       | Hidden content | 0               |
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Text           | Sample hidden two |
       | Hidden content | 1                 |
     And I press "Add content"
@@ -80,10 +80,10 @@ Feature: Editors may manage Markdown content in mod_mubook
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Add content" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Add content | Markdown text |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields to these values:
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields:
       | Text           | Sample text three |
       | Position       | 2                 |
     And I press "Add content"
@@ -93,7 +93,7 @@ Feature: Editors may manage Markdown content in mod_mubook
 
     When I click on "Content 2 actions" "link_or_button"
     And I click on "Delete content" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete content" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete content" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should not see "Sample text three"
     And "Sample hidden two" "text" should appear after "Sample text one" "text"
@@ -117,10 +117,10 @@ Feature: Editors may manage Markdown content in mod_mubook
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Add content" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Add content | Markdown text |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields to these values:
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields:
       | Text           | Sample text one |
     And I press "Add content"
     Then I should not see "This is an intro"
@@ -129,7 +129,7 @@ Feature: Editors may manage Markdown content in mod_mubook
 
     When I click on "Content 1 actions" "link_or_button"
     And I click on "Update content" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Text           | Sample text ONE |
     And I press "Update content"
     Then I should not see "This is an intro"
@@ -138,6 +138,6 @@ Feature: Editors may manage Markdown content in mod_mubook
 
     When I click on "Content 1 actions" "link_or_button"
     And I click on "Delete content" "link" in the ".dropdown-menu.show" "css_element"
-    And I click on "Delete content" "button" in the ".modal-dialog" "css_element"
+    And I click on "Delete content" "button" in the "dialog[open]" "css_element"
     Then I should not see "This is an intro"
     And I should not see "Sample text ONE"

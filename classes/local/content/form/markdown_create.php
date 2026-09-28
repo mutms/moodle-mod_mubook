@@ -23,6 +23,8 @@ use stdClass;
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
 use mod_mubook\local\markdown_formatter;
+use tool_mulib\muform\element\filemanager;
+use tool_mulib\muform\element\textarea;
 
 /**
  * Create Markdown text content.
@@ -33,22 +35,16 @@ use mod_mubook\local\markdown_formatter;
  */
 final class markdown_create extends \mod_mubook\local\form\content_create_base {
     #[\Override]
-    protected function definition() {
-        $mform = $this->_form;
-        /** @var chapter $chapter */
-        $chapter = $this->_customdata['chapter'];
-        /** @var toc $toc */
-        $toc = $this->_customdata['toc'];
-        $mubook = $toc->get_mubook();
-        $context = $toc->get_context();
+    protected function definition(): void {
+        $text = new textarea('text', get_string('content_text', 'mod_mubook'), ['type' => 'rawtext', 'rows' => 20]);
+        $this->add($text);
 
-        $mform->addElement('textarea', 'text', get_string('content_text', 'mod_mubook'), ['cols' => 50, 'rows' => 20]);
-
-        $mform->addElement('filemanager', 'files', get_string('content_files', 'mod_mubook'), null, self::get_content_files_options());
+        $files = new filemanager('files', get_string('content_files', 'mod_mubook'), 100, null, true);
+        $this->add($files);
 
         $this->add_shared_content_elements();
 
-        $this->add_action_buttons(true, get_string('content_create', 'mod_mubook'));
+        $this->add_content_buttons(get_string('content_create', 'mod_mubook'));
 
         // TODO: add preview.
     }

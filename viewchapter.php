@@ -72,6 +72,7 @@ $PAGE->set_other_editing_capability(['mod/mubook:editchapter', 'mod/mubook:editc
 $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, [$mubook->name, $chapter->title]));
 $PAGE->add_body_class('limitedwidth');
 $PAGE->set_secondary_navigation(false);
+$PAGE->set_show_navigation_footer(false);
 
 if ($parent) {
     $PAGE->navbar->add(

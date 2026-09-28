@@ -546,19 +546,19 @@ final class chapter_test extends \advanced_testcase {
         $link = chapter::get_create_link($mubook, 0, false);
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/chapter_create.php?mubookid={$mubook->id}&subchapter=0&position=0",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
 
         $link = chapter::get_create_link($mubook, $chapter2->id, false, $chapter1->id);
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/chapter_create.php?mubookid={$mubook->id}&subchapter=0&position={$chapter2->id}&fromcreatechapterid={$chapter1->id}",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
 
         $link = chapter::get_create_link($mubook, $chapter2->id, true, $chapter1->id);
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/chapter_create.php?mubookid={$mubook->id}&subchapter=1&position={$chapter2->id}&fromcreatechapterid={$chapter1->id}",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
     }
 
@@ -587,13 +587,13 @@ final class chapter_test extends \advanced_testcase {
         $link = $chapter1->get_update_link();
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/chapter_update.php?id={$chapter1->id}",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
 
         $link = $chapter2->get_update_link();
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/chapter_update.php?id={$chapter2->id}",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
     }
 
@@ -622,13 +622,13 @@ final class chapter_test extends \advanced_testcase {
         $link = $chapter1->get_move_link();
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/chapter_move.php?id={$chapter1->id}",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
 
         $link = $chapter2->get_move_link();
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/chapter_move.php?id={$chapter2->id}",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
     }
 
@@ -657,13 +657,13 @@ final class chapter_test extends \advanced_testcase {
         $link = $chapter1->get_delete_link();
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/chapter_delete.php?id={$chapter1->id}",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
 
         $link = $chapter2->get_delete_link();
         $this->assertSame(
             "https://www.example.com/moodle/mod/mubook/management/chapter_delete.php?id={$chapter2->id}",
-            $link->export_for_template($rbase)['formurl']
+            $link->export_for_template($rbase)['url']
         );
     }
 

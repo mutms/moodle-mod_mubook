@@ -30,18 +30,18 @@ Feature: Editors may manage Show solution button in mod_mubook
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Add content" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Add content | Show solution button |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
     And I press "Add content"
     Then I should see "Next element does not exist, disclosure will be disabled."
 
     When I click on "Chapter actions" "link_or_button"
     And I click on "Add content" "link" in the ".dropdown-menu.show" "css_element"
-    And I set the following fields to these values:
+    And I set the following muform fields:
       | Add content | HTML text |
-    And I click on "Continue" "button" in the ".modal-dialog" "css_element"
-    And I set the following fields to these values:
+    And I click on "Continue" "button" in the "dialog[open]" "css_element"
+    And I set the following muform fields:
       | Text        | Sample solution text |
     And I press "Add content"
     Then I should see "Test heading 1"
