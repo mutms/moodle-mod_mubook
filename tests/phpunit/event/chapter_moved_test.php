@@ -25,6 +25,7 @@ use mod_mubook\event\chapter_moved;
 /**
  * Chapter moved event test.
  *
+ * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

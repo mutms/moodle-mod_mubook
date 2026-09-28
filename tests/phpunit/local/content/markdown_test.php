@@ -27,6 +27,7 @@ use mod_mubook\local\content\markdown;
 /**
  * Markdown content test.
  *
+ * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.markdown GNU GPL v3 or later

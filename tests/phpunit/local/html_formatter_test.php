@@ -25,6 +25,7 @@ use mod_mubook\local\html_formatter;
 /**
  * HTML formatter test.
  *
+ * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

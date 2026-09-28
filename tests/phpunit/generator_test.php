@@ -26,6 +26,7 @@ use mod_mubook\local\content;
 /**
  * Interactive book generator test.
  *
+ * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
