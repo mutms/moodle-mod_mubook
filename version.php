@@ -31,7 +31,7 @@ $plugin->component = 'mod_mubook';
 $plugin->version = 2026091901;
 $plugin->requires = 2024100700;
 $plugin->supported = [405, 405];
-$plugin->release = 'v4.5.15.01';
+$plugin->release = 'v4.5.15.01+';
 
 $plugin->dependencies = [
     'tool_mulib' => 2026091900,
