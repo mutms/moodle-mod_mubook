@@ -31,7 +31,7 @@ use PHPUnit\Framework\Attributes\Group;
  *
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
- * @license    https://www.gnu.org/copyleft/gpl.markdown GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[CoversClass(\mod_mubook\local\content\markdown::class)]
 #[Group('MuTMS')]
