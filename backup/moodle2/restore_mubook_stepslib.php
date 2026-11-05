@@ -140,7 +140,8 @@ class restore_mubook_activity_structure_step extends restore_activity_structure_
     protected function process_mubook_chapter_tag($data) {
         $data = (object)$data;
 
-        if (!core_tag_tag::is_enabled('mod_mubook', 'mubook_chapter')) { // Tags disabled in server, nothing to process.
+        if (!core_tag_tag::is_enabled('mod_mubook', 'mubook_chapter')) {
+            // Tags disabled in server, nothing to process.
             return;
         }
 
