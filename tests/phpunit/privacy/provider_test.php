@@ -21,17 +21,18 @@
 namespace mod_mubook\phpunit\privacy;
 
 use mod_mubook\privacy\provider;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Privacy provider test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\privacy\provider
  */
+#[CoversClass(\mod_mubook\privacy\provider::class)]
+#[Group('MuTMS')]
 final class provider_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

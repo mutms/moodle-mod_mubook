@@ -22,17 +22,18 @@ namespace mod_mubook\phpunit;
 
 use mod_mubook\local\chapter;
 use mod_mubook\local\content;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Interactive book generator test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook_generator
  */
+#[CoversClass(\mod_mubook_generator::class)]
+#[Group('MuTMS')]
 final class generator_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

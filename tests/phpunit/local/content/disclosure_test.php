@@ -23,17 +23,18 @@ namespace mod_mubook\phpunit\local\content;
 
 use mod_mubook\local\content;
 use mod_mubook\local\content\disclosure;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Disclosure button test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.disclosure GNU GPL v3 or later
- *
- * @covers \mod_mubook\local\content\disclosure
  */
+#[CoversClass(\mod_mubook\local\content\disclosure::class)]
+#[Group('MuTMS')]
 final class disclosure_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

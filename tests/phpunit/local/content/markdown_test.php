@@ -23,17 +23,18 @@ namespace mod_mubook\phpunit\local\content;
 
 use mod_mubook\local\content;
 use mod_mubook\local\content\markdown;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Markdown content test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.markdown GNU GPL v3 or later
- *
- * @covers \mod_mubook\local\content\markdown
  */
+#[CoversClass(\mod_mubook\local\content\markdown::class)]
+#[Group('MuTMS')]
 final class markdown_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

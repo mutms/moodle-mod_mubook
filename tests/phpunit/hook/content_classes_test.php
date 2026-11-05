@@ -21,17 +21,18 @@
 namespace mod_mubook\phpunit\hook;
 
 use mod_mubook\hook\content_classes;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Content classes hook test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\hook\content_classes;
  */
+#[CoversClass(\mod_mubook\hook\content_classes::class)]
+#[Group('MuTMS')]
 final class content_classes_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

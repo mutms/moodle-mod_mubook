@@ -21,17 +21,19 @@
 namespace mod_mubook\phpunit\local;
 
 use mod_mubook\local\markdown_formatter;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Markdown formatter test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\local\markdown_formatter
  */
+#[CoversClass(\mod_mubook\local\markdown_formatter::class)]
+#[Group('MuTMS')]
 final class markdown_formatter_test extends \advanced_testcase {
     public function test_get_html_options(): void {
         $options = markdown_formatter::get_html_options();
@@ -92,13 +94,12 @@ final class markdown_formatter_test extends \advanced_testcase {
     }
 
     /**
-     * @dataProvider dataprovider_convert_to_html
-     *
      * @param string $markdown
      * @param array $options
      * @param string $html
      * @return void
      */
+    #[DataProvider('dataprovider_convert_to_html')]
     public function test_convert_to_html(string $markdown, array $options, string $html): void {
         $this->assertSame($html, markdown_formatter::convert_to_html($markdown, $options));
     }

@@ -21,14 +21,16 @@
 
 namespace mod_mubook\phpunit;
 
+use PHPUnit\Framework\Attributes\Group;
+
 /**
  * Interactive book core API tests.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[Group('MuTMS')]
 final class lib_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

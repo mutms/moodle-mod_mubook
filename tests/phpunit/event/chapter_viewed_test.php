@@ -21,17 +21,18 @@
 namespace mod_mubook\phpunit\event;
 
 use mod_mubook\event\chapter_viewed;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Chapter viewed event test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\event\chapter_viewed;
  */
+#[CoversClass(\mod_mubook\event\chapter_viewed::class)]
+#[Group('MuTMS')]
 final class chapter_viewed_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

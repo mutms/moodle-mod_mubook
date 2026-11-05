@@ -21,17 +21,18 @@
 namespace mod_mubook\phpunit\local;
 
 use mod_mubook\local\html_formatter;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * HTML formatter test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\local\html_formatter
  */
+#[CoversClass(\mod_mubook\local\html_formatter::class)]
+#[Group('MuTMS')]
 final class html_formatter_test extends \advanced_testcase {
     public function test_normalise_headings(): void {
         $html = '<h1 class="h2">Main heading</h1>

@@ -23,17 +23,18 @@ namespace mod_mubook\phpunit\local\content;
 
 use mod_mubook\local\content;
 use mod_mubook\local\content\unsafehtml;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Unsafe raw html content test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.unsafehtml GNU GPL v3 or later
- *
- * @covers \mod_mubook\local\content\unsafehtml
  */
+#[CoversClass(\mod_mubook\local\content\unsafehtml::class)]
+#[Group('MuTMS')]
 final class unsafehtml_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

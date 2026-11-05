@@ -21,17 +21,18 @@
 namespace mod_mubook\phpunit\hook;
 
 use mod_mubook\hook\content_post_render;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Content post rendering hook test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\hook\content_post_render;
  */
+#[CoversClass(\mod_mubook\hook\content_post_render::class)]
+#[Group('MuTMS')]
 final class content_post_render_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

@@ -21,17 +21,18 @@
 namespace mod_mubook\phpunit\event;
 
 use mod_mubook\event\chapter_deleted;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Chapter deleted event test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\event\chapter_deleted;
  */
+#[CoversClass(\mod_mubook\event\chapter_deleted::class)]
+#[Group('MuTMS')]
 final class chapter_deleted_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

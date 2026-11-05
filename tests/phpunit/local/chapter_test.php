@@ -23,17 +23,18 @@ namespace mod_mubook\phpunit\local;
 
 use mod_mubook\local\toc;
 use mod_mubook\local\chapter;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Chapter test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\local\chapter
  */
+#[CoversClass(\mod_mubook\local\chapter::class)]
+#[Group('MuTMS')]
 final class chapter_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

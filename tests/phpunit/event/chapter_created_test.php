@@ -21,17 +21,18 @@
 namespace mod_mubook\phpunit\event;
 
 use mod_mubook\event\chapter_created;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Chapter created event test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\event\chapter_created;
  */
+#[CoversClass(\mod_mubook\event\chapter_created::class)]
+#[Group('MuTMS')]
 final class chapter_created_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

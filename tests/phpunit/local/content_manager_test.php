@@ -22,17 +22,18 @@
 namespace mod_mubook\phpunit\local;
 
 use mod_mubook\local\content_manager;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Content manager test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\local\content_manager
  */
+#[CoversClass(\mod_mubook\local\content_manager::class)]
+#[Group('MuTMS')]
 final class content_manager_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();

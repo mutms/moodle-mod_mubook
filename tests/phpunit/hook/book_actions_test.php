@@ -21,17 +21,18 @@
 namespace mod_mubook\phpunit\hook;
 
 use mod_mubook\hook\book_actions;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Book actions hook test.
  *
- * @group      MuTMS
  * @package    mod_mubook
  * @copyright  2025 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- * @covers \mod_mubook\hook\book_actions;
  */
+#[CoversClass(\mod_mubook\hook\book_actions::class)]
+#[Group('MuTMS')]
 final class book_actions_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
