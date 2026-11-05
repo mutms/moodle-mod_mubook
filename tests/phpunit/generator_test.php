@@ -156,7 +156,6 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame(null, $content1->auxint3);
         $this->assertSame(null, $content1->unsafetrusted);
         $this->assertSame('0', $content1->hidden);
-        $this->assertSame(null, $content1->groupid);
         $this->assertSame(null, $content1->originjson);
 
         $content1 = $generator->create_chapter_content([
@@ -175,7 +174,6 @@ final class generator_test extends \advanced_testcase {
         $this->assertSame(null, $content1->auxint3);
         $this->assertSame(null, $content1->unsafetrusted);
         $this->assertSame('0', $content1->hidden);
-        $this->assertSame(null, $content1->groupid);
         $this->assertSame(null, $content1->originjson);
     }
 }

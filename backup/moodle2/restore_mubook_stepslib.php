@@ -105,9 +105,8 @@ class restore_mubook_activity_structure_step extends restore_activity_structure_
 
         $data->chapterid = $this->get_new_parentid('mubook_chapter');
 
-        if ($data->groupid) {
-            $data->groupid = $this->get_mappingid('group', $data->groupid);
-        }
+        // Group restriction was removed, ignore it in older backups.
+        unset($data->groupid);
 
         $data->sortorder = 1 + $DB->get_field('mubook_content', 'MAX(sortorder)', ['chapterid' => $data->chapterid]);
 

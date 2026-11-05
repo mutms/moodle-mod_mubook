@@ -153,8 +153,6 @@ abstract class content_create_base extends form {
         if (has_capability('mod/mubook:viewhiddencontent', $context)) {
             $this->add(new checkbox('hidden', get_string('content_hidden', 'mod_mubook')));
         }
-
-        // TODO: add group selection.
     }
 
     /**

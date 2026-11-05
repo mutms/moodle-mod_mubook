@@ -45,8 +45,6 @@ final class markdown_create extends \mod_mubook\local\form\content_create_base {
         $this->add_shared_content_elements();
 
         $this->add_content_buttons(get_string('content_create', 'mod_mubook'));
-
-        // TODO: add preview.
     }
 
     /**

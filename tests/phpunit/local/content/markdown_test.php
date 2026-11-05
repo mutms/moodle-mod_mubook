@@ -157,7 +157,6 @@ final class markdown_test extends \advanced_testcase {
         $this->assertSame(null, $content1->auxint3);
         $this->assertSame(null, $content1->unsafetrusted);
         $this->assertSame('0', $content1->hidden);
-        $this->assertSame(null, $content1->groupid);
         $this->assertSame(null, $content1->originjson);
         $this->assertTimeCurrent($content1->timecreated);
         $this->assertTimeCurrent($content1->timemodified);
@@ -179,7 +178,6 @@ final class markdown_test extends \advanced_testcase {
         $this->assertSame(null, $content2->auxint3);
         $this->assertSame(null, $content2->unsafetrusted);
         $this->assertSame('1', $content2->hidden);
-        $this->assertSame(null, $content2->groupid);
         $this->assertSame(null, $content2->originjson);
         $content1 = self::refetch_content($content1);
         $this->assertSame('2', $content1->sortorder);
@@ -201,7 +199,6 @@ final class markdown_test extends \advanced_testcase {
         $this->assertSame(null, $content3->auxint3);
         $this->assertSame(null, $content3->unsafetrusted);
         $this->assertSame('0', $content3->hidden);
-        $this->assertSame(null, $content3->groupid);
         $this->assertSame(null, $content3->originjson);
         $content1 = self::refetch_content($content1);
         $content2 = self::refetch_content($content2);
@@ -238,7 +235,6 @@ final class markdown_test extends \advanced_testcase {
         $this->assertSame(null, $content4->auxint3);
         $this->assertSame(null, $content4->unsafetrusted);
         $this->assertSame('0', $content4->hidden);
-        $this->assertSame(null, $content4->groupid);
         $this->assertSame(null, $content4->originjson);
 
         $files = $fs->get_area_files($context->id, 'mod_mubook', 'content', $content4->id, 'id ASC', false);

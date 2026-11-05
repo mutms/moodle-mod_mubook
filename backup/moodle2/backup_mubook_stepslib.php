@@ -63,7 +63,6 @@ class backup_mubook_activity_structure_step extends backup_activity_structure_st
             'auxint3',
             'unsafetrusted',
             'hidden',
-            'groupid',
             'originjson',
             'timecreated',
             'timemodified',

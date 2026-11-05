@@ -149,8 +149,6 @@ abstract class content_update_base extends form {
             $hidden = $content->hidden ? get_string('yes') : get_string('no');
             $this->add(new info('statichidden', get_string('content_hidden', 'mod_mubook'), $hidden));
         }
-
-        // TODO: add group selection.
     }
 
     /**

@@ -63,5 +63,20 @@ function xmldb_mubook_upgrade($oldversion): bool {
         upgrade_mod_savepoint(true, 2025103150, 'mubook');
     }
 
+    if ($oldversion < 2026110553) {
+        // Remove unused group restriction of content items.
+        $table = new xmldb_table('mubook_content');
+        $key = new xmldb_key('groupid', XMLDB_KEY_FOREIGN, ['groupid'], 'group', ['id']);
+        $field = new xmldb_field('groupid');
+
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_key($table, $key);
+            $dbman->drop_field($table, $field);
+        }
+
+        // Mubook savepoint reached.
+        upgrade_mod_savepoint(true, 2026110553, 'mubook');
+    }
+
     return true;
 }

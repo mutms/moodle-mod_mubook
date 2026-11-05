@@ -47,8 +47,6 @@ final class markdown_update extends \mod_mubook\local\form\content_update_base {
         $this->add_shared_content_elements();
 
         $this->add_content_buttons(get_string('content_update', 'mod_mubook'));
-
-        // TODO: add preview.
     }
 
     #[\Override]

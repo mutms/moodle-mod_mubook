@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/mubook/db" VERSION="20251031" COMMENT="XMLDB file for Interactive book module"
+<XMLDB PATH="mod/mubook/db" VERSION="20261105" COMMENT="XMLDB file for Interactive book module"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -56,7 +56,6 @@
         <FIELD NAME="auxint3" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="General integer"/>
         <FIELD NAME="unsafetrusted" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="NULL for safe content, for unsafe content 1 means XSS is allowed, 0 means all HTML and files are sanitised"/>
         <FIELD NAME="hidden" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="1 means normal users cannot see the content item, 0 means visible"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Optional restriction by group, if set then only group members or users with access all groups see the content"/>
         <FIELD NAME="originjson" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Optional info related to origin of content - such as import source, restored snapshot id, etc."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
@@ -64,7 +63,6 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="chapterid" TYPE="foreign" FIELDS="chapterid" REFTABLE="mubook_chapter" REFFIELDS="id"/>
-        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="group" REFFIELDS="id"/>
       </KEYS>
       <INDEXES>
         <INDEX NAME="type" UNIQUE="false" FIELDS="type"/>

@@ -40,7 +40,6 @@ use tool_mulib\output\muform\dialog\link;
  * @property-read int $auxint3
  * @property-read int $unsafetrusted
  * @property-read int $hidden
- * @property-read int $groupid
  * @property-read string $originjson
  * @property-read int $timecreated
  * @property-read int $timemodified
@@ -528,8 +527,6 @@ abstract class content {
                 return false;
             }
         }
-
-        // TODO: add group restriction here.
 
         return true;
     }
