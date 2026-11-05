@@ -68,17 +68,17 @@ final class markdown_formatter_test extends \advanced_testcase {
             [
                 "![Image 1](logo.png)\n![Image 2](./logo.png)\n![Image 2](@@PLUGINFILE@@/logo.png)",
                 [],
-                '<p><img class="img-fluid" src="logo.png" alt="" />
-<img class="img-fluid" src="./logo.png" alt="" />
-<img class="img-fluid" src="@@PLUGINFILE@@/logo.png" alt="" /></p>
+                '<p><img class="img-fluid" src="logo.png" alt="Image 1" />
+<img class="img-fluid" src="./logo.png" alt="Image 2" />
+<img class="img-fluid" src="@@PLUGINFILE@@/logo.png" alt="Image 2" /></p>
 ',
             ],
             [
                 "![Image 1](logo.png)\n![Image 2](./logo.png)\n![Image 2](@@PLUGINFILE@@/logo.png)",
                 ['filebase' => 'XX/'],
-                '<p><img class="img-fluid" src="XX/logo.png" alt="" />
-<img class="img-fluid" src="XX/logo.png" alt="" />
-<img class="img-fluid" src="XX/logo.png" alt="" /></p>
+                '<p><img class="img-fluid" src="XX/logo.png" alt="Image 1" />
+<img class="img-fluid" src="XX/logo.png" alt="Image 2" />
+<img class="img-fluid" src="XX/logo.png" alt="Image 2" /></p>
 ',
             ],
             [
@@ -248,6 +248,16 @@ final class markdown_formatter_test extends \advanced_testcase {
                 "![](https://example.com/x.png) ![](/abs.png)",
                 ['filebase' => 'XX/'],
                 "<p><img class=\"img-fluid\" src=\"https://example.com/x.png\" alt=\"\" /> <img class=\"img-fluid\" src=\"/abs.png\" alt=\"\" /></p>\n",
+            ],
+            'image alt and title' => [
+                "![Logo](logo.png \"The title\")",
+                [],
+                "<p><img class=\"img-fluid\" title=\"The title\" src=\"logo.png\" alt=\"Logo\" /></p>\n",
+            ],
+            'image alt is plain text escaped once' => [
+                "![A *b* & \"c\" <d>](x.png \"T & U\")",
+                [],
+                "<p><img class=\"img-fluid\" title=\"T &amp; U\" src=\"x.png\" alt=\"A b &amp; &quot;c&quot; &lt;d&gt;\" /></p>\n",
             ],
         ];
     }

@@ -26,7 +26,10 @@ namespace mod_mubook\local;
 
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\MarkdownConverter;
+use League\CommonMark\Node\Inline\Newline;
 use League\CommonMark\Node\Node;
+use League\CommonMark\Node\NodeIterator;
+use League\CommonMark\Node\StringContainerInterface;
 use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Image;
 use League\CommonMark\Extension\CommonMark\Node\Inline\Link;
@@ -170,6 +173,14 @@ final class markdown_formatter {
                 Image::assertInstanceOf($node);
                 $url = $node->getUrl();
                 $title = $node->getTitle();
+                $alt = '';
+                foreach (new NodeIterator($node) as $child) {
+                    if ($child instanceof StringContainerInterface) {
+                        $alt .= $child->getLiteral();
+                    } else if ($child instanceof Newline) {
+                        $alt .= "\n";
+                    }
+                }
                 if ($this->filebase !== null) {
                     if (str_starts_with($url, '@@PLUGINFILE@@/')) {
                         $url = $this->filebase . substr($url, strlen('@@PLUGINFILE@@/'));
@@ -179,7 +190,11 @@ final class markdown_formatter {
                         $url = $this->filebase . $url;
                     }
                 }
-                return \html_writer::img($url, $title, ['class' => 'img-fluid']);
+                $attributes = ['class' => 'img-fluid'];
+                if (isset($title) && $title !== '') {
+                    $attributes['title'] = $title;
+                }
+                return \html_writer::img($url, $alt, $attributes);
             }
         };
         $environment->addRenderer(Image::class, $imagerender);
