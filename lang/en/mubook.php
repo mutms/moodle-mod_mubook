@@ -135,6 +135,6 @@ $string['subchapter_title'] = 'Sub-chapter title';
 $string['subchapter_update'] = 'Update sub-chapter';
 $string['subchapters'] = 'Sub-chapters';
 $string['subchapters_delete_a'] = 'Confirm deletion of {$a} sub-chapters';
-$string['subchapters_orphaned'] = 'Orphaned subchapters';
+$string['subchapters_orphaned'] = 'Orphaned sub-chapters';
 $string['tagarea_mubook_chapter'] = 'Interactive book chapters';
 $string['toc'] = 'Table of contents';
