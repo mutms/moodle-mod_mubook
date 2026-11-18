@@ -19,10 +19,6 @@
 /**
  * Strings for component 'mod_mubook', language 'it'.
  *
- * NOTE: This Italian translation was produced automatically by an AI language
- * model and has not yet been reviewed by a human translator. Corrections are
- * welcome.
- *
  * @package    mod_mubook
  * @copyright  2026 Petr Skoda
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -51,7 +47,7 @@ $string['chapter_update'] = 'Modifica capitolo';
 $string['chapters_all'] = 'Tutti i capitoli';
 $string['content_actions_a'] = 'Azioni del contenuto {$a}';
 $string['content_create'] = 'Aggiungi contenuto';
-$string['content_create_a'] = 'Aggiungi: {$a}';
+$string['content_create_a'] = 'Aggiungi {$a}';
 $string['content_delete'] = 'Elimina contenuto';
 $string['content_files'] = 'File';
 $string['content_hidden'] = 'Contenuto nascosto';
@@ -76,7 +72,7 @@ $string['content_unknowntype'] = 'Il contenuto non può essere visualizzato (tip
 $string['content_unsafetrusted'] = 'Contenuto non sicuro considerato attendibile';
 $string['content_unsafetrusted_confirmation'] = 'Abilitare solo se si ha piena fiducia nella provenienza di questo HTML e di tutti i file associati';
 $string['content_update'] = 'Modifica contenuto';
-$string['content_update_a'] = 'Modifica: {$a}';
+$string['content_update_a'] = 'Modifica {$a}';
 $string['contentdefault'] = 'Tipo di contenuto di default';
 $string['contentdefault_desc'] = 'Selezionare il tipo di contenuto da inserire nei nuovi libri.';
 $string['event_all_chapters_viewed'] = 'Visualizzazione della pagina con tutti i capitoli';
@@ -99,8 +95,8 @@ $string['markdown_html_escape'] = 'Esegui l\'escape dell\'HTML';
 $string['markdown_html_setting'] = 'Elaborazione di default dell\'HTML in Markdown';
 $string['markdown_html_setting_desc'] = 'Selezionare l\'elaborazione di default dell\'HTML in Markdown per i nuovi libri interattivi.';
 $string['markdown_html_strip'] = 'Rimuovi HTML';
-$string['markdown_task_completed'] = 'Attività completata';
-$string['markdown_task_notcompleted'] = 'Attività non completata';
+$string['markdown_task_completed'] = 'Voce completata';
+$string['markdown_task_notcompleted'] = 'Voce non completata';
 $string['modulename'] = 'Libro interattivo';
 $string['modulename_link'] = 'mod/mubook/view';
 $string['modulenameplural'] = 'Libri interattivi';
