@@ -18,19 +18,6 @@ content types, and safer student editing capabilities.
 * Optimised print support on regular book pages (replaces print sub-plugin)
 * Editing of unsafe HTML controlled by a separate capability — safe to allow student editing
 
-## Roadmap
-
-* Markdown preview
-* Chapter content visibility based on group membership
-* Content snapshots for change tracking
-* Optional user experience tracking
-* Export and import
-* Full text search
-* New block with table of contents, progress indicators, and bookmarks
-* Reusable content libraries
-
-_Development of new features depends on availability of funding._
-
 ## Requirements
 
 > This plugin is included in the [MuTMS distribution](https://github.com/mutms/mutms) —
